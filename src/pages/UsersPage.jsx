@@ -55,6 +55,16 @@ export default function UsersPage() {
     }
   };
 
+  const handleReactivate = async (id) => {
+  try {
+    await adminApi.reactivateUser(id);
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to reactivate user");
+  }
+};
+
   return (
     <div className="bg-white p-6 rounded shadow">
 
@@ -111,16 +121,23 @@ export default function UsersPage() {
                 )}
               </td>
 
-              <td className="border p-2">
-                {user.is_active && (
-                  <button
-                    onClick={() => handleDeactivate(user.id)}
-                    className="px-3 py-1 bg-red-600 text-white rounded"
-                  >
-                    Deactivate
-                  </button>
-                )}
-              </td>
+          <td className="border p-2">
+          {user.is_active ? (
+            <button
+              onClick={() => handleDeactivate(user.id)}
+              className="px-3 py-1 bg-red-600 text-white rounded"
+            >
+              Deactivate
+            </button>
+          ) : (
+            <button
+              onClick={() => handleReactivate(user.id)}
+              className="px-3 py-1 bg-green-600 text-white rounded"
+            >
+              Reactivate
+            </button>
+          )}
+        </td>
             </tr>
           ))}
         </tbody>

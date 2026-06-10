@@ -27,6 +27,10 @@ const adminApi = {
         method: "PUT" 
       }
     ),
+    reactivateUser: (userId) =>
+  apiFetch(`/api/v1/admin/users/${userId}/reactivate`, {
+    method: "POST",
+  }),
 
   changeUserRole: (userId, role) =>
     apiFetch(
