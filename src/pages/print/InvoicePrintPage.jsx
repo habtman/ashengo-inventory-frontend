@@ -29,13 +29,17 @@ export default function InvoicePrintPage() {
     loadInvoice();
   }, [id]);
 
-  useEffect(() => {
-    if (invoice) {
-      setTimeout(() => {
-        window.print();
-      }, 500);
-    }
-  }, [invoice]);
+useEffect(() => {
+  if (invoice) {
+    setTimeout(() => {
+      window.print();
+
+      window.onafterprint = () => {
+        window.close();
+      };
+    }, 1000);
+  }
+}, [invoice]);
 
   if (loading) return <p>Loading...</p>;
   if (!invoice) return <p>Invoice not found</p>;
