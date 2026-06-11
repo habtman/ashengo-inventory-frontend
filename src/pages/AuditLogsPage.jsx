@@ -42,25 +42,12 @@ export default function AuditLogsPage() {
           <thead className="bg-gray-100">
 
             <tr>
-              <th className="border p-2">
-                Date
-              </th>
-
-              <th className="border p-2">
-                User
-              </th>
-
-              <th className="border p-2">
-                Action
-              </th>
-
-              <th className="border p-2">
-                Entity
-              </th>
-
-              <th className="border p-2">
-                ID
-              </th>
+              <th className="border p-2">Date</th>
+              <th className="border p-2">User</th>
+              <th className="border p-2">Role</th>
+              <th className="border p-2">Action</th>
+              <th className="border p-2">Entity</th>
+              <th className="border p-2">ID</th>
             </tr>
 
           </thead>
@@ -85,7 +72,9 @@ export default function AuditLogsPage() {
                 </td> 
 
                 <td className="border p-2">
-                  {log.action}
+                  <span className="px-2 py-1 rounded bg-blue-100 text-blue-700">
+                    {log.action?.replaceAll("_", " ")}
+                  </span>
                 </td>
 
                 <td className="border p-2">
