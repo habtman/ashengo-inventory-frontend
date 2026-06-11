@@ -1,21 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* src/styles/print.css */
+
 @media print {
-  body * {
-    visibility: hidden;
+  body {
+    background: white !important;
   }
 
-  #invoice-print,
-  #invoice-print * {
-    visibility: visible;
+  #root {
+    margin: 0;
+    padding: 0;
+  }
+
+  button,
+  nav,
+  aside {
+    display: none !important;
   }
 
   #invoice-print {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
   }
 }
 
