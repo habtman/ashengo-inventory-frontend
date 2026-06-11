@@ -25,6 +25,7 @@ import PurchaseOrderDetails from "./pages/purchase/PurchaseOrderDetails";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AuditLogsPage from "./pages/AuditLogsPage";  
 import UsersPage from "./pages/UsersPage";  
+import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
 
 
 
@@ -60,7 +61,7 @@ export default function App() {
           <Route path="/purchase-orders/:id" element={<PurchaseOrderDetails />} />
           <Route path="/admin/audit-logs" element={<AuditLogsPage />} /> 
           <Route path="/admin/users" element={<UsersPage />} /> 
-         
+          <Route path="/admin/settings" element={<CompanySettingsPage />} /> 
 
 
 

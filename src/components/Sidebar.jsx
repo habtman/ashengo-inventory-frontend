@@ -27,14 +27,15 @@ const getMenuFromPath = (pathname) => {
     return "inventory";
   }
 
-  if (  
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/users") ||
-    pathname.startsWith("/staff") ||
-    pathname.startsWith("/audit-logs")
-  ) {
-    return "admin";
-  }
+  if (
+  pathname.startsWith("/admin") ||
+  pathname.startsWith("/users") ||
+  pathname.startsWith("/staff") ||
+  pathname.startsWith("/audit-logs") ||
+  pathname.startsWith("/admin/settings")
+) {
+  return "admin";
+}
 
   return "";
 };
@@ -121,6 +122,13 @@ const getMenuFromPath = (pathname) => {
           className={linkClass}
         >
           Audit Logs
+        </NavLink>
+
+        <NavLink
+          to="/admin/settings"
+          className={linkClass}
+        >
+          Company Settings
         </NavLink>
       </div>
     )}

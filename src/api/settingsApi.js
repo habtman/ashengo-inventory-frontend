@@ -1,7 +1,8 @@
+// src/api/settingsApi.js
+
 import { apiFetch } from "./api";
 
 const settingsApi = {
-
   getCompanySettings: () =>
     apiFetch("/api/v1/settings/company"),
 
