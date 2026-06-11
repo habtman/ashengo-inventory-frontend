@@ -89,6 +89,19 @@ export default function InvoiceDetails() {
       <div className="mt-6 text-right font-bold text-lg">
         Total: ${invoice.total_amount}
       </div>
+
+      <button
+        onClick={() =>
+          window.open(
+            `/invoices/${invoice.id}/print`,
+            "_blank"
+          )
+        }
+        className="bg-indigo-600 text-white px-4 py-2 rounded"
+      >
+        Print Invoice
+      </button>
+
     </div>
   );
 }

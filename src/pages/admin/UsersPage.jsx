@@ -12,7 +12,7 @@ export default function UsersPage() {
   const loadUsers = async () => {
     try {
       const data = await adminApi.getUsers();
-      console.log("Loaded users:", data);
+      //console.log("Loaded users:", data);
       setUsers(data);
     } catch (err) {
       console.error(err);
