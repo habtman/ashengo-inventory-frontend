@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/Login";
-import Admin from "./pages/Admin";
-import Staff from "./pages/Staff";
-import User from "./pages/User";
-import Forbidden from "./pages/Forbidden";
+import Login from "./pages/admin/Login";
+import Admin from "./pages/admin/Admin";
+import Staff from "./pages/admin/Staff";
+import User from "./pages/admin/User";
+import Forbidden from "./pages/admin/Forbidden";
 
 import Inventory from "./pages/inventory/InventoryPage";
 
@@ -23,8 +23,8 @@ import PurchaseOrdersList from "./pages/purchase/PurchaseOrdersList";
 import PurchaseOrderCreate from "./pages/purchase/PurchaseOrderCreate";
 import PurchaseOrderDetails from "./pages/purchase/PurchaseOrderDetails";
 import AdminDashboard from "./components/admin/AdminDashboard";
-import AuditLogsPage from "./pages/AuditLogsPage";  
-import UsersPage from "./pages/UsersPage";  
+import AuditLogsPage from "./pages/admin/AuditLogsPage";  
+import UsersPage from "./pages/admin/UsersPage";  
 import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
 
 
