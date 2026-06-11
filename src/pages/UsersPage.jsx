@@ -66,6 +66,17 @@ export default function UsersPage() {
   }
 };
 
+const handleRoleChange = async (id, role) => {
+  try {
+    await adminApi.changeUserRole(id, role);
+
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to change role");
+  }
+};
+
   return (
     <div className="bg-white p-6 rounded shadow">
 
@@ -107,7 +118,16 @@ export default function UsersPage() {
               </td>
 
               <td className="border p-2">
-                {user.role}
+                <select
+                  value={user.role}
+                  onChange={(e) =>
+                    handleRoleChange(user.id, e.target.value)
+                  }
+                  className="border rounded px-2 py-1"
+                >
+                  <option value="staff">Staff</option>
+                  <option value="admin">Admin</option>
+                </select>
               </td>
 
               <td className="border p-2">
