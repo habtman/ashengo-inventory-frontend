@@ -26,6 +26,7 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AuditLogsPage from "./pages/admin/AuditLogsPage";  
 import UsersPage from "./pages/admin/UsersPage";  
 import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
+import InvoicePrintPage from "./pages/print/InvoicePrintPage";  
 
 
 
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="/admin/audit-logs" element={<AuditLogsPage />} /> 
           <Route path="/admin/users" element={<UsersPage />} /> 
           <Route path="/admin/settings" element={<CompanySettingsPage />} /> 
+          <Route path="/invoices/:id/print" element={<InvoicePrintPage />} />
 
 
 

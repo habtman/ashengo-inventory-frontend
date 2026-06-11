@@ -2,12 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 @media print {
-  button {
-    display: none;
+  body * {
+    visibility: hidden;
   }
 
-  body {
-    background: white;
+  #invoice-print,
+  #invoice-print * {
+    visibility: visible;
+  }
+
+  #invoice-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }
 
