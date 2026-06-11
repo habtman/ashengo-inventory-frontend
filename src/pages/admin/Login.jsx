@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
-import { redirectByRole } from "../utils/redirectByRole";
+import { redirectByRole } from "../../utils/redirectByRole";
 
 export default function Login() {
   const [email, setEmail] = useState("");
