@@ -20,6 +20,7 @@ export default function SuppliersPage() {
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
     const [taxNumber, setTaxNumber] = useState("");
+    const [search, setSearch] = useState("");
 
 async function loadSuppliers() {
   try {
@@ -133,6 +134,19 @@ useEffect(() => {
     }
 };
 
+const filteredSuppliers = suppliers.filter(
+  (supplier) =>
+    supplier.supplier_name
+      ?.toLowerCase()
+      .includes(search.toLowerCase()) ||
+    supplier.contact_person
+      ?.toLowerCase()
+      .includes(search.toLowerCase()) ||
+    supplier.email
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+);
+
 
   return (
     <div className="bg-white p-6 rounded-xl shadow">
@@ -154,7 +168,14 @@ useEffect(() => {
         </button>
         
       </div>
-      <div classsName="overflow-x-auto">
+      <div className="overflow-x-auto">
+      <input
+        type="text"
+        placeholder="Search suppliers..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border p-2 rounded w-80"
+      />
       <table className="w-full border">
         <thead className="bg-gray-100">
             <tr>
@@ -169,7 +190,7 @@ useEffect(() => {
             </thead>
 
             <tbody>
-            {suppliers.map((supplier) => (
+            {filteredSuppliers.map((supplier) => (
                 <tr key={supplier.id}>
                 <td className="border p-2">{supplier.id}</td>
 

@@ -66,6 +66,7 @@ export default function App() {
           <Route path="/admin/settings" element={<CompanySettingsPage />} /> 
           <Route path="/invoices/:id/print" element={<InvoicePrintPage />} />
           <Route path="/suppliers" element={<SuppliersPage />} />
+          <Route path="/suppliers/:id" element={<SupplierDetailsPage />} />
 
 
         </Route>
