@@ -5,6 +5,14 @@ export default function SuppliersPage() {
     const [suppliers, setSuppliers] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingSupplier, setEditingSupplier] = useState(null);
+    const resetForm = () => {
+        setSupplierName("");
+        setContactPerson("");
+        setPhone("");
+        setEmail("");
+        setAddress("");
+        setTaxNumber("");
+    };
 
     const [supplierName, setSupplierName] = useState("");
     const [contactPerson, setContactPerson] = useState("");
@@ -13,48 +21,49 @@ export default function SuppliersPage() {
     const [address, setAddress] = useState("");
     const [taxNumber, setTaxNumber] = useState("");
 
-  useEffect(() => {
-    loadSuppliers();
-  }, []);
+async function loadSuppliers() {
+  try {
+    const data = await supplierApi.getSuppliers();
+    setSuppliers(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-  const loadSuppliers = async () => {
-    try {
-      const data = await supplierApi.getSuppliers();
-      setSuppliers(data);
-    } catch (err) {
-      console.error(err);
-    } 
-  };
+useEffect(() => {
+  loadSuppliers();
+}, []);
 
   const handleCreateSupplier = async () => {
-    try {
-      const newSupplier = {
-        supplier_name: supplierName,
-        contact_person: contactPerson,
-        phone: phone,
-        email: email,
-        address: address,
-        tax_number: taxNumber
-      };
-      const data = await supplierApi.createSupplier(newSupplier);
-      setSuppliers([...suppliers, data]);
-      setShowCreateModal(false);
-      resetForm();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  if (!supplierName.trim()) {
+    alert("Supplier name is required");
+    return;
+  }
 
-  const resetForm = () => {
-    setSupplierName("");
-    setContactPerson("");
-    setPhone("");
-    setEmail('');
-    setAddress("");
-    setTaxNumber("");
-  };        
+  try {
+    const newSupplier = {
+      supplier_name: supplierName,
+      contact_person: contactPerson,
+      phone,
+      email,
+      address,
+      tax_number: taxNumber
+    };
+
+    await supplierApi.createSupplier(newSupplier);
+
+    await loadSuppliers();
+
+    setShowCreateModal(false);
+    resetForm();
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const handleEditSupplier = (supplier) => {
+    if (!supplier) return;  
+
     setEditingSupplier(supplier);
     setSupplierName(supplier.supplier_name);
     setContactPerson(supplier.contact_person);
@@ -66,6 +75,11 @@ export default function SuppliersPage() {
   };    
 
   const handleUpdateSupplier = async () => {
+    if (!supplierName.trim()) {
+      alert("Supplier name is required");
+      return;
+    }   
+
     try {
       const updatedSupplier = {
         supplier_name: supplierName,
@@ -75,8 +89,11 @@ export default function SuppliersPage() {
         address: address,
         tax_number: taxNumber
       };
-      const data = await supplierApi.updateSupplier(editingSupplier.id, updatedSupplier);
-      setSuppliers(suppliers.map(s => s.id === data.id ? data : s));
+
+      await supplierApi.updateSupplier(editingSupplier.id, updatedSupplier);
+
+      await loadSuppliers();   
+
       setShowCreateModal(false);
       setEditingSupplier(null);
       resetForm();
@@ -88,7 +105,7 @@ export default function SuppliersPage() {
   const handleDeactivateSupplier = async (id) => {
     try {
       await supplierApi.deactivateSupplier(id);
-      loadSuppliers();
+      await loadSuppliers();
     } catch (err) {
       console.error(err);
     }
@@ -97,11 +114,24 @@ export default function SuppliersPage() {
   const handleReactivateSupplier = async (id) => {
     try {
       await supplierApi.reactivateSupplier(id);
-      loadSuppliers();
+      await loadSuppliers();
     } catch (err) {
       console.error(err);
     }
   };
+
+  const handleDeleteSupplier = async (id) => {
+    if (!window.confirm("Delete this supplier?")) {
+        return;
+    }
+
+    try {
+        await supplierApi.deleteSupplier(id);
+        await loadSuppliers();
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 
   return (
@@ -109,7 +139,7 @@ export default function SuppliersPage() {
      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">
-          Suppliers
+          Suppliers({suppliers.length})
         </h2>
 
         <button
@@ -124,6 +154,7 @@ export default function SuppliersPage() {
         </button>
         
       </div>
+      <div classsName="overflow-x-auto">
       <table className="w-full border">
         <thead className="bg-gray-100">
             <tr>
@@ -180,6 +211,13 @@ export default function SuppliersPage() {
                     Edit
                     </button>
 
+                    <button
+                        onClick={() => handleDeleteSupplier(supplier.id)}
+                        className="px-3 py-1 bg-gray-700 text-white rounded"
+                        >
+                        Delete
+                    </button>
+
                     {supplier.is_active ? (
                     <button
                         onClick={() =>
@@ -207,6 +245,7 @@ export default function SuppliersPage() {
             ))}
             </tbody>
       </table>
+    </div>
         {showCreateModal && (
   <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
