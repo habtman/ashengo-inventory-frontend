@@ -201,7 +201,7 @@ export default function SupplierDetailsPage() {
                 to={`/purchase-orders/${po.id}`}
                 className="text-indigo-600 hover:underline"
               >
-                {po.order_number}
+                {po.po_number}
               </Link>
             </td>
 
