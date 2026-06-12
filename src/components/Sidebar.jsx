@@ -117,12 +117,12 @@ const getMenuFromPath = (pathname) => {
           Suppliers
         </NavLink> 
 
-                <NavLink
+        <NavLink
           to="/suppliers/:id/purchase-orders"
           className={linkClass}
         >
-          Suppliers Details 
-        </NavLink> 
+          Suppliers Details
+        </NavLink>
 
         <NavLink
           to="/admin/audit-logs"

@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import supplierApi from '../../api/supplierApi';
+import { useNavigate } from 'react-router-dom'; 
 
 export default function SuppliersPage() {
     const [suppliers, setSuppliers] = useState([]);
@@ -21,6 +22,7 @@ export default function SuppliersPage() {
     const [address, setAddress] = useState("");
     const [taxNumber, setTaxNumber] = useState("");
     const [search, setSearch] = useState("");
+    const navigate = useNavigate(); 
 
 async function loadSuppliers() {
   try {
@@ -224,6 +226,14 @@ const filteredSuppliers = suppliers.filter(
                 
                 <td className="border p-2">
                 <div className="flex gap-2">
+                  <button
+                    onClick={() =>
+                      navigate(`/suppliers/${supplier.id}`)
+                    }
+                    className="px-3 py-1 bg-indigo-600 text-white rounded"
+                  >
+                    View
+                  </button>
 
                     <button
                     onClick={() => handleEditSupplier(supplier)}

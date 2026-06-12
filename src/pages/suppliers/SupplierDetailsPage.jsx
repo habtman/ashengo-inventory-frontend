@@ -5,6 +5,7 @@ import supplierApi from "../../api/supplierApi";
 
 export default function SupplierDetailsPage() {
   const { id } = useParams();
+  console.log("Supplier ID from URL:", id); 
   const navigate = useNavigate();
 
   const [supplier, setSupplier] = useState(null);
