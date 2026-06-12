@@ -1,8 +1,7 @@
-import supplierApi from "../../api/supplierApi";
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";  
+import supplierApi from "../../api/supplierApi";
 
 export default function SupplierDetailsPage() {
   const { id } = useParams();
