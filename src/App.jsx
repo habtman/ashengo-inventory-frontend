@@ -28,6 +28,7 @@ import UsersPage from "./pages/admin/UsersPage";
 import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
 import InvoicePrintPage from "./pages/print/InvoicePrintPage";  
 import SuppliersPage from "./pages/suppliers/SuppliersPage";
+import SupplierDetailsPage from "./pages/suppliers/SupplierDetailsPage";  
 
 
 
