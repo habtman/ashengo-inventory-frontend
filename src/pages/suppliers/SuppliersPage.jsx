@@ -23,6 +23,9 @@ export default function SuppliersPage() {
     const [taxNumber, setTaxNumber] = useState("");
     const [search, setSearch] = useState("");
     const navigate = useNavigate(); 
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const suppliersPerPage = 10;
 
 async function loadSuppliers() {
   try {
@@ -149,6 +152,20 @@ const filteredSuppliers = suppliers.filter(
       .includes(search.toLowerCase())
 );
 
+const indexOfLastSupplier =
+  currentPage * suppliersPerPage;
+
+const indexOfFirstSupplier =
+  indexOfLastSupplier - suppliersPerPage;
+
+const currentSuppliers = filteredSuppliers.slice(
+    indexOfFirstSupplier,
+    indexOfLastSupplier
+  );
+
+const totalPages = Math.ceil(
+  suppliers.length / suppliersPerPage
+);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow">
@@ -192,7 +209,7 @@ const filteredSuppliers = suppliers.filter(
             </thead>
 
             <tbody>
-            {filteredSuppliers.map((supplier) => (
+            {currentSuppliers.map((supplier) => (
                 <tr key={supplier.id}>
                 <td className="border p-2">{supplier.id}</td>
 
@@ -276,8 +293,28 @@ const filteredSuppliers = suppliers.filter(
             ))}
             </tbody>
       </table>
+
+    <div className="flex justify-center gap-2 mt-4">
+      {[...Array(totalPages)].map((_, index) => (
+        <button
+          key={index}
+          onClick={() =>
+            setCurrentPage(index + 1)
+          }
+          className={`px-3 py-1 rounded ${
+            currentPage === index + 1
+              ? "bg-indigo-600 text-white"
+              : "bg-gray-200"
+          }`}
+        >
+          {index + 1}
+        </button>
+      ))}
     </div>
-        {showCreateModal && (
+
+    </div>
+    
+{showCreateModal && (
   <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
 

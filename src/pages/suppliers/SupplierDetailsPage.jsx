@@ -5,13 +5,14 @@ import supplierApi from "../../api/supplierApi";
 
 export default function SupplierDetailsPage() {
   const { id } = useParams();
-  console.log("Supplier ID from URL:", id); 
+  
   const navigate = useNavigate();
 
   const [supplier, setSupplier] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [purchaseOrders, setPurchaseOrders] = useState([]);
+ 
 
   useEffect(() => {
     const fetchSupplier = async () => {
@@ -151,7 +152,7 @@ export default function SupplierDetailsPage() {
           <p className="font-semibold">
             {purchaseOrders[0]
               ? new Date(
-                  purchaseOrders[0].order_date
+                  purchaseOrders[0].created_at
                 ).toLocaleDateString()
               : "-"}
           </p>
