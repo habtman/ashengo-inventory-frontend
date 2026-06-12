@@ -206,9 +206,7 @@ export default function SupplierDetailsPage() {
             </td>
 
             <td className="border p-2">
-              {new Date(
-                po.order_date
-              ).toLocaleDateString()}
+              {new Date(po.created_at).toLocaleDateString()}
             </td>
 
             <td className="border p-2">
