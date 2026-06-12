@@ -7,6 +7,13 @@ const supplierApi = {
   getSupplierById: (id) =>
     apiFetch(`/api/v1/suppliers/${id}`),
 
+  getSupplierPurchaseOrders: async (id) => {
+  return await apiFetch(
+    `/api/v1/suppliers/${id}/purchase-orders`
+    );
+  },
+  
+
   createSupplier: (data) =>
     apiFetch("/api/v1/suppliers", {
       method: "POST",
