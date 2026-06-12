@@ -68,11 +68,6 @@ export default function App() {
           <Route path="/suppliers" element={<SuppliersPage />} />
 
 
-
-
-
-         
-
         </Route>
       </Route>
 
