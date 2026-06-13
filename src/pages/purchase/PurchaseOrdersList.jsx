@@ -10,19 +10,21 @@ export default function PurchaseOrdersList() {
   const [search, setSearch] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState(""); 
+  const [loading, setLoading] = useState(false);
 
 useEffect(() => {
   const loadOrders = async () => {
+    setLoading(true);
     const data = await purchaseOrderApi.getAll({
+    
     page,
     limit: 10,
     search,
     status
   });
 
-  console.log("Full data:", data);
-  console.log("data.items:", data.items);
-  console.log("isArray:", Array.isArray(data));
+  setLoading(false);
+
 
   setOrders(data.items || []);
   setTotalPages(data.totalPages || 1);
@@ -33,7 +35,6 @@ useEffect(() => {
   loadOrders();
 }, [page, search, status]);
 
-console.log("API response:", orders);
 
   return (
     <div className="p-6 bg-white rounded shadow">
@@ -89,43 +90,53 @@ console.log("API response:", orders);
           </tr>
         </thead>
 
-        <tbody>
-         {console.log("orders:", orders)}
-          {orders.map(po => (
-            <tr key={po.id}>
-              <td>{po.po_number}</td>
-              <td>{po.supplier_name}</td>
-              <td>${po.total_amount}</td>
-              <td>
-              <span
-                className={`px-2 py-1 rounded text-xs font-medium
-                  ${
-                    po.status === "DRAFT"
-                      ? "bg-gray-100 text-gray-700"
-                      : po.status === "PENDING_APPROVAL"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : po.status === "APPROVED"
-                      ? "bg-blue-100 text-blue-700"
-                      : po.status === "REJECTED"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-              >
-                {po.status.replace("_", " ")}
-              </span>
-            </td>
-              <td>{new Date(po.created_at).toLocaleString()}</td>
-              <td>
-                <button
-                  onClick={() => navigate(`/purchase-orders/${po.id}`)}
-                  className="text-blue-600"
-                >
-                  View
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+<tbody>
+  {orders.length === 0 ? (
+    <tr>
+      <td colSpan="6" className="text-center py-4 text-gray-500">
+        No purchase orders found
+      </td>
+    </tr>
+  ) : (
+    orders.map((po) => (
+      <tr key={po.id}>
+        <td>{po.po_number}</td>
+        <td>{po.supplier_name}</td>
+        <td>${po.total_amount}</td>
+
+        <td>
+          <span
+            className={`px-2 py-1 rounded text-xs font-medium
+              ${
+                po.status === "DRAFT"
+                  ? "bg-gray-100 text-gray-700"
+                  : po.status === "PENDING_APPROVAL"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : po.status === "APPROVED"
+                  ? "bg-blue-100 text-blue-700"
+                  : po.status === "REJECTED"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-green-100 text-green-700"
+              }`}
+          >
+            {po.status.replace("_", " ")}
+          </span>
+        </td>
+
+        <td>{new Date(po.created_at).toLocaleString()}</td>
+
+        <td>
+          <button
+            onClick={() => navigate(`/purchase-orders/${po.id}`)}
+            className="text-blue-600"
+          >
+            View
+          </button>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
       </table>
       <div className="flex justify-center gap-2 mt-4">
           <button
@@ -147,6 +158,11 @@ console.log("API response:", orders);
           >
             Next
           </button>
+          {loading && (
+            <div className="text-center py-4">
+              Loading purchase orders...
+            </div>
+          )}
         </div>
     </div>
   );
