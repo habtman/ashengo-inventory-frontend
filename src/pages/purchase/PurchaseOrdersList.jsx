@@ -20,11 +20,15 @@ useEffect(() => {
     status
   });
 
-  console.log("API response:", data);
+  console.log("Full data:", data);
+  console.log("data.items:", data.items);
+  console.log("isArray:", Array.isArray(data));
 
   setOrders(data.items || []);
   setTotalPages(data.totalPages || 1);
   };
+
+
 
   loadOrders();
 }, [page, search, status]);
