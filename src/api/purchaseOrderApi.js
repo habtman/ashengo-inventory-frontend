@@ -1,8 +1,15 @@
 import { apiFetch } from "./api";
 
 const purchaseOrderApi = {
-  getAll: () =>
-    apiFetch("/api/v1/purchase-orders"),
+  getAll: ({
+    page = 1,
+    limit = 10,
+    search = "",
+    status = ""
+  } = {}) =>
+    apiFetch(
+      `/api/v1/purchase-orders?page=${page}&limit=${limit}&search=${search}&status=${status}`
+    ),
 
   getById: (id) =>
     apiFetch(`/api/v1/purchase-orders/${id}`),

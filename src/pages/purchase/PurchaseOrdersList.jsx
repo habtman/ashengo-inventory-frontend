@@ -6,13 +6,26 @@ export default function PurchaseOrdersList() {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const load = async () => {
-      const data = await purchaseOrderApi.getAll();
-      setOrders(data);
-    };
-    load();
-  }, []);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+  const [status, setStatus] = useState(""); 
+
+useEffect(() => {
+  const loadOrders = async () => {
+    const data = await purchaseOrderApi.getAll({
+      page,
+      limit: 10,
+      search,
+      status
+    });
+
+    setOrders(data.items);
+    setTotalPages(data.totalPages);
+  };
+
+  loadOrders();
+}, [page, search, status]);
 
   return (
     <div className="p-6 bg-white rounded shadow">
@@ -24,6 +37,36 @@ export default function PurchaseOrdersList() {
         >
           New PO
         </button>
+
+      </div>
+
+      <div className="flex gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Search PO or supplier..."
+          value={search}
+          onChange={(e) => {
+            setPage(1);
+            setSearch(e.target.value);
+          }}
+          className="border px-3 py-2 rounded flex-1"
+        />
+
+        <select
+          value={status}
+          onChange={(e) => {
+            setPage(1);
+            setStatus(e.target.value);
+          }}
+          className="border px-3 py-2 rounded"
+        >
+          <option value="">All Statuses</option>
+          <option value="DRAFT">Draft</option>
+          <option value="PENDING_APPROVAL">Pending Approval</option>
+          <option value="APPROVED">Approved</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="RECEIVED">Received</option>
+        </select>
       </div>
 
       <table className="w-full border">
@@ -45,7 +88,24 @@ export default function PurchaseOrdersList() {
               <td>{po.po_number}</td>
               <td>{po.supplier_name}</td>
               <td>${po.total_amount}</td>
-              <td>{po.status}</td>
+              <td>
+              <span
+                className={`px-2 py-1 rounded text-xs font-medium
+                  ${
+                    po.status === "DRAFT"
+                      ? "bg-gray-100 text-gray-700"
+                      : po.status === "PENDING_APPROVAL"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : po.status === "APPROVED"
+                      ? "bg-blue-100 text-blue-700"
+                      : po.status === "REJECTED"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+              >
+                {po.status.replace("_", " ")}
+              </span>
+            </td>
               <td>{new Date(po.created_at).toLocaleString()}</td>
               <td>
                 <button
@@ -59,6 +119,27 @@ export default function PurchaseOrdersList() {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center gap-2 mt-4">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className="px-3 py-1 border rounded"
+          >
+            Previous
+          </button>
+
+          <span>
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+            className="px-3 py-1 border rounded"
+          >
+            Next
+          </button>
+        </div>
     </div>
   );
 }
