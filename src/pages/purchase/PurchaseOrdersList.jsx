@@ -14,15 +14,16 @@ export default function PurchaseOrdersList() {
 useEffect(() => {
   const loadOrders = async () => {
     const data = await purchaseOrderApi.getAll({
-      page,
-      limit: 10,
-      search,
-      status
-    });
-    console.log(data);
+    page,
+    limit: 10,
+    search,
+    status
+  });
 
-    setOrders(data);
-    setTotalPages(data.totalPages);
+  console.log("API response:", data);
+
+  setOrders(data.items || []);
+  setTotalPages(data.totalPages || 1);
   };
 
   loadOrders();
@@ -85,7 +86,7 @@ console.log("API response:", orders);
         </thead>
 
         <tbody>
-         {console.log(orders)}
+         {console.log("orders:", orders)}
           {orders.map(po => (
             <tr key={po.id}>
               <td>{po.po_number}</td>
