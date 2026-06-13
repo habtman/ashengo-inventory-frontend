@@ -19,13 +19,16 @@ useEffect(() => {
       search,
       status
     });
+    console.log(data);
 
-    setOrders(data.items);
+    setOrders(data);
     setTotalPages(data.totalPages);
   };
 
   loadOrders();
 }, [page, search, status]);
+
+console.log("API response:", orders);
 
   return (
     <div className="p-6 bg-white rounded shadow">
@@ -82,7 +85,7 @@ useEffect(() => {
         </thead>
 
         <tbody>
-         
+         {console.log(orders)}
           {orders.map(po => (
             <tr key={po.id}>
               <td>{po.po_number}</td>
