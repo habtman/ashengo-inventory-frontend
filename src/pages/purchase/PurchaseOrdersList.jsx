@@ -39,6 +39,7 @@ export default function PurchaseOrdersList() {
         </thead>
 
         <tbody>
+          {console.log(orders)}
           {orders.map(po => (
             <tr key={po.id}>
               <td>{po.po_number}</td>
