@@ -15,7 +15,10 @@ const getMenuFromPath = (pathname) => {
     return "sales";
   }
 
-  if (pathname.startsWith("/purchase-orders")) {
+  if (
+    pathname.startsWith("/purchase-orders") ||
+    pathname.startsWith("/grn")
+  ) {
     return "purchase";
   }
 
@@ -109,13 +112,6 @@ const getMenuFromPath = (pathname) => {
         >
           Users
         </NavLink>
-
-        <NavLink
-          to="/suppliers"
-          className={linkClass}
-        >
-          Suppliers
-        </NavLink> 
 
         <NavLink
           to="/admin/audit-logs"
@@ -237,71 +233,54 @@ const getMenuFromPath = (pathname) => {
         )}
       </div>
 
-      {/* Purchases */}
-      <div>
-        <button
-          onClick={() => toggle("purchase")}
-          className={menuButton}
-        >
-          <span>Purchases</span>
-          <span>
-            {activeMenu === "purchase" ? "−" : "+"
-            }
-          </span>
-        </button>
+      
+    {/* Purchasing */}
+    <div>
+      <button
+        onClick={() => toggle("purchase")}
+        className={menuButton}
+      >
+        <span>Purchasing</span>
 
-        {activeMenu === "purchase" && (
-          <div className="ml-4 mt-1 space-y-1">
-            <NavLink
-              to="/purchase-orders/new"
-              className={linkClass}
-            >
-              New PO
-            </NavLink>
+        <span>
+          {activeMenu === "purchase" ? "−" : "+"}
+        </span>
+      </button>
 
-            <NavLink
-              to="/purchase-orders"
-              className={linkClass}
-            >
-              View PO
-            </NavLink>
-          </div>
-        )}
-      </div>
+      {activeMenu === "purchase" && (
+        <div className="ml-4 mt-1 space-y-1">
 
-  {/* Goods Receive Notes */}
-      <div>
-        <button
-          onClick={() => toggle("grn")}
-          className={menuButton}
-        >
-          <span>Good Receiving Notes</span>
-          <span>
-            {activeMenu === "grn" ? "−" : "+"
-            }
-          </span>
-        </button>
+          <NavLink
+            to="/suppliers"
+            className={linkClass}
+          >
+            Suppliers
+          </NavLink>
 
-        {activeMenu === "grn" && (
-          <div className="ml-4 mt-1 space-y-1">
-            <NavLink
-              to="/grn"
-              className={linkClass}
-            >
-              View GRN
-            </NavLink>
+          <NavLink
+            to="/purchase-orders"
+            className={linkClass}
+          >
+            Purchase Orders
+          </NavLink>
 
-            <NavLink
-              to="/grn/:id"
-              className={linkClass}
-            >
-              GRN Details
-            </NavLink>
-          </div>
-        )}
-      </div>
+          <NavLink
+            to="/purchase-orders/new"
+            className={linkClass}
+          >
+            Create Purchase Order
+          </NavLink>
 
+          <NavLink
+            to="/grn"
+            className={linkClass}
+          >
+            Goods Receipt Notes
+          </NavLink>
 
+        </div>
+      )}
+    </div>
     </aside>
   );
 }
