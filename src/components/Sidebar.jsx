@@ -288,14 +288,14 @@ const getMenuFromPath = (pathname) => {
               to="/grn"
               className={linkClass}
             >
-              New GRN
+              View GRN
             </NavLink>
 
             <NavLink
               to="/grn/:id"
               className={linkClass}
             >
-              View GRN
+              GRN Details
             </NavLink>
           </div>
         )}

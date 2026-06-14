@@ -22,11 +22,22 @@ export default function GRNDetails() {
   }
 
   return (
+    <div id="grn-print">
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
 
       <h2 className="text-2xl font-bold mb-4">
         {grn.grn_number}
       </h2>
+
+      <div className="mb-6">
+
+          <h2 className="font-bold text-lg">
+            Ashengo Inventory
+          </h2>
+
+          <p>Addis Ababa</p>
+
+      </div>
 
       <div className="space-y-2 mb-6">
 
@@ -76,7 +87,29 @@ export default function GRNDetails() {
         </tbody>
 
       </table>
+      <div className="grid grid-cols-2 gap-12 mt-16">
 
+  <div>
+    <p>____________________</p>
+    <p>Received By</p>
+  </div>
+
+  <div>
+    <p>____________________</p>
+    <p>Authorized By</p>
+  </div>
+
+</div>
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => window.print()}
+          className="bg-indigo-600 text-white px-4 py-2 rounded"
+        >
+          Print / Save PDF
+        </button>
+      </div>
+      </div>
     </div>
   );
 }

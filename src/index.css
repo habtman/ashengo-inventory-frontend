@@ -24,6 +24,12 @@
     margin: 0 !important;
     width: 100% !important;
   }
+
+  #grn-print {
+    width: 100%;
+  }
+
+
 }
 
 @page {
