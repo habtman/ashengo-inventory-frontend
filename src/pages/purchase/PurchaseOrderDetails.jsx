@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import { useAuth } from "../../context/useAuth";   
+import locationsApi from "../../api/locationsApi";
 
 export default function PurchaseOrderDetails() {
     
@@ -10,6 +11,8 @@ export default function PurchaseOrderDetails() {
   const [po, setPo] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [receiving, setReceiving] = useState(false);
+  const [locationId, setLocationId] = useState("");
+  const [locations, setLocations] = useState([]);
 
 
   const load = useCallback(async () => {
@@ -32,25 +35,45 @@ useEffect(() => {
     const data = await purchaseOrderApi.getById(id);
     setPo(data);
   };
-
+  
   fetchData();
 }, [id]);
 
-if (!id) return;
+useEffect(() => {
+  const loadLocations = async () => {
+    const data = await locationsApi.getLocations();
+    setLocations(data);
+  };
 
-  const handleReceive = async () => {
+  loadLocations();
+}, []);
+
+if (!id) {
+  return <p>Invalid Purchase Order</p>;
+}
+
+const handleReceive = async () => {
   try {
+
+    if (!locationId) {
+      alert("Please select a warehouse");
+      return;
+    }
+
     setReceiving(true);
 
-    await purchaseOrderApi.receive(id);
+    await purchaseOrderApi.receive(
+      id,
+      Number(locationId)
+    );
 
-    await load(); // refresh PO
+    await load();
 
     setShowConfirm(false);
 
   } catch (err) {
     console.error(err);
-    alert("Failed to receive stock");
+    alert(err.message || "Failed to receive stock");
   } finally {
     setReceiving(false);
   }
@@ -155,6 +178,23 @@ const statusColor = {
                 This will add all items in this purchase order to your stock.
                 This action cannot be undone.
             </p>
+
+            <select
+                value={locationId}
+                onChange={(e) => setLocationId(e.target.value)}
+                className="w-full border rounded px-3 py-2 mb-4"
+              >
+                <option value="">Select Warehouse</option>
+
+                {locations.map((location) => (
+                  <option
+                    key={location.id}
+                    value={location.id}
+                  >
+                    {location.name}
+                  </option>
+                ))}
+              </select>
 
             <div className="flex justify-end gap-2">
 

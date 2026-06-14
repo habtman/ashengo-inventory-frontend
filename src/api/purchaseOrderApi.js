@@ -11,21 +11,6 @@ const purchaseOrderApi = {
       `/api/v1/purchase-orders?page=${page}&limit=${limit}&search=${search}&status=${status}`
     ),
 
-  /*getAll: ({
-  page = 1,
-  limit = 10,
-  search = "",
-  status = ""
-} = {}) => {
-
-  const url =
-    `/api/v1/purchase-orders?page=${page}&limit=${limit}&search=${search}&status=${status}`;
-
-  console.log("REQUEST URL:", url);
-
-  return apiFetch(url);
-},*/
-
   getById: (id) =>
     apiFetch(`/api/v1/purchase-orders/${id}`),
 
@@ -35,10 +20,13 @@ const purchaseOrderApi = {
       body: JSON.stringify(data),
     }),
 
-  receive: (id) =>
-    apiFetch(`/api/v1/purchase-orders/${id}/receive`, {
-      method: "POST",
-    }),
+receive: (id, locationId) =>
+  apiFetch(`/api/v1/purchase-orders/${id}/receive`, {
+    method: "POST",
+    body: JSON.stringify({
+      locationId
+    })
+  }),
 
     submit: (id) =>
       apiFetch(`/api/v1/purchase-orders/${id}/submit`, { method: "POST" }),
