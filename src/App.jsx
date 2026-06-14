@@ -28,7 +28,9 @@ import UsersPage from "./pages/admin/UsersPage";
 import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
 import InvoicePrintPage from "./pages/print/InvoicePrintPage";  
 import SuppliersPage from "./pages/suppliers/SuppliersPage";
-import SupplierDetailsPage from "./pages/suppliers/SupplierDetailsPage";  
+import SupplierDetailsPage from "./pages/suppliers/SupplierDetailsPage"; 
+import GRNList from "./pages/grn/GRNList";
+import GRNDetails from "./pages/grn/GRNDetails"; 
 
 
 
@@ -68,6 +70,8 @@ export default function App() {
           <Route path="/invoices/:id/print" element={<InvoicePrintPage />} />
           <Route path="/suppliers" element={<SuppliersPage />} />
           <Route path="/suppliers/:id" element={<SupplierDetailsPage />} />
+          <Route path="/grn" element={<GRNList />} />
+          <Route path="/grn/:id" element={<GRNDetails />} />
 
 
         </Route>

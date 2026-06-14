@@ -265,6 +265,12 @@ const getMenuFromPath = (pathname) => {
             >
               View PO
             </NavLink>
+            <Link
+              to="/grn"
+              className="block px-3 py-2 hover:bg-gray-100 rounded"
+            >
+              Goods Receipt Notes
+            </Link>
           </div>
         )}
       </div>
