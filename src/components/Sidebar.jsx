@@ -151,7 +151,7 @@ const getMenuFromPath = (pathname) => {
               to="/inventory"
               className={linkClass}
             >
-              Inventory
+              Products
             </NavLink>
 
             <NavLink
@@ -165,73 +165,53 @@ const getMenuFromPath = (pathname) => {
               to="/locations"
               className={linkClass}
             >
-              Locations
+              Warehouses
             </NavLink>
           </div>
         )}
       </div>
 
-      {/* Sales */}
-      <div>
-        <button
-          onClick={() => toggle("sales")}
-          className={menuButton}
+      {/* Sales and invoices*/}
+        <div>
+            <button
+            onClick={() => toggle("sales")}
+            className={menuButton}
+          >
+            <span>Sales</span>
+
+            <span>
+              {activeMenu === "purchase" ? "−" : "+"}
+            </span>
+          </button>
+
+    {activeMenu === "sales" && (
+      <div className="ml-4 mt-1 space-y-1">
+
+        <NavLink
+          to="/sales"
+          className={linkClass}
         >
-          <span>Sales</span>
-          <span>
-            {activeMenu === "sales" ? "−" : "+"}
-          </span>
-        </button>
+          Sales Orders
+        </NavLink>
 
-        {activeMenu === "sales" && (
-          <div className="ml-4 mt-1 space-y-1">
-            <NavLink
-              to="/sales"
-              className={linkClass}
-            >
-              Sales List
-            </NavLink>
-
-            <NavLink
-              to="/sales/analytics"
-              className={linkClass}
-            >
-              Sales Analytics
-            </NavLink>
-          </div>
-        )}
-      </div>
-
-      {/* Invoices */}
-      <div>
-        <button
-          onClick={() => toggle("invoices")}
-          className={menuButton}
+        <NavLink
+          to="/invoices"
+          className={linkClass}
         >
-          <span>Invoices</span>
-          <span>
-            {activeMenu === "invoices" ? "−" : "+"}
-          </span>
-        </button>
+          Invoices
+        </NavLink>
 
-        {activeMenu === "invoices" && (
-          <div className="ml-4 mt-1 space-y-1">
-            <NavLink
-              to="/invoices/new"
-              className={linkClass}
-            >
-              New Invoice
-            </NavLink>
+        <NavLink
+          to="/sales/analytics"
+          className={linkClass}
+        >
+          Analytics
+        </NavLink>
 
-            <NavLink
-              to="/invoices"
-              className={linkClass}
-            >
-              View Invoices
-            </NavLink>
-          </div>
-        )}
       </div>
+    )}
+      
+    </div>
 
       
     {/* Purchasing */}
