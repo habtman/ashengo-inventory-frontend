@@ -269,10 +269,10 @@ const getMenuFromPath = (pathname) => {
         )}
       </div>
 
-              {/* Goods Receive Notes */}
+  {/* Goods Receive Notes */}
       <div>
         <button
-          onClick={() => toggle("purchase")}
+          onClick={() => toggle("grn")}
           className={menuButton}
         >
           <span>Good Receiving Notes</span>
@@ -285,14 +285,14 @@ const getMenuFromPath = (pathname) => {
         {activeMenu === "grn" && (
           <div className="ml-4 mt-1 space-y-1">
             <NavLink
-              to="/grn/new"
+              to="/grn"
               className={linkClass}
             >
               New GRN
             </NavLink>
 
             <NavLink
-              to="/grn"
+              to="/grn/:id"
               className={linkClass}
             >
               View GRN
