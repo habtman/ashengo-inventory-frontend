@@ -265,15 +265,43 @@ const getMenuFromPath = (pathname) => {
             >
               View PO
             </NavLink>
-            <Link
-              to="/grn"
-              className="block px-3 py-2 hover:bg-gray-100 rounded"
-            >
-              Goods Receipt Notes
-            </Link>
           </div>
         )}
       </div>
+
+              {/* Goods Receive Notes */}
+      <div>
+        <button
+          onClick={() => toggle("purchase")}
+          className={menuButton}
+        >
+          <span>Good Receiving Notes</span>
+          <span>
+            {activeMenu === "grn" ? "−" : "+"
+            }
+          </span>
+        </button>
+
+        {activeMenu === "grn" && (
+          <div className="ml-4 mt-1 space-y-1">
+            <NavLink
+              to="/grn/new"
+              className={linkClass}
+            >
+              New GRN
+            </NavLink>
+
+            <NavLink
+              to="/grn"
+              className={linkClass}
+            >
+              View GRN
+            </NavLink>
+          </div>
+        )}
+      </div>
+
+
     </aside>
   );
 }
