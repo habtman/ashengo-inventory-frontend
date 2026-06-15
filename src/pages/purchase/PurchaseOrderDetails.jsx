@@ -84,6 +84,16 @@ const handleReceive = async () => {
       return;
     }
 
+    console.log({
+  locationId,
+  items: receiveItems
+    .filter(i => Number(i.receiveNow) > 0)
+    .map(i => ({
+      inventoryId: i.inventoryId,
+      receivedQuantity: Number(i.receiveNow)
+    }))
+});
+
     await purchaseOrderApi.receive(id, {
       locationId,
       items
@@ -143,6 +153,7 @@ const statusColor = {
 
 
   if (!po) return <p>Loading...</p>;
+  console.log(receiveItems);
 
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
@@ -366,14 +377,28 @@ const statusColor = {
     </div>
     )}
 
-    {po.status === "APPROVED" && (
-  <button
-    onClick={() => setShowReceiveModal(true)}
-    className="bg-green-700 text-white px-4 py-2 rounded"
-  >
-    Receive Stock
-  </button>
-)}
+        {(po.status === "APPROVED" ||
+          po.status === "PARTIALLY_RECEIVED") && (
+          <button
+            onClick={() => {
+
+              setReceiveItems(
+                po.items.map(item => ({
+                  inventoryId: item.inventory_id,
+                  itemName: item.item_name,
+                  orderedQuantity: Number(item.quantity),
+                  receivedQuantity: Number(item.received_quantity || 0),
+                  receiveNow: 0
+                }))
+              );
+
+              setShowReceiveModal(true);
+            }}
+            className="bg-green-700 text-white px-4 py-2 rounded"
+          >
+            Receive Goods
+          </button>
+        )}
 
 {modal && (
   <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">

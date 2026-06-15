@@ -22,7 +22,7 @@ const purchaseOrderApi = {
 
 receive(id, payload) {
   return apiFetch(
-    `/purchase-orders/${id}/receive`,
+    `/api/v1/purchase-orders/${id}/receive`,
     {
       method: "POST",
       body: JSON.stringify(payload)
