@@ -20,13 +20,15 @@ const purchaseOrderApi = {
       body: JSON.stringify(data),
     }),
 
-receive: (id, locationId) =>
-  apiFetch(`/api/v1/purchase-orders/${id}/receive`, {
-    method: "POST",
-    body: JSON.stringify({
-      locationId
-    })
-  }),
+receive(id, payload) {
+  return apiFetch(
+    `/purchase-orders/${id}/receive`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload)
+    }
+  );
+},
 
     submit: (id) =>
       apiFetch(`/api/v1/purchase-orders/${id}/submit`, { method: "POST" }),

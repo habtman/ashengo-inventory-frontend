@@ -9,7 +9,9 @@ export default function PurchaseOrderDetails() {
   const { id } = useParams();
 
   const [po, setPo] = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [showReceiveModal, setShowReceiveModal] = useState(false);
+
+  const [receiveItems, setReceiveItems] = useState([]);
   const [receiving, setReceiving] = useState(false);
   const [locationId, setLocationId] = useState("");
   const [locations, setLocations] = useState([]);
@@ -52,24 +54,46 @@ if (!id) {
   return <p>Invalid Purchase Order</p>;
 }
 
+const updateReceiveQty = (inventoryId, value) => {
+  
+  setReceiveItems(prev =>
+    prev.map(item =>
+      item.inventoryId === inventoryId
+        ? {
+            ...item,
+            receiveNow: Number(value)
+          }
+        : item
+    )
+  );
+};
+
 const handleReceive = async () => {
   try {
+    setReceiving(true);
 
-    if (!locationId) {
-      alert("Please select a warehouse");
+    const items = receiveItems
+      .filter(i => Number(i.receiveNow) > 0)
+      .map(i => ({
+        inventoryId: i.inventoryId,
+        receivedQuantity: Number(i.receiveNow)
+      }));
+
+    if (!items.length) {
+      alert("Enter at least one quantity");
       return;
     }
 
-    setReceiving(true);
-
-    await purchaseOrderApi.receive(
-      id,
-      Number(locationId)
-    );
+    await purchaseOrderApi.receive(id, {
+      locationId,
+      items
+    });
 
     await load();
 
-    setShowConfirm(false);
+    setShowReceiveModal(false);
+
+    alert("Goods received successfully");
 
   } catch (err) {
     console.error(err);
@@ -158,68 +182,156 @@ const statusColor = {
 
       {po.status === "PENDING" && (
         <button
-            onClick={() => setShowConfirm(true)}
+            onClick={() => {
+              console.log("PO ITEMS", po.items);
+                setReceiveItems(
+                  po.items.map(item => ({
+                    inventoryId: item.inventory_id,
+                    itemName: item.item_name,
+                    orderedQuantity: Number(item.quantity),
+                    receivedQuantity: Number(item.received_quantity || 0),
+                    receiveNow: 0
+                  }))
+                );
+
+                setShowReceiveModal(true);
+              }}
             className="bg-green-600 text-white px-4 py-2 mt-4 rounded"
         >
             Receive Stock
         </button>
         )}
 
-        {showConfirm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            
-            <div className="bg-white p-6 rounded-xl shadow-lg w-96">
+{showReceiveModal && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-            <h3 className="text-lg font-bold mb-2">
-                Confirm Receive
-            </h3>
+    <div className="bg-white p-6 rounded-xl shadow-lg w-[900px] max-h-[80vh] overflow-auto">
 
-            <p className="text-sm text-gray-600 mb-4">
-                This will add all items in this purchase order to your stock.
-                This action cannot be undone.
-            </p>
+      <h3 className="text-xl font-bold mb-4">
+        Receive Goods
+      </h3>
 
-            <select
-                value={locationId}
-                onChange={(e) => setLocationId(e.target.value)}
-                className="w-full border rounded px-3 py-2 mb-4"
-              >
-                <option value="">Select Warehouse</option>
+      <div className="mb-4">
 
-                {locations.map((location) => (
-                  <option
-                    key={location.id}
-                    value={location.id}
-                  >
-                    {location.name}
-                  </option>
-                ))}
-              </select>
+        <label className="block text-sm font-medium mb-1">
+          Warehouse
+        </label>
 
-            <div className="flex justify-end gap-2">
+        <select
+          value={locationId}
+          onChange={(e) =>
+            setLocationId(e.target.value)
+          }
+          className="border rounded px-3 py-2 w-full"
+        >
+          <option value="">
+            Select Warehouse
+          </option>
 
-                <button
-                onClick={() => setShowConfirm(false)}
-                disabled={receiving}
-                className="px-4 py-2 bg-gray-300 rounded"
-                >
-                Cancel
-                </button>
+          {locations.map(location => (
+            <option
+              key={location.id}
+              value={location.id}
+            >
+              {location.name}
+            </option>
+          ))}
+        </select>
 
-                <button
-                onClick={handleReceive}
-                disabled={receiving}
-                className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50"
-                >
-                {receiving ? "Processing..." : "Confirm"}
-                </button>
+      </div>
 
-            </div>
+      <table className="w-full border">
 
-            </div>
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2">Item</th>
+            <th className="p-2">Ordered</th>
+            <th className="p-2">Received</th>
+            <th className="p-2">Remaining</th>
+            <th className="p-2">Receive Now</th>
+          </tr>
+        </thead>
 
-        </div>
-        )}
+        <tbody>
+
+          {receiveItems.map(item => {
+
+            const remaining =
+              item.orderedQuantity -
+              item.receivedQuantity;
+
+            return (
+              <tr key={item.inventoryId}>
+
+                <td className="border p-2">
+                  {item.itemName}
+                </td>
+
+                <td className="border p-2 text-center">
+                  {item.orderedQuantity}
+                </td>
+
+                <td className="border p-2 text-center">
+                  {item.receivedQuantity}
+                </td>
+
+                <td className="border p-2 text-center">
+                  {remaining}
+                </td>
+
+                <td className="border p-2">
+
+                  <input
+                    type="number"
+                    min="0"
+                    max={remaining}
+                    value={item.receiveNow}
+                    onChange={(e) =>
+                      updateReceiveQty(
+                        item.inventoryId,
+                        e.target.value
+                      )
+                    }
+                    className="border rounded px-2 py-1 w-full"
+                  />
+
+                </td>
+
+              </tr>
+            );
+          })}
+
+        </tbody>
+
+      </table>
+
+      <div className="flex justify-end gap-2 mt-4">
+
+        <button
+          onClick={() =>
+            setShowReceiveModal(false)
+          }
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          disabled={receiving}
+          onClick={handleReceive}
+          className="px-4 py-2 bg-green-600 text-white rounded"
+        >
+          {receiving
+            ? "Processing..."
+            : "Receive Goods"}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
 
         <span className={`px-3 py-1 text-white rounded ${statusColor[po.status]}`}>
         {po.status}
@@ -256,7 +368,7 @@ const statusColor = {
 
     {po.status === "APPROVED" && (
   <button
-    onClick={() => setShowConfirm(true)}
+    onClick={() => setShowReceiveModal(true)}
     className="bg-green-700 text-white px-4 py-2 rounded"
   >
     Receive Stock
