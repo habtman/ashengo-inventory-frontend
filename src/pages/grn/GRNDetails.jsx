@@ -79,7 +79,7 @@ export default function GRNDetails() {
 
               <td>{item.item_name}</td>
 
-              <td>{item.quantity}</td>
+              <td>{item.received_quantity}</td>
 
             </tr>
           ))}

@@ -55,6 +55,7 @@ if (!id) {
 }
 
 const updateReceiveQty = (inventoryId, value) => {
+ 
   
   setReceiveItems(prev =>
     prev.map(item =>
@@ -195,6 +196,7 @@ const statusColor = {
         <button
             onClick={() => {
               console.log("PO ITEMS", po.items);
+              
                 setReceiveItems(
                   po.items.map(item => ({
                     inventoryId: item.inventory_id,
@@ -381,7 +383,8 @@ const statusColor = {
           po.status === "PARTIALLY_RECEIVED") && (
           <button
             onClick={() => {
-
+              
+              console.log("PO items", po.items);
               setReceiveItems(
                 po.items.map(item => ({
                   inventoryId: item.inventory_id,
