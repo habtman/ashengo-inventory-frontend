@@ -158,60 +158,60 @@ const statusColor = {
 
 
   return (
-    <div className="flex justify-between items-center">
-  <h1 className="text-2xl font-bold">
-    {po.po_number}
-  </h1>
+    <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
+
+<div className="flex justify-between items-start mb-6">
 
   <div>
-    {po.status === "RECEIVED" && (
-      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-        Fully Received
-      </span>
-    )}
+    <h2 className="text-2xl font-bold">
+      PO #{po.po_number}
+    </h2>
+
+    <p className="text-gray-600">
+      Supplier: {po.supplier_name}
+    </p>
+  </div>
+
+  <div className="flex items-center gap-2">
+
+    <span
+      className={`px-3 py-1 rounded-full text-white text-sm font-medium
+      ${statusColor[po.status]}`}
+    >
+      {po.status}
+    </span>
 
     {po.status === "PARTIALLY_RECEIVED" && (
-      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-medium">
+      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
         Partially Received
       </span>
     )}
 
-    {po.status === "APPROVED" && (
-      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-        Approved
+    {po.status === "RECEIVED" && (
+      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+        Fully Received
       </span>
     )}
 
-    {po.status === "DRAFT" && (
-      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-        Draft
-      </span>
-    )}
   </div>
 
-      <p><b>Supplier:</b> {po.supplier_name}</p>
-      <p><b>Status:</b> {po.status}</p>
+</div>
 
-      <div className="bg-gray-50 border rounded p-4 mb-4">
-        <h3 className="font-semibold mb-2">
-          Receipt Progress
-        </h3>
+{po.status === "PARTIALLY_RECEIVED" && (
+  <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4">
+    <p className="font-medium text-yellow-800">
+      This purchase order has been partially received.
+    </p>
+  </div>
+)}
 
-        {po.items?.map(item => (
-          <div
-            key={item.inventory_id}
-            className="flex justify-between py-1"
-          >
-            <span>{item.item_name}</span>
-
-            <span>
-              Received {item.received_quantity || 0}
-              {" / "}
-              {item.quantity}
-            </span>
-          </div>
-        ))}
-      </div>
+{po.status === "RECEIVED" && (
+  <div className="bg-green-50 border border-green-200 rounded p-3 mb-4">
+    <p className="font-medium text-green-800">
+      All goods have been received.
+    </p>
+  </div>
+)}
 
       <table className="w-full border mt-4">
         <thead>
@@ -238,40 +238,6 @@ const statusColor = {
       <div className="text-right font-bold mt-4">
         Total: ${po.total_amount}
       </div>
-
-      {po.status === "RECEIVED" && (
-        <span className="bg-green-100 text-green-700 px-2 py-1 rounded">
-          Fully Received
-        </span>
-      )}
-
-      {po.status === "PARTIALLY_RECEIVED" && (
-        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
-          Partially Received
-        </span>
-      )}
-
-      {po.status === "PENDING" && (
-        <button
-            onClick={() => {
-              
-                setReceiveItems(
-                  po.items.map(item => ({
-                    inventoryId: item.inventory_id,
-                    itemName: item.item_name,
-                    orderedQuantity: Number(item.quantity),
-                    receivedQuantity: Number(item.received_quantity || 0),
-                    receiveNow: 0
-                  }))
-                );
-
-                setShowReceiveModal(true);
-              }}
-            className="bg-green-600 text-white px-4 py-2 mt-4 rounded"
-        >
-            Receive Stock
-        </button>
-        )}
 
 {showReceiveModal && (
   <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
