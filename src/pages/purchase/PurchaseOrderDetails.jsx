@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import { useAuth } from "../../context/useAuth";   
 import locationsApi from "../../api/locationsApi";
@@ -15,6 +15,10 @@ export default function PurchaseOrderDetails() {
   const [receiving, setReceiving] = useState(false);
   const [locationId, setLocationId] = useState("");
   const [locations, setLocations] = useState([]);
+  const navigate = useNavigate();
+  /*const handlePrint = () => {
+  window.print();
+};*/
 
 
   const load = useCallback(async () => {
@@ -144,8 +148,7 @@ const statusColor = {
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
 
-<div className="flex justify-between items-start mb-6">
-
+  <div className="flex justify-between items-start mb-4">
   <div>
     <h2 className="text-2xl font-bold">
       PO #{po.po_number}
@@ -348,19 +351,7 @@ const statusColor = {
         </button>
 
     </div>
-    <div className="flex justify-end gap-2 mt-4">
-          <button
-          onClick={() =>
-            window.open(
-              `/purchase-orders/${id}/print`,
-              "_blank"
-            )
-          }
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Print PO
-        </button>
-    </div>
+
 
     </div>
 
@@ -468,14 +459,28 @@ const statusColor = {
     </div>
   </div>
 )}
+    <div className="flex justify-end gap-2 mt-4">
+        <button
+          onClick={() => navigate("/purchase-orders")}
+          className="text-indigo-600 hover:text-indigo-800"
+        >
+          ← Back to Purchase Orders
+        </button>
+    </div>
 
-<button
-  onClick={() => window.print()}
-  className="bg-blue-600 text-white px-4 py-2 rounded"
->
-  Print PO
-</button>
-
+    <div className="flex justify-end gap-2 mt-4">
+          <button
+          onClick={() =>
+            window.open(
+              `/purchase-orders/${id}/print`,
+              "_blank"
+            )
+          }
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Print PO
+        </button>
+    </div>
 
     </div>
   );
