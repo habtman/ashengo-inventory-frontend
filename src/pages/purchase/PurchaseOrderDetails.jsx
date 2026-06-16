@@ -158,14 +158,60 @@ const statusColor = {
 
 
   return (
-    <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
+    <div className="flex justify-between items-center">
+  <h1 className="text-2xl font-bold">
+    {po.po_number}
+  </h1>
 
-      <h2 className="text-xl font-bold mb-4">
-        PO #{po.po_number}
-      </h2>
+  <div>
+    {po.status === "RECEIVED" && (
+      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+        Fully Received
+      </span>
+    )}
+
+    {po.status === "PARTIALLY_RECEIVED" && (
+      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-medium">
+        Partially Received
+      </span>
+    )}
+
+    {po.status === "APPROVED" && (
+      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+        Approved
+      </span>
+    )}
+
+    {po.status === "DRAFT" && (
+      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+        Draft
+      </span>
+    )}
+  </div>
 
       <p><b>Supplier:</b> {po.supplier_name}</p>
       <p><b>Status:</b> {po.status}</p>
+
+      <div className="bg-gray-50 border rounded p-4 mb-4">
+        <h3 className="font-semibold mb-2">
+          Receipt Progress
+        </h3>
+
+        {po.items?.map(item => (
+          <div
+            key={item.inventory_id}
+            className="flex justify-between py-1"
+          >
+            <span>{item.item_name}</span>
+
+            <span>
+              Received {item.received_quantity || 0}
+              {" / "}
+              {item.quantity}
+            </span>
+          </div>
+        ))}
+      </div>
 
       <table className="w-full border mt-4">
         <thead>
