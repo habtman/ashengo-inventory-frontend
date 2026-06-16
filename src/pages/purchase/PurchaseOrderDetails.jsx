@@ -29,8 +29,6 @@ export default function PurchaseOrderDetails() {
     // "submit" | "approve" | "reject" | null
 
 
-
-
 useEffect(() => {
     if (!id || id === ":id") return;
   const fetchData = async () => {
@@ -49,20 +47,6 @@ useEffect(() => {
 
   loadLocations();
 }, []);
-
-useEffect(() => {
-  if (po) {
-    setTimeout(() => {
-      window.print();
-    }, 500);
-  }
-}, [po]);useEffect(() => {
-  if (po) {
-    setTimeout(() => {
-      window.print();
-    }, 500);
-  }
-}, [po]);
 
 if (!id) {
   return <p>Invalid Purchase Order</p>;
@@ -98,16 +82,6 @@ const handleReceive = async () => {
       alert("Enter at least one quantity");
       return;
     }
-
-   /* console.log({
-  locationId,
-  items: receiveItems
-    .filter(i => Number(i.receiveNow) > 0)
-    .map(i => ({
-      inventoryId: i.inventoryId,
-      receivedQuantity: Number(i.receiveNow)
-    }))
-});*/
 
     await purchaseOrderApi.receive(id, {
       locationId,
@@ -162,6 +136,7 @@ const statusColor = {
   RECEIVED: "bg-green-600",
   REJECTED: "bg-red-600",
 };
+
 
   if (!po) return <p>Loading...</p>;
 
@@ -372,7 +347,9 @@ const statusColor = {
             : "Receive Goods"}
         </button>
 
-        <button
+    </div>
+    <div className="flex justify-end gap-2 mt-4">
+          <button
           onClick={() =>
             window.open(
               `/purchase-orders/${id}/print`,
@@ -383,8 +360,7 @@ const statusColor = {
         >
           Print PO
         </button>
-
-      </div>
+    </div>
 
     </div>
 

@@ -16,6 +16,14 @@ export default function PurchaseOrderPrint() {
     load();
   }, [id]);
 
+  useEffect(() => {
+  if (po) {
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+}, [po]);
+
   if (!po) {
     return <div>Loading...</div>;
   }
