@@ -430,6 +430,20 @@ const statusColor = {
         {modal === "reject" && "Reject this purchase order?"}
       </p>
 
+        <p>
+          <b>Approved By:</b>{" "}
+          {po.approved_by_name || "-"}
+        </p>
+
+        <p>
+          <b>Approved On:</b>{" "}
+          {po.approved_at
+            ? new Date(
+                po.approved_at
+              ).toLocaleString()
+            : "-"}
+        </p>
+
       <div className="flex justify-end gap-2">
 
         <button
