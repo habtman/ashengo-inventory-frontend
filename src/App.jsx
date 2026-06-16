@@ -26,11 +26,12 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AuditLogsPage from "./pages/admin/AuditLogsPage";  
 import UsersPage from "./pages/admin/UsersPage";  
 import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
-import InvoicePrintPage from "./pages/print/InvoicePrintPage";  
+import InvoicePrintPage from "./pages/invoice/InvoicePrintPage";  
 import SuppliersPage from "./pages/suppliers/SuppliersPage";
 import SupplierDetailsPage from "./pages/suppliers/SupplierDetailsPage"; 
 import GRNList from "./pages/grn/GRNList";
 import GRNDetails from "./pages/grn/GRNDetails"; 
+import PurchaseOrderPrint from "./pages/purchase/PurchaseOrderPrint"; 
 
 
 
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/suppliers/:id" element={<SupplierDetailsPage />} />
           <Route path="/grn" element={<GRNList />} />
           <Route path="/grn/:id" element={<GRNDetails />} />
+          <Route path="/purchase-orders/:id/print" element={<PurchaseOrderPrint />} />
 
 
         </Route>

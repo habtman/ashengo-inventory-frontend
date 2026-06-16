@@ -50,6 +50,20 @@ useEffect(() => {
   loadLocations();
 }, []);
 
+useEffect(() => {
+  if (po) {
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+}, [po]);useEffect(() => {
+  if (po) {
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+}, [po]);
+
 if (!id) {
   return <p>Invalid Purchase Order</p>;
 }
@@ -148,11 +162,6 @@ const statusColor = {
   RECEIVED: "bg-green-600",
   REJECTED: "bg-red-600",
 };
-
-
-
-
-
 
   if (!po) return <p>Loading...</p>;
 
@@ -363,6 +372,18 @@ const statusColor = {
             : "Receive Goods"}
         </button>
 
+        <button
+          onClick={() =>
+            window.open(
+              `/purchase-orders/${id}/print`,
+              "_blank"
+            )
+          }
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Print PO
+        </button>
+
       </div>
 
     </div>
@@ -472,6 +493,12 @@ const statusColor = {
   </div>
 )}
 
+<button
+  onClick={() => window.print()}
+  className="bg-blue-600 text-white px-4 py-2 rounded"
+>
+  Print PO
+</button>
 
 
     </div>
