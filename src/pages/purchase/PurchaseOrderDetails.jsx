@@ -85,7 +85,7 @@ const handleReceive = async () => {
       return;
     }
 
-    console.log({
+   /* console.log({
   locationId,
   items: receiveItems
     .filter(i => Number(i.receiveNow) > 0)
@@ -93,7 +93,7 @@ const handleReceive = async () => {
       inventoryId: i.inventoryId,
       receivedQuantity: Number(i.receiveNow)
     }))
-});
+});*/
 
     await purchaseOrderApi.receive(id, {
       locationId,
@@ -153,8 +153,9 @@ const statusColor = {
 
 
 
+
   if (!po) return <p>Loading...</p>;
-  console.log(receiveItems);
+
 
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
@@ -192,10 +193,21 @@ const statusColor = {
         Total: ${po.total_amount}
       </div>
 
+      {po.status === "RECEIVED" && (
+        <span className="bg-green-100 text-green-700 px-2 py-1 rounded">
+          Fully Received
+        </span>
+      )}
+
+      {po.status === "PARTIALLY_RECEIVED" && (
+        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
+          Partially Received
+        </span>
+      )}
+
       {po.status === "PENDING" && (
         <button
             onClick={() => {
-              console.log("PO ITEMS", po.items);
               
                 setReceiveItems(
                   po.items.map(item => ({
