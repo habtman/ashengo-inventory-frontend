@@ -143,7 +143,23 @@ const statusColor = {
 
 
   if (!po) return <p>Loading...</p>;
+  const totalOrdered = po.items.reduce(
+  (sum, item) => sum + Number(item.quantity),
+  0
+);
 
+const totalReceived = po.items.reduce(
+  (sum, item) =>
+    sum + Number(item.received_quantity || 0),
+  0
+);
+
+const progress =
+  totalOrdered > 0
+    ? Math.round(
+        (totalReceived / totalOrdered) * 100
+      )
+    : 0;
 
   return (
 
@@ -266,6 +282,40 @@ const statusColor = {
 
       </div>
 
+      <div className="mt-4 mb-6">
+
+  <div className="flex justify-between mb-1 text-sm font-medium">
+    <span>Received Progress</span>
+
+    <span>
+      {totalReceived} / {totalOrdered}
+      {" "}({progress}%)
+    </span>
+  </div>
+
+  <div className="w-full bg-gray-200 rounded-full h-4">
+
+    <div
+      className={`h-4 rounded-full ${
+        progress === 100
+          ? "bg-green-600"
+          : "bg-yellow-500"
+      }`}
+      style={{
+        width: `${progress}%`
+      }}
+    />
+
+  </div>
+
+  <p className="text-sm mt-2 text-gray-600">
+    {progress === 100
+      ? "All goods received"
+      : `${totalOrdered - totalReceived} units remaining`}
+  </p>
+
+</div>
+
       <table className="w-full border">
 
         <thead className="bg-gray-100">
@@ -286,7 +336,10 @@ const statusColor = {
               item.orderedQuantity -
               item.receivedQuantity;
 
-            return (
+
+            return (   
+               
+            
               <tr key={item.inventoryId}>
 
                 <td className="border p-2">
@@ -326,10 +379,12 @@ const statusColor = {
               </tr>
             );
           })}
+          
 
         </tbody>
 
       </table>
+      
 
       <div className="flex justify-end gap-2 mt-4">
 
@@ -397,8 +452,7 @@ const statusColor = {
           po.status === "PARTIALLY_RECEIVED") && (
           <button
             onClick={() => {
-              
-              console.log("PO items", po.items);
+
               setReceiveItems(
                 po.items.map(item => ({
                   inventoryId: item.inventory_id,
