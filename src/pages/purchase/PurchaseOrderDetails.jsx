@@ -142,17 +142,22 @@ const statusColor = {
 };
 
 
-  if (!po) return <p>Loading...</p>;
-  const totalOrdered = po.items.reduce(
-  (sum, item) => sum + Number(item.quantity),
-  0
-);
+const totalOrdered = po
+  ? po.items.reduce(
+      (sum, item) =>
+        sum + Number(item.quantity),
+      0
+    )
+  : 0;
 
-const totalReceived = po.items.reduce(
-  (sum, item) =>
-    sum + Number(item.received_quantity || 0),
-  0
-);
+const totalReceived = po
+  ? po.items.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.received_quantity || 0),
+      0
+    )
+  : 0;
 
 const progress =
   totalOrdered > 0
@@ -160,6 +165,8 @@ const progress =
         (totalReceived / totalOrdered) * 100
       )
     : 0;
+
+if (!po) return <p>Loading...</p>;
 
   return (
 
@@ -228,16 +235,67 @@ const progress =
           </tr>
         </thead>
 
-        <tbody>
-          {po.items.map(item => (
-            <tr key={item.inventory_id}>
-              <td>{item.item_name}</td>
-              <td>{item.quantity}</td>
-              <td>{item.cost_price}</td>
-              <td>{item.total_amount}</td>
-            </tr>
-          ))}
-        </tbody>
+  <tbody>
+  {po.items.map(item => {
+
+    const itemProgress =
+      Number(item.quantity) > 0
+        ? Math.round(
+            (
+              Number(item.received_quantity || 0) /
+              Number(item.quantity)
+            ) * 100
+          )
+        : 0;
+
+    return (
+      <tr key={item.inventory_id}>
+
+        <td>{item.item_name}</td>
+
+        <td className="text-center">
+          {item.quantity}
+        </td>
+
+        <td className="text-center">
+          {item.received_quantity || 0}
+        </td>
+
+        <td className="w-48">
+
+          <div className="bg-gray-200 h-3 rounded">
+
+            <div
+              className={`h-3 rounded ${
+                itemProgress === 100
+                  ? "bg-green-600"
+                  : "bg-yellow-500"
+              }`}
+              style={{
+                width: `${itemProgress}%`
+              }}
+            />
+
+          </div>
+
+          <div className="text-xs text-center mt-1">
+            {itemProgress}%
+          </div>
+
+        </td>
+
+        <td>
+          {item.cost_price}
+        </td>
+
+        <td>
+          {item.total_amount}
+        </td>
+
+      </tr>
+    );
+  })}
+</tbody>
       </table>
 
       <div className="text-right font-bold mt-4">
@@ -308,6 +366,8 @@ const progress =
 
   </div>
 
+  
+
   <p className="text-sm mt-2 text-gray-600">
     {progress === 100
       ? "All goods received"
@@ -318,15 +378,16 @@ const progress =
 
       <table className="w-full border">
 
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2">Item</th>
-            <th className="p-2">Ordered</th>
-            <th className="p-2">Received</th>
-            <th className="p-2">Remaining</th>
-            <th className="p-2">Receive Now</th>
-          </tr>
-        </thead>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Received</th>
+        <th>Progress</th>
+        <th>Cost</th>
+        <th>Total</th>
+      </tr>
+    </thead>
 
         <tbody>
 
@@ -357,6 +418,20 @@ const progress =
                 <td className="border p-2 text-center">
                   {remaining}
                 </td>
+                <td className="w-40">
+  <div className="bg-gray-200 h-3 rounded">
+    <div
+      className="bg-green-600 h-3 rounded"
+      style={{
+        width: `${
+          (item.received_quantity /
+            item.quantity) *
+          100
+        }%`
+      }}
+    />
+  </div>
+</td>
 
                 <td className="border p-2">
 
@@ -374,6 +449,14 @@ const progress =
                     className="border rounded px-2 py-1 w-full"
                   />
 
+                </td>
+
+                <td>
+                  {Math.round(
+                    (item.received_quantity /
+                      item.quantity) *
+                      100
+                  )}%
                 </td>
 
               </tr>
@@ -447,6 +530,42 @@ const progress =
 
     </div>
     )}
+
+    <div className="bg-white border rounded p-4 mb-4">
+
+  <div className="flex justify-between mb-2">
+    <span className="font-medium">
+      Receiving Progress
+    </span>
+
+    <span className="font-medium">
+      {totalReceived} / {totalOrdered}
+      {" "}({progress}%)
+    </span>
+  </div>
+
+  <div className="w-full bg-gray-200 rounded-full h-4">
+
+    <div
+      className={`h-4 rounded-full ${
+        progress === 100
+          ? "bg-green-600"
+          : "bg-yellow-500"
+      }`}
+      style={{
+        width: `${progress}%`
+      }}
+    />
+
+  </div>
+
+  <p className="text-sm text-gray-600 mt-2">
+    {progress === 100
+      ? "All goods have been received."
+      : `${totalOrdered - totalReceived} units remaining to receive.`}
+  </p>
+
+</div>
 
         {(po.status === "APPROVED" ||
           po.status === "PARTIALLY_RECEIVED") && (
