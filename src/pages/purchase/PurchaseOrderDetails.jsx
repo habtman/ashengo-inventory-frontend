@@ -146,6 +146,8 @@ const statusColor = {
 
 
   return (
+
+    <div className="print-area">
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
 
   <div className="flex justify-between items-start mb-4">
@@ -415,6 +417,18 @@ const statusColor = {
           </button>
         )}
 
+        {po.approved_by_name && (
+        <div className="mt-4 p-3 bg-green-50 border rounded">
+          <p>
+            <strong>Approved By:</strong> {po.approved_by_name}
+          </p>
+          <p>
+            <strong>Approved At:</strong>{" "}
+            {new Date(po.approved_at).toLocaleString()}
+          </p>
+        </div>
+      )}
+
 {modal && (
   <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
@@ -430,19 +444,6 @@ const statusColor = {
         {modal === "reject" && "Reject this purchase order?"}
       </p>
 
-        <p>
-          <b>Approved By:</b>{" "}
-          {po.approved_by_name || "-"}
-        </p>
-
-        <p>
-          <b>Approved On:</b>{" "}
-          {po.approved_at
-            ? new Date(
-                po.approved_at
-              ).toLocaleString()
-            : "-"}
-        </p>
 
       <div className="flex justify-end gap-2">
 
@@ -473,6 +474,7 @@ const statusColor = {
     </div>
   </div>
 )}
+
     <div className="flex justify-end gap-2 mt-4">
         <button
           onClick={() => navigate("/purchase-orders")}
@@ -496,6 +498,7 @@ const statusColor = {
         </button>
     </div>
 
+    </div>
     </div>
   );
 }
