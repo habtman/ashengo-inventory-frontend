@@ -1,677 +1,172 @@
-import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react"; 
+import { useParams, useNavigate } from "react-router-dom"; 
 import salesOrderApi from "../../api/salesOrderApi";
-import { useAuth } from "../../context/useAuth";   
-import locationsApi from "../../api/locationsApi";
 
-export default function PurchaseOrderDetails() {
-    
-  const { id } = useParams();
-
-  const [so, setSo] = useState(null);
-  const [showSalesModal, setShowSalesModal] = useState(false);
-
-  const [saleItems, setSaleItems] = useState([]);
-  const [selling, setSelling] = useState(false);
-  const [locationId, setLocationId] = useState("");
-  const [locations, setLocations] = useState([]);
+export default function SalesOrderDetails() { 
+  const { id } = useParams(); 
   const navigate = useNavigate();
-  /*const handlePrint = () => {
-  window.print();
-};*/
+  const [so, setSo] = useState(null); 
+  const [loading, setLoading] = useState(true); 
+  const [confirming, setConfirming] = useState(false);
 
-
-  const load = useCallback(async () => {
-  const data = await salesOrderApi.getById(id);
-  setSo(data);
-}, [id]);
-
-    const { user } = useAuth();
-
-    const [actionLoading, setActionLoading] = useState(false);
-    const [modal, setModal] = useState(null); 
-    // "submit" | "approve" | "reject" | null
-
-
-useEffect(() => {
-    if (!id || id === ":id") return;
-  const fetchData = async () => {
-    const data = await salesOrderApi.getById(id);
-    setSo(data);
-  };
-  
-  fetchData();
-}, [id]);
-
-useEffect(() => {
-  const loadLocations = async () => {
-    const data = await locationsApi.getLocations();
-    setLocations(data);
-  };
-
-  loadLocations();
-}, []);
-
-if (!id) {
-  return <p>Invalid Sales Order</p>;
-}
-
-const updateSaleQty = (inventoryId, value) => {
- 
-  
-  setSaleItems(prev =>
-    prev.map(item =>
-      item.inventoryId === inventoryId
-        ? {
-            ...item,
-            sellNow: Number(value)
-          }
-        : item
-    )
-  );
-};
-
-const handleSell = async () => {
-  try {
-    setSelling(true);
-
-    const items = saleItems
-      .filter(i => Number(i.sellNow) > 0)
-      .map(i => ({
-        inventoryId: i.inventoryId,
-        sellQuantity: Number(i.sellNow)
-      }));
-
-    if (!items.length) {
-      alert("Enter at least one quantity");
-      return;
-    }
-
-    await salesOrderApi.receive(id, {
-      locationId,
-      items
-    });
-
-    await load();
-
-    setShowSalesModal(false);
-
-    alert("Goods Sold successfully");
-
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Failed to sell stock");
-  } finally {
-    setSelling(false);
+  const fetchData = async () => { 
+    try { 
+      const data = await salesOrderApi.getById(id); 
+      setSo(data); 
+    } catch (err) { 
+      console.error(err); 
+      alert("Failed to load Sales Order"); 
+    } finally { 
+      setLoading(false); 
+    } 
   }
-};
 
-const handleAction = async (type) => {
-  try {
-    setActionLoading(true);
+  useEffect(() => { 
+fetchData(); 
+}, 
+[id]);
 
-    if (type === "submit") {
-      await salesOrderApi.submit(id);
+const handleConfirm = async () => { 
+        try { 
+
+        setConfirming(true);
+        await salesOrderApi.confirm(id);  
+        alert("Sales Order confirmed");  
+        await fetchData();
+        } catch (err) {  
+        alert(err.message || "Failed to confirm Sales Order");
+        } finally {  
+            setConfirming(false);}
+        };
+
+    const statusColor = {
+      DRAFT: "bg-gray-500",
+      CONFIRMED: "bg-green-600",
+    };
+
+    if (loading) {
+      return <div>Loading…</div>;
     }
 
-    if (type === "approve") {
-      await salesOrderApi.approve(id);
+    if (!so) {
+      return <div>Sales Order not found</div>;
     }
-
-    if (type === "reject") {
-      await salesOrderApi.reject(id);
-    }
-
-    await load(); // refresh PO
-    setModal(null);
-
-  } catch (err) {
-    console.error(err);
-    alert("Action failed");
-  } finally {
-    setActionLoading(false);
-  }
-};
-
-const statusColor = {
-  DRAFT: "bg-gray-400",
-  PENDING_APPROVAL: "bg-yellow-500",
-  APPROVED: "bg-blue-600",
-  RECEIVED: "bg-green-600",
-  REJECTED: "bg-red-600",
-};
-
-
-const totalSold = so
-  ? so.items.reduce(
-      (sum, item) =>
-        sum + Number(item.quantity),
-      0
-    )
-  : 0;
-
-const totalSold = so
-  ? so.items.reduce(
-      (sum, item) =>
-        sum +
-        Number(item.received_quantity || 0),
-      0
-    )
-  : 0;
-
-const progress =
-  totalOrdered > 0
-    ? Math.round(
-        (totalReceived / totalOrdered) * 100
-      )
-    : 0;
-
-if (!po) return <p>Loading...</p>;
-
-  return (
-
-    <div className="print-area">
-    <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
-
-  <div className="flex justify-between items-start mb-4">
-  <div>
-    <h2 className="text-2xl font-bold">
-      PO #{po.po_number}
-    </h2>
-
-    <p className="text-gray-600">
-      Supplier: {po.supplier_name}
-    </p>
-  </div>
-
-  <div className="flex items-center gap-2">
-
-    <span
-      className={`px-3 py-1 rounded-full text-white text-sm font-medium
-      ${statusColor[po.status]}`}
-    >
-      {po.status}
-    </span>
-
-    {po.status === "PARTIALLY_RECEIVED" && (
-      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
-        Partially Received
-      </span>
-    )}
-
-    {po.status === "RECEIVED" && (
-      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-        Fully Received
-      </span>
-    )}
-
-  </div>
-
-</div>
-
-{po.status === "PARTIALLY_RECEIVED" && (
-  <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4">
-    <p className="font-medium text-yellow-800">
-      This purchase order has been partially received.
-    </p>
-  </div>
-)}
-
-{po.status === "RECEIVED" && (
-  <div className="bg-green-50 border border-green-200 rounded p-3 mb-4">
-    <p className="font-medium text-green-800">
-      All goods have been received.
-    </p>
-  </div>
-)}
-
-      <table className="w-full border mt-4">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Cost</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-
-  <tbody>
-  {po.items.map(item => {
-
-    const itemProgress =
-      Number(item.quantity) > 0
-        ? Math.round(
-            (
-              Number(item.received_quantity || 0) /
-              Number(item.quantity)
-            ) * 100
-          )
-        : 0;
 
     return (
-      <tr key={item.inventory_id}>
-
-        <td>{item.item_name}</td>
-
-        <td className="text-center">
-          {item.quantity}
-        </td>
-
-        <td className="text-center">
-          {item.received_quantity || 0}
-        </td>
-
-        <td className="w-48">
-
-          <div className="bg-gray-200 h-3 rounded">
-
-            <div
-              className={`h-3 rounded ${
-                itemProgress === 100
-                  ? "bg-green-600"
-                  : "bg-yellow-500"
-              }`}
-              style={{
-                width: `${itemProgress}%`
-              }}
-            />
-
-          </div>
-
-          <div className="text-xs text-center mt-1">
-            {itemProgress}%
-          </div>
-
-        </td>
-
-        <td>
-          {item.cost_price}
-        </td>
-
-        <td>
-          {item.total_amount}
-        </td>
-
-      </tr>
-    );
-  })}
-</tbody>
-      </table>
-
-      <div className="text-right font-bold mt-4">
-        Total: ${po.total_amount}
-      </div>
-
-{showReceiveModal && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-
-    <div className="bg-white p-6 rounded-xl shadow-lg w-[900px] max-h-[80vh] overflow-auto">
-
-      <h3 className="text-xl font-bold mb-4">
-        Receive Goods
-      </h3>
-
-      <div className="mb-4">
-
-        <label className="block text-sm font-medium mb-1">
-          Warehouse
-        </label>
-
-        <select
-          value={locationId}
-          onChange={(e) =>
-            setLocationId(e.target.value)
-          }
-          className="border rounded px-3 py-2 w-full"
-        >
-          <option value="">
-            Select Warehouse
-          </option>
-
-          {locations.map(location => (
-            <option
-              key={location.id}
-              value={location.id}
-            >
-              {location.name}
-            </option>
-          ))}
-        </select>
-
-      </div>
-
-      <div className="mt-4 mb-6">
-
-  <div className="flex justify-between mb-1 text-sm font-medium">
-    <span>Received Progress</span>
-
-    <span>
-      {totalReceived} / {totalOrdered}
-      {" "}({progress}%)
-    </span>
-  </div>
-
-  <div className="w-full bg-gray-200 rounded-full h-4">
-
-    <div
-      className={`h-4 rounded-full ${
-        progress === 100
-          ? "bg-green-600"
-          : "bg-yellow-500"
-      }`}
-      style={{
-        width: `${progress}%`
-      }}
-    />
-
-  </div>
-
-  
-
-  <p className="text-sm mt-2 text-gray-600">
-    {progress === 100
-      ? "All goods received"
-      : `${totalOrdered - totalReceived} units remaining`}
-  </p>
-
-</div>
-
-      <table className="w-full border">
-
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>Received</th>
-        <th>Progress</th>
-        <th>Cost</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-
-        <tbody>
-
-          {receiveItems.map(item => {
-
-            const remaining =
-              item.orderedQuantity -
-              item.receivedQuantity;
-
-
-            return (   
-               
-            
-              <tr key={item.inventoryId}>
-
-                <td className="border p-2">
-                  {item.itemName}
-                </td>
-
-                <td className="border p-2 text-center">
-                  {item.orderedQuantity}
-                </td>
-
-                <td className="border p-2 text-center">
-                  {item.receivedQuantity}
-                </td>
-
-                <td className="border p-2 text-center">
-                  {remaining}
-                </td>
-                <td className="w-40">
-  <div className="bg-gray-200 h-3 rounded">
-    <div
-      className="bg-green-600 h-3 rounded"
-      style={{
-        width: `${
-          (item.received_quantity /
-            item.quantity) *
-          100
-        }%`
-      }}
-    />
-  </div>
-</td>
-
-                <td className="border p-2">
-
-                  <input
-                    type="number"
-                    min="0"
-                    max={remaining}
-                    value={item.receiveNow}
-                    onChange={(e) =>
-                      updateReceiveQty(
-                        item.inventoryId,
-                        e.target.value
-                      )
-                    }
-                    className="border rounded px-2 py-1 w-full"
-                  />
-
-                </td>
-
-                <td>
-                  {Math.round(
-                    (item.received_quantity /
-                      item.quantity) *
-                      100
-                  )}%
-                </td>
-
-              </tr>
-            );
-          })}
-          
-
-        </tbody>
-
-      </table>
-      
-
-      <div className="flex justify-end gap-2 mt-4">
-
-        <button
-          onClick={() =>
-            setShowReceiveModal(false)
-          }
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Cancel
-        </button>
-
-        <button
-          disabled={receiving}
-          onClick={handleReceive}
-          className="px-4 py-2 bg-green-600 text-white rounded"
-        >
-          {receiving
-            ? "Processing..."
-            : "Receive Goods"}
-        </button>
-
-    </div>
-
-
-    </div>
-
-  </div>
-)}
-
-        <span className={`px-3 py-1 text-white rounded ${statusColor[po.status]}`}>
-        {po.status}
-        </span>
-
-        {po.status === "DRAFT" && (
-    <button
-        onClick={() => setModal("submit")}
-        className="bg-yellow-500 text-white px-4 py-2 rounded"
-    >
-        Submit for Approval
-    </button>
-    )}
-
-        {po.status === "PENDING_APPROVAL" && user.role === "admin" && (
-    <div className="flex gap-2">
-
-        <button
-        onClick={() => setModal("approve")}
-        className="bg-green-600 text-white px-4 py-2 rounded"
-        >
-        Approve
-        </button>
-
-        <button
-        onClick={() => setModal("reject")}
-        className="bg-red-600 text-white px-4 py-2 rounded"
-        >
-        Reject
-        </button>
-
-    </div>
-    )}
-
-    <div className="bg-white border rounded p-4 mb-4">
-
-  <div className="flex justify-between mb-2">
-    <span className="font-medium">
-      Receiving Progress
-    </span>
-
-    <span className="font-medium">
-      {totalReceived} / {totalOrdered}
-      {" "}({progress}%)
-    </span>
-  </div>
-
-  <div className="w-full bg-gray-200 rounded-full h-4">
-
-    <div
-      className={`h-4 rounded-full ${
-        progress === 100
-          ? "bg-green-600"
-          : "bg-yellow-500"
-      }`}
-      style={{
-        width: `${progress}%`
-      }}
-    />
-
-  </div>
-
-  <p className="text-sm text-gray-600 mt-2">
-    {progress === 100
-      ? "All goods have been received."
-      : `${totalOrdered - totalReceived} units remaining to receive.`}
-  </p>
-
-</div>
-
-        {(po.status === "APPROVED" ||
-          po.status === "PARTIALLY_RECEIVED") && (
-          <button
-            onClick={() => {
-
-              setReceiveItems(
-                po.items.map(item => ({
-                  inventoryId: item.inventory_id,
-                  itemName: item.item_name,
-                  orderedQuantity: Number(item.quantity),
-                  receivedQuantity: Number(item.received_quantity || 0),
-                  receiveNow: 0
-                }))
-              );
-
-              setShowReceiveModal(true);
-            }}
-            className="bg-green-700 text-white px-4 py-2 rounded"
-          >
-            Receive Goods
-          </button>
-        )}
-
-        {po.approved_by_name && (
-        <div className="mt-4 p-3 bg-green-50 border rounded">
-          <p>
-            <strong>Approved By:</strong> {po.approved_by_name}
-          </p>
-          <p>
-            <strong>Approved At:</strong>{" "}
-            {new Date(po.approved_at).toLocaleString()}
-          </p>
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-6">    
+            <button onClick={
+                () => navigate("/sales-orders")}
+            className="bg-gray-500 text-white px-4 py-2 rounded" > 
+                 ← Back    
+            </button>    
+        <h2 className="text-2xl font-bold">
+             Sales Order #{so.so_number} 
+        </h2>  
         </div>
-      )}
 
-{modal && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+ <div className="grid grid-cols-2 gap-4 mb-6">
+    <div>
+       <p> 
+        <strong>Customer:</strong>{" "}
+        {so.customer_name}      
+        </p>
+        <p>  
+        <strong>Created:</strong>{" "}
+            {new Date(so.created_at).toLocaleString()
+            }  
+        </p> 
+    </div>  
+    <div>  
+        <p>
+            <strong>Status:</strong>{" "}
+              <span className={`px-3 py-1 text-white rounded ${statusColor[so.status]}
+              `}>        
+                {so.status}
+              </span>
+        </p>
+        <p>   
+            <strong>Confirmed By:</strong>{" "}
+                {so.confirmed_by_name || "-"} 
+        </p>
+        <p>   
+            <strong>Confirmed At:</strong>{" "}
+                {so.confirmed_at ? new Date(so.confirmed_at).toLocaleString()
+                    : "-"} 
+         </p>  
+      </div> 
+     </div>
+    
 
-    <div className="bg-white p-6 rounded-xl w-96 shadow">
+    <table className="w-full border border-collapse">   
+        <thead className="bg-gray-100">
+            <tr>        
+                <th className="border p-2 text-left">
+                    Item  
+                </th>   
+                <th className="border p-2">  
+                  Quantity      
+                </th>  
+                <th className="border p-2"> 
+                  Unit Price      
+                </th>       
+                <th className="border p-2">  
+                     Line Total
+                </th>      
+                </tr> 
+               </thead> 
+        <tbody> 
+             {so.items.map((item) => (
+               <tr key={item.inventory_id}>      
+                <td className="border p-2"> 
+                      {item.item_name}        
+                 </td>     
+                 <td className="border p-2 text-center"> 
+                      {item.quantity} 
+                 </td>    
+                 <td className="border p-2 text-right"> 
+                    ${Number(item.unit_price).toFixed(2)} 
+                 </td>   
+                 <td className="border p-2 text-right">      
+                     ${Number(item.total_amount).toFixed(2)} 
+                 </td>   
+             </tr>  
+         ))}   
+          </tbody> 
+      </table>
 
-      <h3 className="text-lg font-bold mb-2 capitalize">
-        Confirm {modal}
-      </h3>
-
-      <p className="text-sm text-gray-600 mb-4">
-        {modal === "submit" && "Send this purchase order for approval?"}
-        {modal === "approve" && "Approve this purchase order?"}
-        {modal === "reject" && "Reject this purchase order?"}
-      </p>
-
-
-      <div className="flex justify-end gap-2">
-
-        <button
-          onClick={() => setModal(null)}
-          disabled={actionLoading}
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={() => handleAction(modal)}
-          disabled={actionLoading}
-          className={`px-4 py-2 text-white rounded ${
-            modal === "approve"
-              ? "bg-green-600"
-              : modal === "reject"
-              ? "bg-red-600"
-              : "bg-yellow-500"
-          }`}
-        >
-          {actionLoading ? "Processing..." : "Confirm"}
-        </button>
-
-      </div>
-
+    <div className="text-right mt-6"> 
+       <h3 className="text-xl font-bold"> 
+         Total: ${Number(so.total_amount).toFixed(2)}
+        </h3> 
     </div>
-  </div>
-)}
 
-    <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={() => navigate("/purchase-orders")}
-          className="text-indigo-600 hover:text-indigo-800"
-        >
-          ← Back to Purchase Orders
-        </button>
-    </div>
 
-    <div className="flex justify-end gap-2 mt-4">
-          <button
-          onClick={() =>
-            window.open(
-              `/purchase-orders/${id}/print`,
-              "_blank"
-            )
-          }
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Print PO
-        </button>
+     <div className="flex justify-end gap-2 mt-6"> 
+        {so.status === "DRAFT" && (
+         <button
+             onClick={handleConfirm}
+             disabled={confirming}   
+             className="bg-green-600 text-white px-4 py-2 rounded"> 
+                {confirming ? "Confirming..." : "Confirm Sales Order"}
+         </button> 
+       )}  
+         {so.status === "CONFIRMED" && (
+         <button  
+             onClick={() => window.open(
+                 `/sales-orders/${so.id}/print`,
+                     "_blank" )
+             }  
+             className="bg-blue-600 text-white px-4 py-2 rounded">
+                Print
+         </button> 
+         )}
     </div>
-
-    </div>
-    </div>
-  );
+</div>
+); 
 }
+
+
+
+
+
