@@ -180,7 +180,7 @@ const getMenuFromPath = (pathname) => {
             <span>Sales</span>
 
             <span>
-              {activeMenu === "purchase" ? "−" : "+"}
+              {activeMenu === "sales" ? "−" : "+"}
             </span>
           </button>
 

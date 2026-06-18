@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { inventoryApi } from "../../api/inventoryApi";
+   
 
 export default function SalesOrderForm() {
   const navigate = useNavigate();
@@ -16,13 +17,24 @@ export default function SalesOrderForm() {
   }
 ]);
 
-  useEffect(() => {
-    const load = async () => {
+useEffect(() => {
+  const load = async () => {
+    try {
+      console.log("Loading inventory...");
+
       const data = await inventoryApi.getAllForInvoice();
+
+      console.log("Inventory data:", data);
+
       setInventoryList(data);
-    };
-    load();
-  }, []);
+
+    } catch (err) {
+      console.error("Inventory load failed:", err);
+    }
+  };
+
+  load();
+}, []);
 
   const updateItem = (i, field, value) => {
     const updated = [...items];
