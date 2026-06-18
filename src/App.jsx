@@ -34,7 +34,7 @@ import GRNDetails from "./pages/grn/GRNDetails";
 import PurchaseOrderPrint from "./pages/purchase/PurchaseOrderPrint"; 
 import SalesOrders from "./pages/sales/SalesOrders";
 import SalesOrderForm from "./pages/sales/SalesOrderForm";
-//import SalesOrderDetails from ".pages/sales/SalesOrderDetails";
+import SalesOrderDetails from "./pages/sales/SalesOrderDetails";
 
 
 
@@ -77,15 +77,9 @@ export default function App() {
           <Route path="/grn" element={<GRNList />} />
           <Route path="/grn/:id" element={<GRNDetails />} />
           <Route path="/purchase-orders/:id/print" element={<PurchaseOrderPrint />} />
-<Route
-  path="/sales-orders"
-  element={<SalesOrders />}
-/>
-
-<Route
-  path="/sales-orders/new"
-  element={<SalesOrderForm />}
-/>
+          <Route path="/sales-orders" element={<SalesOrders />} /> 
+          <Route path="/sales-orders/new" element={<SalesOrderForm />} />
+          <Route path="/sales-orders/:id" element={<SalesOrderDetails />} />
  
 
 

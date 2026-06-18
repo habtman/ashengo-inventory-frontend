@@ -50,9 +50,11 @@ useEffect(() => {
     setItems(items.filter((_, idx) => idx !== i));
   };
 
-   const total = items.reduce(
+const total = items.reduce(
   (sum, item) =>
-    sum + item.quantity * item.unitPrice,
+    sum +
+    Number(item.quantity) *
+    Number(item.unitPrice),
   0
 );
 
@@ -65,6 +67,8 @@ useEffect(() => {
     navigate(`/sales-orders/${res.soId}`);
   };
 
+  console.log("Inventory List:", inventoryList[0]);
+
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
 
@@ -76,6 +80,10 @@ useEffect(() => {
         onChange={(e) => setCustomerName(e.target.value)}
         className="border p-2 mb-4 w-full"
       />
+
+      <div className="mb-4">
+        Products Loaded: {inventoryList.length}
+      </div>
 
       <table className="w-full border mb-4">
         <thead>
@@ -91,47 +99,85 @@ useEffect(() => {
         <tbody>
           {items.map((item, i) => (
             <tr key={i}>
+
+        <td className="border p-2">
+          <select
+            className="border rounded px-2 py-1 w-full"
+            value={item.inventoryId}
+            onChange={(e) => {
+              const inventoryId = Number(e.target.value);
+
+              const inv = inventoryList.find(
+                x => x.id === inventoryId
+              );
+
+              const updated = [...items];
+
+              updated[i].inventoryId = inventoryId;
+              updated[i].unitPrice = Number(inv?.price || 0);
+
+              setItems(updated);
+            }}
+          >
+            <option value="">Select Product</option>
+
+            {inventoryList.map(inv => (
+              <option
+                key={inv.id}
+                value={inv.id}
+              >
+                {inv.name}
+              </option>
+            ))}
+          </select>
+        </td>
+
+        <td className="border p-2">
+          <input
+            className="border rounded px-2 py-1 w-full"
+            type="number"
+            min="1"
+            value={item.quantity}
+            onChange={(e) =>
+              updateItem(
+                i,
+                "quantity",
+                Number(e.target.value)
+              )
+            }
+          />
+        </td>
+
+        <td className="border p-2">
+          <input
+            className="border rounded px-2 py-1 w-full"
+            type="number"
+            value={item.unitPrice}
+            onChange={(e) =>
+              updateItem(
+                i,
+                "unitPrice",
+                Number(e.target.value)
+              )
+            }
+          />
+        </td>
+
               <td>
-                <select
-                  value={item.inventoryId}
-                  onChange={(e) =>
-                    updateItem(i, "inventoryId", e.target.value)
-                  }
+                {(
+                  Number(item.quantity) *
+                  Number(item.unitPrice)
+                ).toFixed(2)}
+              </td>
+
+              <td>
+                <button
+                  onClick={() => removeItem(i)}
                 >
-                  <option value="">Select</option>
-                  {inventoryList.map(inv => (
-                    <option key={inv.id} value={inv.id}>
-                      {inv.name}
-                    </option>
-                  ))}
-                </select>
+                  X
+                </button>
               </td>
 
-              <td>
-                <input
-                  type="number"
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateItem(i, "quantity", Number(e.target.value))
-                  }
-                />
-              </td>
-
-              <td>
-                <input
-                  type="number"
-                  value={item.unitPrice}
-                  onChange={(e) =>
-                    updateItem(i, "unitPrice", Number(e.target.value))
-                  }
-                />
-              </td>
-
-              <td>{item.quantity * item.unitPrice}</td>
-
-              <td>
-                <button onClick={() => removeItem(i)}>X</button>
-              </td>
             </tr>
           ))}
         </tbody>
