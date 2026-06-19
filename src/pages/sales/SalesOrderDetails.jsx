@@ -74,6 +74,26 @@ const handleConfirm = async () => {
         <strong>Customer:</strong>{" "}
         {so.customer_name}      
         </p>
+      <p>
+        <strong>Payment Type:</strong>
+        {so.payment_type}
+      </p>
+
+      <p>
+        <strong>Credit Terms:</strong>
+        {so.credit_days || "-"} Days
+      </p>
+
+      <p>
+        <strong>Due Date:</strong>
+        {so.due_date || "-"}
+      </p>
+
+      <p>
+        <strong>Balance Due:</strong>
+        {so.balance_due}
+      </p>
+
         <p>  
         <strong>Created:</strong>{" "}
             {new Date(so.created_at).toLocaleString()

@@ -98,6 +98,21 @@ useEffect(() => {
         </p>
 
         <p>
+          <strong>Payment Type:</strong>
+          {so.payment_type}
+        </p>
+
+        <p>
+          <strong>Credit Terms:</strong>
+          {so.credit_days || "-"} Days
+        </p>
+
+        <p>
+          <strong>Due Date:</strong>
+          {so.due_date || "-"}
+        </p>
+
+        <p>
           <strong>Status:</strong>{" "}
           {so.status}
         </p>

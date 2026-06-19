@@ -17,6 +17,12 @@ export default function SalesOrderForm() {
   }
 ]);
 
+const [paymentType, setPaymentType] =
+  useState("CASH");
+
+const [creditDays, setCreditDays] =
+  useState(30);
+
 useEffect(() => {
   const load = async () => {
     try {
@@ -61,6 +67,8 @@ const total = items.reduce(
   const handleSubmit = async () => {
     const res = await salesOrderApi.create({
       customerName,
+      paymentType,
+      creditDays,
       items
     });
 
@@ -80,6 +88,43 @@ const total = items.reduce(
         onChange={(e) => setCustomerName(e.target.value)}
         className="border p-2 mb-4 w-full"
       />
+      <select
+        value={paymentType}
+        onChange={(e) =>
+          setPaymentType(e.target.value)
+        }
+      >
+        <option value="CASH">
+          Cash
+        </option>
+
+        <option value="CREDIT">
+          Credit
+        </option>
+      </select>
+
+      {paymentType === "CREDIT" && (
+        <select
+          value={creditDays}
+          onChange={(e) =>
+            setCreditDays(
+              Number(e.target.value)
+            )
+          }
+        >
+          <option value={30}>
+            30 Days
+          </option>
+
+          <option value={45}>
+            45 Days
+          </option>
+
+          <option value={60}>
+            60 Days
+          </option>
+        </select>
+      )}
 
       <div className="mb-4">
         Products Loaded: {inventoryList.length}
