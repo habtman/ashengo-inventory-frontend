@@ -195,6 +195,13 @@ const getMenuFromPath = (pathname) => {
         </NavLink>
 
         <NavLink
+          to="/customers"
+          className={linkClass}
+        >
+          Customers
+        </NavLink>
+
+        <NavLink
           to="/invoices"
           className={linkClass}
         >

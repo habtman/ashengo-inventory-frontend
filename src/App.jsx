@@ -36,6 +36,9 @@ import SalesOrders from "./pages/sales/SalesOrders";
 import SalesOrderForm from "./pages/sales/SalesOrderForm";
 import SalesOrderDetails from "./pages/sales/SalesOrderDetails";
 import SalesOrderPrint from "./pages/sales/SalesOrderPrint";
+import CustomersList from "./pages/customers/CustomersList";
+import CustomerCreate from "./pages/customers/CustomerCreate";
+import CustomerDetails from "./pages/customers/CustomerDetails";
 
 
 
@@ -82,6 +85,9 @@ export default function App() {
           <Route path="/sales-orders/new" element={<SalesOrderForm />} />
           <Route path="/sales-orders/:id" element={<SalesOrderDetails />} />
           <Route path="/sales-orders/:id/print" element={<SalesOrderPrint />} />
+          <Route path="/customers" element={<CustomersList />} />
+          <Route path="/customers/new" element={<CustomerCreate />} />
+          <Route path="/customers/:id" element={<CustomerDetails />} />
  
 
 
