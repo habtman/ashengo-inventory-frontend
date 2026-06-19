@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { inventoryApi } from "../../api/inventoryApi";
+import customerApi from "../../api/customerApi";
    
 
 export default function SalesOrderForm() {
   const navigate = useNavigate();
 
-  const [customerName, setCustomerName] = useState("");
+  const [customerId, setCustomerId] = useState("");
+  const [customers, setCustomers] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
   const [items, setItems] = useState([
   {
@@ -33,6 +35,11 @@ useEffect(() => {
       console.log("Inventory data:", data);
 
       setInventoryList(data);
+
+      const customerData =
+        await customerApi.getAll();
+
+      setCustomers(customerData);
 
     } catch (err) {
       console.error("Inventory load failed:", err);
@@ -66,7 +73,7 @@ const total = items.reduce(
 
   const handleSubmit = async () => {
     const res = await salesOrderApi.create({
-      customerName,
+      customerId,
       paymentType,
       creditDays,
       items
@@ -82,12 +89,28 @@ const total = items.reduce(
 
       <h2 className="text-xl font-bold mb-4">Create Sales Order</h2>
 
-      <input
-        placeholder="Customer Name"
-        value={customerName}
-        onChange={(e) => setCustomerName(e.target.value)}
-        className="border p-2 mb-4 w-full"
-      />
+        <select
+          value={customerId}
+          onChange={(e) =>
+            setCustomerId(
+              Number(e.target.value)
+            )
+          }
+          className="border p-2 mb-4 w-full"
+        >
+          <option value="">
+            Select Customer
+          </option>
+
+          {customers.map(customer => (
+            <option
+              key={customer.id}
+              value={customer.id}
+            >
+              {customer.name}
+            </option>
+          ))}
+        </select>
       <select
         value={paymentType}
         onChange={(e) =>
