@@ -9,30 +9,33 @@ export default function SalesOrderDetails() {
   const [loading, setLoading] = useState(true); 
   const [confirming, setConfirming] = useState(false);
 
-  const fetchData = async () => { 
-    try { 
-      const data = await salesOrderApi.getById(id); 
-      setSo(data); 
-    } catch (err) { 
-      console.error(err); 
-      alert("Failed to load Sales Order"); 
-    } finally { 
-      setLoading(false); 
-    } 
-  }
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await salesOrderApi.getById(id);
+      setSo(data);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load Sales Order");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(() => { 
-fetchData(); 
-}, 
-[id]);
+  fetchData();
+}, [id]);
 
 const handleConfirm = async () => { 
         try { 
 
         setConfirming(true);
-        await salesOrderApi.confirm(id);  
-        alert("Sales Order confirmed");  
-        await fetchData();
+        
+
+    await salesOrderApi.confirm(id);
+    alert("Sales Order confirmed"); 
+    const data = await salesOrderApi.getById(id);
+    setSo(data);
+    
         } catch (err) {  
         alert(err.message || "Failed to confirm Sales Order");
         } finally {  
