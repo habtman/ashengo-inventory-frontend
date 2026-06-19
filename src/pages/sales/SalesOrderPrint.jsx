@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 
@@ -7,7 +7,7 @@ export default function SalesOrderPrint() {
 
   const [so, setSo] = useState(null);
 
-  const hasPrinted = useRef(false);
+ 
 
   useEffect(() => {
     const load = async () => {
@@ -18,33 +18,31 @@ export default function SalesOrderPrint() {
     load();
   }, [id]);
 
-  useEffect(() => {
-    if (!so || hasPrinted.current) return;
+ 
+useEffect(() => {
+  const handleAfterPrint = () => {
+    window.close();
+  };
 
-    hasPrinted.current = true;
+  window.addEventListener("afterprint", handleAfterPrint);
 
-    const timer = setTimeout(() => {
-      window.print();
-    }, 500);
-
-    const handleAfterPrint = () => {
-      window.close();
-    };
-
-    window.addEventListener(
+  return () => {
+    window.removeEventListener(
       "afterprint",
       handleAfterPrint
     );
+  };
+}, []);
 
-    return () => {
-      clearTimeout(timer);
+useEffect(() => {
+  if (!so) return;
 
-      window.removeEventListener(
-        "afterprint",
-        handleAfterPrint
-      );
-    };
-  }, [so]);
+  const timer = setTimeout(() => {
+    window.print();
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [so]);
 
   if (!so) {
     return <div>Loading...</div>;

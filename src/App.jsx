@@ -35,6 +35,7 @@ import PurchaseOrderPrint from "./pages/purchase/PurchaseOrderPrint";
 import SalesOrders from "./pages/sales/SalesOrders";
 import SalesOrderForm from "./pages/sales/SalesOrderForm";
 import SalesOrderDetails from "./pages/sales/SalesOrderDetails";
+import SalesOrderPrint from "./pages/sales/SalesOrderPrint";
 
 
 
@@ -80,6 +81,7 @@ export default function App() {
           <Route path="/sales-orders" element={<SalesOrders />} /> 
           <Route path="/sales-orders/new" element={<SalesOrderForm />} />
           <Route path="/sales-orders/:id" element={<SalesOrderDetails />} />
+          <Route path="/sales-orders/:id/print" element={<SalesOrderPrint />} />
  
 
 

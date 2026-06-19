@@ -35,7 +35,7 @@ const handleConfirm = async () => {
     alert("Sales Order confirmed"); 
     const data = await salesOrderApi.getById(id);
     setSo(data);
-    
+
         } catch (err) {  
         alert(err.message || "Failed to confirm Sales Order");
         } finally {  
@@ -155,14 +155,18 @@ const handleConfirm = async () => {
          </button> 
        )}  
          {so.status === "CONFIRMED" && (
-         <button  
-             onClick={() => window.open(
-                 `/sales-orders/${so.id}/print`,
-                     "_blank" )
-             }  
-             className="bg-blue-600 text-white px-4 py-2 rounded">
-                Print
-         </button> 
+         <button
+            onClick={() =>
+                window.open(
+                `/sales-orders/${so.id}/print`,
+                "_blank",
+                "width=900,height=800"
+                )
+            }
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+            >
+            Print
+            </button>
          )}
     </div>
 </div>
