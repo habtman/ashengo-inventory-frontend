@@ -16,6 +16,12 @@ const getMenuFromPath = (pathname) => {
   }
 
   if (
+  pathname.startsWith("/customers")
+) {
+  return "sales";
+}
+
+  if (
     pathname.startsWith("/purchase-orders") ||
     pathname.startsWith("/grn")
   ) {
@@ -199,6 +205,13 @@ const getMenuFromPath = (pathname) => {
           className={linkClass}
         >
           Customers
+        </NavLink>
+
+        <NavLink
+          to="/customers/aging"
+          className={linkClass}
+        >
+          Aging Report
         </NavLink>
 
         <NavLink

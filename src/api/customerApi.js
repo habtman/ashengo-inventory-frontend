@@ -25,7 +25,17 @@ const customerApi = {
   remove: (id) =>
     apiFetch(`/api/v1/customers/${id}`, {
       method: "DELETE"
-    })
+    }),
+    getLedger: (id) =>
+    apiFetch(`/api/v1/customer-ledger/${id}/ledger`),
+
+  getStatement: (id) =>
+    apiFetch(`/api/v1/customer-ledger/${id}/statement`),
+
+  getAging: () =>
+    apiFetch("/api/v1/customer-ledger/aging"),
 };
+
+
 
 export default customerApi;

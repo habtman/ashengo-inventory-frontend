@@ -39,6 +39,7 @@ import SalesOrderPrint from "./pages/sales/SalesOrderPrint";
 import CustomersList from "./pages/customers/CustomersList";
 import CustomerCreate from "./pages/customers/CustomerCreate";
 import CustomerDetails from "./pages/customers/CustomerDetails";
+import AgingReport from "./pages/customers/AgingReport";
 
 
 
@@ -88,7 +89,7 @@ export default function App() {
           <Route path="/customers" element={<CustomersList />} />
           <Route path="/customers/new" element={<CustomerCreate />} />
           <Route path="/customers/:id" element={<CustomerDetails />} />
-          
+          <Route path="/customers/aging" element={<AgingReport />} />
  
 
 
