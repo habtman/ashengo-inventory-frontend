@@ -31,9 +31,6 @@ useEffect(() => {
       console.log("Loading inventory...");
 
       const data = await inventoryApi.getAllForInvoice();
-
-      console.log("Inventory data:", data);
-
       setInventoryList(data);
 
       const customerData =
@@ -82,7 +79,6 @@ const total = items.reduce(
     navigate(`/sales-orders/${res.soId}`);
   };
 
-  //console.log("Inventory List:", inventoryList[0]);
 
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
