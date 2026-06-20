@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 
 export default function CustomerStatement({
@@ -8,23 +8,23 @@ export default function CustomerStatement({
   const [statement, setStatement] =
     useState([]);
 
-  useEffect(() => {
-    const load = async () => {
-      const data = await customerApi.getStatement(customerId);
-      setStatement(data);
-    };
-
+    useEffect(() => {
     load();
   }, [customerId]);
 
-  const rowsWithBalances = useMemo(() => {
-    return statement.reduce((acc, row) => {
-      const prevBal = acc.length ? acc[acc.length - 1].balance : 0;
-      const bal = prevBal + Number(row.debit || 0) - Number(row.credit || 0);
-      acc.push({ ...row, balance: bal });
-      return acc;
-    }, []);
-  }, [statement]);
+  const load = async () => {
+
+    const data =
+      await customerApi.getStatement(
+        customerId
+      );
+
+    setStatement(data);
+  };
+
+
+
+  let runningBalance = 0;
 
   return (
     <div className="mt-8">
@@ -47,17 +47,34 @@ export default function CustomerStatement({
         </thead>
 
         <tbody>
-        
-          {rowsWithBalances.map((row, idx) => (
-            <tr key={idx}>
-              <td>{row.date}</td>
-              <td>{row.type}</td>
-              <td>{row.reference}</td>
-              <td>{row.debit}</td>
-              <td>{row.credit}</td>
-              <td>{row.balance.toFixed(2)}</td>
-            </tr>
-          ))}
+
+          {statement.map((row, idx) => {
+
+            runningBalance +=
+              Number(row.debit || 0)
+              -
+              Number(row.credit || 0);
+
+            return (
+              <tr key={idx}>
+
+                <td>{row.date}</td>
+
+                <td>{row.type}</td>
+
+                <td>{row.reference}</td>
+
+                <td>{row.debit}</td>
+
+                <td>{row.credit}</td>
+
+                <td>
+                  {runningBalance.toFixed(2)}
+                </td>
+
+              </tr>
+            );
+          })}
 
         </tbody>
 

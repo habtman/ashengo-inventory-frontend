@@ -80,7 +80,18 @@ export default function CustomerDetails() {
           Record Payment
         </button>
 
-        {showPaymentModal && (
+      <div className="p-6">
+        <CustomerLedger
+          customerId={id}
+        />
+      </div>
+       <div className="p-6">
+        <CustomerStatement
+          customerId={id}
+        />
+      </div>
+      </div>
+             {showPaymentModal && (
 
           <RecordPaymentModal
             customerId={id}
@@ -94,15 +105,6 @@ export default function CustomerDetails() {
           />
 
         )}
-
-        <CustomerLedger
-          customerId={id}
-        />
-        <CustomerStatement
-          customerId={id}
-        />
-
-      </div>
 
       </div>
 
