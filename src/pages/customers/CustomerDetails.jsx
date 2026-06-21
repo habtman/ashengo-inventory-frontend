@@ -91,31 +91,36 @@ const totalPaid =
         </div>
       </div>
 
-        <div className="mt-6">
-          <button
-            onClick={() => setShowPaymentModal(true)}
-            className="
-              bg-green-600
-              text-white
-              px-4 py-2
-              rounded
-            "
-          >
-            Record Payment
-          </button>
-        </div>
+      <div className="flex gap-4 mb-6">
 
-        <div className="grid grid-cols-2 gap-6 mt-8">
+        <button
+          onClick={() =>
+            setShowPaymentModal(true)
+          }
+          className="
+            bg-green-600
+            text-white
+            px-4
+            py-2
+            rounded
+          "
+        >
+          Record Payment
+        </button>
 
-          <div className="bg-white border rounded-lg p-4">
-            <CustomerLedger customerId={id} />
-          </div>
+      </div>
 
-          <div className="bg-white border rounded-lg p-4">
-            <CustomerStatement customerId={id} />
-          </div>
+        <div className="grid grid-cols-2 gap-6">
 
-        </div>
+        <CustomerLedger
+          customerId={id}
+        />
+
+        <CustomerStatement
+          customerId={id}
+        />
+
+      </div>
              {showPaymentModal && (
 
           <RecordPaymentModal
