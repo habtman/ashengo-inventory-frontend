@@ -102,9 +102,7 @@ const totalPaid =
         </button>
 
       <div className="p-6">
-        <CustomerLedger
-          customerId={id}
-        />
+        {/* <CustomerStatement customerId={id} /> */}
       </div>
        <div className="p-6">
         <CustomerStatement
