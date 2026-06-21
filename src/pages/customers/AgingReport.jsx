@@ -3,76 +3,165 @@ import customerApi from "../../api/customerApi";
 
 export default function AgingReport() {
 
-  const [rows, setRows] =
-    useState([]);
+  const [rows, setRows] = useState([]);
+
+
 
   const load = async () => {
+    try {
 
-    const data =
-      await customerApi.getAging();
+      const data =
+        await customerApi.getAgingReport();
 
-    setRows(data);
+      setRows(data);
+
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  useEffect(() => {
+    useEffect(() => {
     load();
   }, []);
+
+  const totalCurrent =
+    rows.reduce(
+      (sum, r) =>
+        sum + Number(r.current_bucket || 0),
+      0
+    );
+
+  const total31 =
+    rows.reduce(
+      (sum, r) =>
+        sum + Number(r.days_31_60 || 0),
+      0
+    );
+
+  const total61 =
+    rows.reduce(
+      (sum, r) =>
+        sum + Number(r.days_61_90 || 0),
+      0
+    );
+
+  const total90 =
+    rows.reduce(
+      (sum, r) =>
+        sum + Number(r.over_90 || 0),
+      0
+    );
 
   return (
     <div className="p-6">
 
-      <h1 className="text-2xl font-bold mb-6">
-        Aging Report
+      <h1 className="text-2xl font-bold mb-4">
+        Customer Aging Report
       </h1>
 
-      <table className="w-full border">
+      <div className="bg-white rounded shadow overflow-x-auto">
 
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Current</th>
-            <th>31-60</th>
-            <th>61-90</th>
-            <th>90+</th>
-            <th>Total</th>
-          </tr>
-        </thead>
+        <table className="w-full">
 
-        <tbody>
+          <thead className="bg-gray-100">
 
-          {rows.map(row => {
+            <tr>
+              <th className="p-3 text-left">
+                Customer
+              </th>
 
-            const total =
-              Number(row.current_bucket)
-              +
-              Number(row.bucket_31_60)
-              +
-              Number(row.bucket_61_90)
-              +
-              Number(row.bucket_90_plus);
+              <th className="p-3 text-right">
+                Current
+              </th>
 
-            return (
-              <tr key={row.id}>
+              <th className="p-3 text-right">
+                31-60 Days
+              </th>
 
-                <td>{row.name}</td>
+              <th className="p-3 text-right">
+                61-90 Days
+              </th>
 
-                <td>{row.current_bucket}</td>
+              <th className="p-3 text-right">
+                Over 90
+              </th>
+            </tr>
 
-                <td>{row.bucket_31_60}</td>
+          </thead>
 
-                <td>{row.bucket_61_90}</td>
+          <tbody>
 
-                <td>{row.bucket_90_plus}</td>
+            {rows.map(row => (
 
-                <td>{total.toFixed(2)}</td>
+              <tr
+                key={row.id}
+                className="border-t"
+              >
+
+                <td className="p-3">
+                  {row.name}
+                </td>
+
+                <td className="p-3 text-right">
+                  {Number(
+                    row.current_bucket
+                  ).toFixed(2)}
+                </td>
+
+                <td className="p-3 text-right">
+                  {Number(
+                    row.days_31_60
+                  ).toFixed(2)}
+                </td>
+
+                <td className="p-3 text-right">
+                  {Number(
+                    row.days_61_90
+                  ).toFixed(2)}
+                </td>
+
+                <td className="p-3 text-right">
+                  {Number(
+                    row.over_90
+                  ).toFixed(2)}
+                </td>
 
               </tr>
-            );
-          })}
 
-        </tbody>
+            ))}
 
-      </table>
+          </tbody>
+
+          <tfoot className="bg-gray-50 font-bold">
+
+            <tr>
+
+              <td className="p-3">
+                Totals
+              </td>
+
+              <td className="p-3 text-right">
+                {totalCurrent.toFixed(2)}
+              </td>
+
+              <td className="p-3 text-right">
+                {total31.toFixed(2)}
+              </td>
+
+              <td className="p-3 text-right">
+                {total61.toFixed(2)}
+              </td>
+
+              <td className="p-3 text-right">
+                {total90.toFixed(2)}
+              </td>
+
+            </tr>
+
+          </tfoot>
+
+        </table>
+
+      </div>
 
     </div>
   );

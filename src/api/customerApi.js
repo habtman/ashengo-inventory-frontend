@@ -32,7 +32,7 @@ const customerApi = {
   getStatement: (id) =>
     apiFetch(`/api/v1/customer-ledger/${id}/statement`),
 
-  getAging: () =>
+  getAgingReport: () =>
     apiFetch("/api/v1/customer-ledger/aging"),
 };
 
