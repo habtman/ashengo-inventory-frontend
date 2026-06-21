@@ -64,52 +64,58 @@ const totalPaid =
         {customer.name}
       </h1>
 
-      <div className="grid grid-cols-3 gap-4 mt-4">
+      <div className="bg-white border rounded-lg p-4 shadow-sm">
+        <div className="text-gray-500 text-sm">
+          Outstanding
+        </div>
+        <div className="text-2xl font-bold">
+          ${outstanding.toFixed(2)}
+        </div>
+      </div>
 
-        <div className="border p-4 rounded">
-          <div>
-            Outstanding: {outstanding.toFixed(2)}
-          </div>
+      <div className="bg-white border rounded-lg p-4 shadow-sm">
+        <div className="text-gray-500 text-sm">
+          Available Credit
+        </div>
+        <div className="text-2xl font-bold">
+          ${availableCredit.toFixed(2)}
+        </div>
+      </div>
+
+      <div className="bg-white border rounded-lg p-4 shadow-sm">
+        <div className="text-gray-500 text-sm">
+          Total Paid
+        </div>
+        <div className="text-2xl font-bold">
+          ${totalPaid.toFixed(2)}
+        </div>
+      </div>
+
+        <div className="mt-6">
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="
+              bg-green-600
+              text-white
+              px-4 py-2
+              rounded
+            "
+          >
+            Record Payment
+          </button>
         </div>
 
-        <div className="border p-4 rounded">
-          <div>
-            Available Credit: {availableCredit.toFixed(2)}
+        <div className="grid grid-cols-2 gap-6 mt-8">
+
+          <div className="bg-white border rounded-lg p-4">
+            <CustomerLedger customerId={id} />
           </div>
-        </div>
 
-
-        <div className="border p-4 rounded">
-          <div>
-            Total Paid:{totalPaid.toFixed(2)}
+          <div className="bg-white border rounded-lg p-4">
+            <CustomerStatement customerId={id} />
           </div>
+
         </div>
-
-        <div className="flex gap-3 mt-6">
-
-        <button
-          onClick={() =>
-            setShowPaymentModal(true)
-          }
-          className="
-            bg-green-600
-            text-white
-            px-4 py-2
-            rounded
-          "
-        >
-          Record Payment
-        </button>
-
-      <div className="p-6">
-        {/* <CustomerStatement customerId={id} /> */}
-      </div>
-       <div className="p-6">
-        <CustomerStatement
-          customerId={id}
-        />
-      </div>
-      </div>
              {showPaymentModal && (
 
           <RecordPaymentModal
@@ -127,6 +133,6 @@ const totalPaid =
 
       </div>
 
-    </div>
+    
   );
 }

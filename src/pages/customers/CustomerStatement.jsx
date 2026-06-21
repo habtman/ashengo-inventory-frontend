@@ -9,22 +9,28 @@ export default function CustomerStatement({
     useState([]);
 
     useEffect(() => {
-    load();
-  }, [customerId]);
+      const load = async () => {
+        const data = await customerApi.getStatement(customerId);
+        setStatement(data);
+      };
 
-  const load = async () => {
-
-    const data =
-      await customerApi.getStatement(
-        customerId
-      );
-
-    setStatement(data);
-  };
+      load();
+    }, [customerId]);
 
 
 
-  let runningBalance = 0;
+  const statementWithBalances = statement.reduce((acc, row) => {
+    const debit = Number(row.debit || 0);
+    const credit = Number(row.credit || 0);
+    const previousBalance = acc.length > 0 ? acc[acc.length - 1].balance : 0;
+
+    acc.push({
+      ...row,
+      balance: previousBalance + debit - credit,
+    });
+
+    return acc;
+  }, []);
 
   return (
     <div className="mt-8">
@@ -48,13 +54,7 @@ export default function CustomerStatement({
 
         <tbody>
 
-          {statement.map((row, idx) => {
-
-            runningBalance +=
-              Number(row.debit || 0)
-              -
-              Number(row.credit || 0);
-
+          {statementWithBalances.map((row, idx) => {
             return (
               <tr key={idx}>
 
@@ -69,7 +69,7 @@ export default function CustomerStatement({
                 <td>{row.credit}</td>
 
                 <td>
-                  {runningBalance.toFixed(2)}
+                  {row.balance.toFixed(2)}
                 </td>
 
               </tr>
