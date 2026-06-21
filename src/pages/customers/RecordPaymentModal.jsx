@@ -32,6 +32,8 @@ export default function RecordPaymentModal({
       onClose();
     };
 
+    
+
   return (
     <div
       className="

@@ -10,6 +10,7 @@ const getMenuFromPath = (pathname) => {
   if (pathname.startsWith("/invoices")) {
     return "invoices";
   }
+  
 
   if (pathname.startsWith("/sales")) {
     return "sales";
