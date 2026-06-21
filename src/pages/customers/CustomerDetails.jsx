@@ -11,28 +11,51 @@ export default function CustomerDetails() {
 
   const [customer, setCustomer] =
     useState(null);
-  const [showPaymentModal,
-  setShowPaymentModal] =
-  useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [ledger, setLedger] = useState({
+      customer: {},
+      salesOrders: [],
+      payments: []
+    });
 
 
-  const fetchData = async () => {
-  const data = await customerApi.getById(id);
-    setCustomer(data);
-  };
+const load = async () => {
+  const customerData =
+    await customerApi.getById(id);
 
-  useEffect(() => {
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  const ledgerData =
+    await customerApi.getLedger(id);
+
+  setCustomer(customerData);
+  setLedger(ledgerData);
+};
+
+useEffect(() => {
+  load();
+}, [id]);
 
 
   if (!customer) return null;
 
-  const availableCredit =
-    Number(customer.credit_limit)
-    -
-    Number(customer.outstanding_balance);
+  const outstanding =
+  ledger.salesOrders?.reduce(
+    (sum, so) =>
+      sum + Number(so.balance_due || 0),
+    0
+  ) || 0;
+
+const availableCredit =
+  Number(
+    ledger.customer?.credit_limit || 0
+  ) - outstanding;
+
+const totalPaid =
+  ledger.payments?.reduce(
+    (sum, p) =>
+      sum + Number(p.amount || 0),
+    0
+  ) || 0;
+    
 
   return (
     <div className="p-6">
@@ -44,23 +67,21 @@ export default function CustomerDetails() {
       <div className="grid grid-cols-3 gap-4 mt-4">
 
         <div className="border p-4 rounded">
-          Credit Limit
           <div>
-            {customer.credit_limit}
+            Outstanding: {outstanding.toFixed(2)}
           </div>
         </div>
 
         <div className="border p-4 rounded">
-          Outstanding
           <div>
-            {customer.outstanding_balance}
+            Available Credit: {availableCredit.toFixed(2)}
           </div>
         </div>
 
+
         <div className="border p-4 rounded">
-          Available Credit
           <div>
-            {availableCredit}
+            Total Paid:{totalPaid.toFixed(2)}
           </div>
         </div>
 
@@ -96,12 +117,12 @@ export default function CustomerDetails() {
           <RecordPaymentModal
             customerId={id}
             salesOrders={
-              customer.salesOrders || []
+              ledger.salesOrders || []
             }
             onClose={() =>
               setShowPaymentModal(false)
             }
-            onSuccess={fetchData}
+            onSuccess={load}
           />
 
         )}
