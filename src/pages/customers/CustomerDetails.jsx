@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 import CustomerLedger from "./CustomerLedger";
 import CustomerStatement from "./CustomerStatement";
@@ -19,20 +19,20 @@ export default function CustomerDetails() {
     });
 
 
-const load = async () => {
-  const customerData =
-    await customerApi.getById(id);
+  const load = useCallback(async () => {
+    const customerData =
+      await customerApi.getById(id);
 
-  const ledgerData =
-    await customerApi.getLedger(id);
+    const ledgerData =
+      await customerApi.getLedger(id);
 
-  setCustomer(customerData);
-  setLedger(ledgerData);
-};
+    setCustomer(customerData);
+    setLedger(ledgerData);
+  }, [id]);
 
 useEffect(() => {
-  load();
-}, [id]);
+    load();
+  }, [load]);
 
 
   if (!customer) return null;
