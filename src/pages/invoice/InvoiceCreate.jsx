@@ -1,32 +1,53 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
-import {inventoryApi} from "../../api/inventoryApi";
+import {customerApi} from "../../api/customerApi";
+import { inventoryApi } from "../../api/inventoryApi";
+
+
+
 
 export default function InvoiceCreate() {
   const navigate = useNavigate();
-
-  const [customerName, setCustomerName] = useState("");
+  const [searchParams] = useSearchParams();
   const [inventoryList, setInventoryList] = useState([]);
+
+  const [customerId, setCustomerId] = useState("");
+  const [customers, setCustomers] = useState([]);
   const [items, setItems] = useState([
     { inventoryId: "", quantity: 1, sellingPrice: 0 }
   ]);
 
   const [loading, setLoading] = useState(false);
 
-  // Load inventory items
-  useEffect(() => {
-  const loadInventory = async () => {
-    try {
-      const data = await inventoryApi.getAllForInvoice();
-      setInventoryList(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+useEffect(() => {
   loadInventory();
 }, []);
+
+const loadInventory = async () => {
+  const data =
+    await inventoryApi.getAllForInvoice();
+
+  setInventoryList(data);
+};
+  // Load customers
+ useEffect(() => {
+  loadCustomers();
+}, []);
+
+const loadCustomers = async () => {
+  const data = await customerApi.getAll();
+  setCustomers(data);
+};
+
+useEffect(() => {
+  const id =
+    searchParams.get("customerId");
+
+  if (id) {
+    setCustomerId(Number(id));
+  }
+}, [searchParams]);
 
 
   // Add row
@@ -38,24 +59,31 @@ export default function InvoiceCreate() {
   };
 
   // Update item
-  const updateItem = (index, field, value) => {
-    const updated = [...items];
+ const updateItem = (
+  index,
+  field,
+  value
+) => {
 
-    updated[index][field] = value;
+  const updated = [...items];
 
-    // Auto-fill price when selecting item
-    if (field === "inventoryId") {
-      const selected = inventoryList.find(
-        (inv) => inv.id === Number(value)
+  updated[index][field] = value;
+
+  if (field === "inventoryId") {
+
+    const selected =
+      inventoryList.find(
+        inv => inv.id === Number(value)
       );
 
-      if (selected) {
-        updated[index].sellingPrice = selected.selling_price || 0;
-      }
+    if (selected) {
+      updated[index].sellingPrice =
+        Number(selected.selling_price || 0);
     }
+  }
 
-    setItems(updated);
-  };
+  setItems(updated);
+};
 
   // Remove row
   const removeItem = (index) => {
@@ -81,16 +109,16 @@ const handleSubmit = async () => {
   setLoading(true);
 
   try {
-    //console.log("Sending request...");
 
-    const data = await invoiceApi.createInvoice({
-      customerName,
-      items
-    });
+    const data =
+      await invoiceApi.createInvoice({
+        customerId,
+        items
+      });
 
-    //console.log("Response received:", data);
-
-    navigate(`/invoices/${data.invoiceId}`);
+    navigate(
+      `/invoices/${data.invoiceId}`
+    );
 
   } catch (err) {
     console.error("Invoice error:", err);
@@ -107,19 +135,36 @@ const handleSubmit = async () => {
         Create Invoice
       </h2>
 
-      {/* Customer */}
+
+
       <div className="mb-6">
         <label className="block mb-2 font-semibold">
-          Customer Name
+          Customer
         </label>
-        <input
-          type="text"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
+
+        <select
+          value={customerId}
+          onChange={(e) =>
+            setCustomerId(Number(e.target.value))
+          }
           className="w-full border p-2 rounded"
-          placeholder="Walk-in Customer"
-        />
+        >
+          <option value="">
+            Select Customer
+          </option>
+
+          {customers.map(customer => (
+            <option
+              key={customer.id}
+              value={customer.id}
+            >
+              {customer.name}
+            </option>
+          ))}
+        </select>
       </div>
+
+
 
       {/* Items Table */}
       <table className="w-full border mb-4">
@@ -145,16 +190,21 @@ const handleSubmit = async () => {
                     updateItem(
                       index,
                       "inventoryId",
-                      e.target.value
+                      Number(e.target.value)
                     )
                   }
                   className="w-full border p-1 rounded"
                 >
-                  <option value="">Select Item</option>
-                  {Array.isArray(inventoryList) &&
-                    inventoryList.map((inv) => (
-                    <option key={inv.id} value={inv.id}>
-                      {inv.name} ({inv.sku})
+                  <option value="">
+                    Select Item
+                  </option>
+
+                  {inventoryList.map(inv => (
+                    <option
+                      key={inv.id}
+                      value={inv.id}
+                    >
+                      {inv.name}
                     </option>
                   ))}
                 </select>
