@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
-import {customerApi} from "../../api/customerApi";
+import customerApi from "../../api/customerApi";
 import { inventoryApi } from "../../api/inventoryApi";
 
 
