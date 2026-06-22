@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
 
 export default function InvoicesList() {
@@ -37,6 +37,25 @@ export default function InvoicesList() {
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white shadow rounded-xl">
       <h2 className="text-2xl font-bold mb-6">Invoices</h2>
+   
+
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">
+            Invoices
+          </h1>
+
+          <Link
+            to="/invoices/new"
+            className="
+              bg-blue-600
+              text-white
+              px-4 py-2
+              rounded
+            "
+          >
+            + Create Invoice
+          </Link>
+        </div>
       <div className="mb-4 flex gap-2">
         <input
           type="text"
