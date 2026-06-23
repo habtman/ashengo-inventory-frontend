@@ -41,9 +41,15 @@ getMovements: (page = 1, limit = 20, filters = {}) => {
 
 
 
+getSalesHistory: (id) =>
+  apiFetch(`/api/v1/stock/inventory/${id}/sales`),
 
-/*getMovements: (page = 1, limit = 20) =>
-apiFetch(`/api/v1/stock/movements?page=${page}&limit=${limit}`),*/
+getPurchaseHistory: (id) =>
+  apiFetch(`/api/v1/stock/inventory/${id}/purchases`),
+getInventoryStockByLocation: (locationId) =>
+  apiFetch(
+    `/api/v1/locations/${locationId}/stock`
+  ),
 
 
 };

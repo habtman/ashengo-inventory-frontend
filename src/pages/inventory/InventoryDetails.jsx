@@ -10,14 +10,11 @@ export default function InventoryDetails() {
   const [movements, setMovements] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [showTransfer, setShowTransfer] =
-  useState(false);
-
-  const [showAdjustment, setShowAdjustment] =
-    useState(false);
-
-  const [showSell, setShowSell] =
-    useState(false);
+      const [showTransfer, setShowTransfer] = useState(false);
+      const [showAdjustment, setShowAdjustment] = useState(false);
+      const [showSell, setShowSell] = useState(false);
+      const [salesHistory, setSalesHistory] = useState([]);
+      const [purchaseHistory, setPurchaseHistory] = useState([]);
 
 
 useEffect(() => {
@@ -28,10 +25,12 @@ useEffect(() => {
           stockData,
           movementData
         ] = await Promise.all([
-          inventoryApi.getById(id),
-          inventoryApi.getStockByLocation(id),
-          inventoryApi.getMovements(id)
-        ]);
+              inventoryApi.getById(id),
+              inventoryApi.getStockByLocation(id),
+              inventoryApi.getMovements(id),
+              inventoryApi.getSalesHistory(id),
+              inventoryApi.getPurchaseHistory(id)
+            ])
 
         setProduct(productData);
         setStock(stockData);
@@ -100,18 +99,17 @@ if (totalStock === 0) {
 
       <div className="flex gap-3">
 
-        <button
-          onClick={() => setShowTransfer(true)}
-          className="
-            bg-blue-600
-            text-white
-            px-4 py-2
-            rounded
-            hover:bg-blue-700
-          "
-        >
-          Transfer Stock
-        </button>
+      {showTransfer && (
+        <TransferStockForm
+          product={product}
+          onClose={() =>
+            setShowTransfer(false)
+          }
+          onSuccess={() => {
+            window.location.reload();
+          }}
+        />
+      )}
 
         <button
           onClick={() => setShowAdjustment(true)}

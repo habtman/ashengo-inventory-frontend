@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import stockApi from "../../api/stockApi";
 import useStockActions from "../../hooks/useStockActions";
+import StockTransferModal from "./StockTransferModal";
+
 
 
 export default function StockTransferForm({
@@ -20,22 +22,53 @@ const [formError, setFormError] = useState("");
 const [qtyErrors, setQtyErrors] = useState({});
 const hasQtyErrors = Object.values(qtyErrors).some(Boolean);
 const { transferStock, loading, error } = useStockActions();
+const [locationStock, setLocationStock] = useState({});
 
-
+const canSubmit =
+  fromLocation &&
+  toLocation &&
+  !locationError &&
+  !hasQtyErrors &&
+  items.every(
+    i => quantities[i.id] > 0
+  );
 
 //const isBulk = items.length > 1;
-
-// 📦 Load locations
 useEffect(() => {
   stockApi
     .getLocations()
     .then(setLocations)
     .catch((err) => {
-      console.error("Location load error:", err);
+      console.error(err);
       setFormError("Failed to load locations");
     });
-
 }, []);
+// 📦 Load locations
+useEffect(() => {
+
+  if (!fromLocation) return;
+
+  const loadStock = async () => {
+
+    const stock =
+      await stockApi.getInventoryStockByLocation(
+        fromLocation
+      );
+
+    const map = {};
+
+    stock.forEach(item => {
+      map[item.inventory_id] =
+        item.quantity;
+    });
+
+    setLocationStock(map);
+
+  };
+
+  loadStock();
+
+}, [fromLocation]);
 
 const locationError =
 fromLocation &&
@@ -56,13 +89,18 @@ if (!items.length) {
 }
 
   const handleQtyChange = (item, value) => {
-const qty = Number(value);
-const available = Number(item.total_stock);
+  const qty = Number(value);
+  const available =
+  Number(locationStock[item.id] || 0);
 
-setQuantities(prev => ({
-  ...prev,
-  [item.id]: qty,
-}));
+if (qty > available) {
+  return `Insufficient stock for ${item.name}`;
+}
+
+    setQuantities(prev => ({
+      ...prev,
+      [item.id]: qty,
+    }));
 
 let error = null;
 
@@ -110,6 +148,8 @@ const handleSubmit = async (e) => {
 e.preventDefault();
 setFormError("");
 
+
+
 const validationError = validate();
 if (validationError) {
   setFormError(validationError);
@@ -133,7 +173,6 @@ if (!result.success) {
 }
 
 onSuccess?.(payload);
-onCancel();
 };
 
 
@@ -159,7 +198,7 @@ return (
             <div>
               <div className="font-medium">{item.name}</div>
               <div className="text-xs text-slate-500">
-                Available: {item.total_stock}
+                Available: {locationStock[item.id] ?? 0}
 
               </div>
             </div>
@@ -176,11 +215,11 @@ return (
         }`}
         placeholder="Qty"
       />
-      {qtyErrors[item.id] && (
-        <div className="text-xs text-red-600 mt-1">
-          {qtyErrors[item.id]}
-        </div>
-      )}
+       {qtyErrors[item.id] && (
+          <div className="text-xs text-red-600 mt-1">
+            {qtyErrors[item.id]}
+          </div>
+        )}
 
       </div>
         ))}
@@ -218,10 +257,15 @@ return (
             className="w-full border rounded px-3 py-2"
           >
             <option value="">Select</option>
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>
-                {loc.name}
-              </option>
+            {locations
+              .filter(
+                loc =>
+                  String(loc.id) !== String(fromLocation)
+              )
+              .map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.name}
+                </option>
             ))}
           </select>
         </div>
@@ -251,13 +295,7 @@ return (
 
         <button
           type="submit"
-          disabled={
-            loading ||
-            hasQtyErrors ||
-            locationError ||
-            !fromLocation ||
-            !toLocation
-          }
+          disabled={!canSubmit || loading}
           className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
         >
           {loading ? "Transferring..." : "Transfer"}
