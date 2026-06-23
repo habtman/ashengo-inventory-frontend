@@ -12,11 +12,12 @@ getAllForInvoice: () =>
 
 getById: (id) =>
   apiFetch(`/api/v1/inventory/${id}`),
+
 getMovements: (id) =>
-  apiFetch(`/inventory/${id}/movements`),
+  apiFetch(`/api/v1/inventory/${id}/movements`),
 
 getStockByLocation: (id) =>
-apiFetch(`/api/v1/inventory/${id}/stock`),
+  apiFetch(`/api/v1/inventory/${id}/stock`),
 
 create: (data) =>
   apiFetch("/api/v1/inventory", {
