@@ -1,9 +1,6 @@
 // src/api/stockApi.js
 import { apiFetch } from "./api";
 
-
-
-
 const stockApi = {
 
 addStock: (data) =>

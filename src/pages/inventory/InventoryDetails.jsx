@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { inventoryApi } from "../../api/inventoryApi";
+import stockApi from "../../api/stockApi";
 
 export default function InventoryDetails() {
   const { id } = useParams();
@@ -20,18 +21,19 @@ export default function InventoryDetails() {
 useEffect(() => {
     const load = async () => {
       try {
-        const [
-          productData,
-          stockData,
-          movementData
-        ] = await Promise.all([
-              inventoryApi.getById(id),
-              inventoryApi.getStockByLocation(id),
-              inventoryApi.getMovements(id),
-              inventoryApi.getSalesHistory(id),
-              inventoryApi.getPurchaseHistory(id)
-            ])
-
+const [
+  productData,
+  stockData,
+  movementData,
+  salesData,
+  purchaseData
+] = await Promise.all([
+  inventoryApi.getById(id),
+  inventoryApi.getStockByLocation(id),
+  inventoryApi.getMovements(id),
+  stockApi.getSalesHistory(id),
+  stockApi.getPurchaseHistory(id)
+]);
         setProduct(productData);
         setStock(stockData);
         setMovements(movementData);
