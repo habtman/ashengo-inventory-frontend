@@ -14,13 +14,16 @@ export default function InventoryDetails() {
       const [showTransfer, setShowTransfer] = useState(false);
       const [showAdjustment, setShowAdjustment] = useState(false);
       const [showSell, setShowSell] = useState(false);
-      const [salesHistory, setSalesHistory] = useState([]);
-      const [purchaseHistory, setPurchaseHistory] = useState([]);
+      const [sales, setSales] = useState([]);
+      const [purchases, setPurchases] = useState([]);
 
 
 useEffect(() => {
     const load = async () => {
       try {
+        console.log("stockApi", stockApi);
+console.log("getSalesHistory", stockApi.getSalesHistory);
+console.log("getPurchaseHistory", stockApi.getPurchaseHistory);
 const [
   productData,
   stockData,
@@ -37,6 +40,8 @@ const [
         setProduct(productData);
         setStock(stockData);
         setMovements(movementData);
+        setSales(salesData);
+        setPurchases(purchaseData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -321,6 +326,45 @@ if (totalStock === 0) {
         </table>
 
       </div>
+
+      {/* Sales History */}
+<div className="border rounded p-4">
+  <h2 className="text-xl font-semibold mb-4">
+    Sales History
+  </h2>
+
+  <table className="w-full">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {sales.map(sale => (
+        <tr key={sale.id}>
+          <td>
+            {new Date(
+              sale.created_at
+            ).toLocaleDateString()}
+          </td>
+
+          <td>{sale.sold_to || "-"}</td>
+
+          <td>{sale.quantity}</td>
+
+          <td>${sale.selling_price}</td>
+
+          <td>${sale.total_amount}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
     </div>
   );
