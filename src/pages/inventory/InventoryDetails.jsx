@@ -144,6 +144,19 @@ if (totalStock === 0) {
           Sell
         </button>
 
+        <button
+          onClick={() => setShowTransfer(true)}
+          className="
+            bg-blue-600
+            text-white
+            px-4 py-2
+            rounded
+            hover:bg-blue-700
+          "
+        >
+          Transfer Stock
+        </button>
+
       </div>
 
       {/* Summary Cards */}
