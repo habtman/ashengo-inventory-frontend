@@ -9,6 +9,7 @@ export default function InventoryTable({
   selectedIds = [],
   onSelect,
   onSelectAll,
+  onView,
   onEdit,
   onDelete,
   onAddStock,
@@ -79,6 +80,7 @@ export default function InventoryTable({
               permissions={permissions}
               selected={selectedIds.includes(item.id)}
               onSelect={onSelect}
+              onView={onView}
               onEdit={onEdit}
               onDelete={() => onDelete(item)}
               status={item.status}

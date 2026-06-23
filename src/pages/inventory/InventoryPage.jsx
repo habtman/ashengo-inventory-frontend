@@ -2,6 +2,9 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from "../../context/useAuth";
 import { inventoryApi } from "../../api/inventoryApi";
 import { inventoryPermissions } from "../../config/inventoryPermissions";
+import { useNavigate } from "react-router-dom";
+
+
 
 import InventoryTable from "../../components/inventory/InventoryTable";
 import InventoryCreate from "./InventoryCreate";
@@ -20,6 +23,7 @@ import SellItemForm from "../../components/sell/SellItemForm";
 
 
 export default function InventoryPage() {
+
 const { user } = useAuth();
 const permissions = user ? inventoryPermissions[user.role] : {};
 
@@ -55,6 +59,7 @@ const [showAddStock, setShowAddStock] = useState(false);
   page: 1,
   totalPages: 1,
 });
+const navigate = useNavigate();
 
 
 
@@ -82,6 +87,9 @@ const fetchInventory = useCallback(async () => {
       }
     }, [debouncedSearch, statusFilter, lowStockOnly, page, limit]);
 
+const handleView = (item) => {
+  navigate(`/inventory/${item.id}`);
+};
 
    
 
@@ -299,6 +307,7 @@ return (
               : [...prev, id]
           )
         }
+        onView={handleView}
         onSelectAll={(ids) => setSelectedIds(ids)}
         onEdit={setEditItem}
         onDelete={item => handleDelete(item)} 

@@ -12,6 +12,8 @@ getAllForInvoice: () =>
 
 getById: (id) =>
   apiFetch(`/api/v1/inventory/${id}`),
+getMovements: (id) =>
+  apiFetch(`/inventory/${id}/movements`),
 
 getStockByLocation: (id) =>
 apiFetch(`/api/v1/inventory/${id}/stock`),

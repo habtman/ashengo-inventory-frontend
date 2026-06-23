@@ -5,6 +5,7 @@ import StockByLocation from "./StockByLocation";
 export default function InventoryRow({
   item,
   selected,
+  onView,
   onEdit,
   onSelect,
   onDelete,
@@ -128,6 +129,18 @@ export default function InventoryRow({
             >
               {expanded ? "Hide" : "Locations"}
             </button>
+
+
+              {permissions?.canView && (
+                <button
+                  onClick={() => onView(item)}
+                  className="text-slate-600 hover:text-emerald-600 transition"
+                >
+                  View
+                </button>
+              )}
+          
+            
 
             {permissions?.canEdit && (
               <button

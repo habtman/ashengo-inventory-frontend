@@ -40,6 +40,7 @@ import CustomersList from "./pages/customers/CustomersList";
 import CustomerCreate from "./pages/customers/CustomerCreate";
 import CustomerDetails from "./pages/customers/CustomerDetails";
 import AgingReport from "./pages/customers/AgingReport";
+import InventoryDetails from "./pages/inventory/InventoryDetails"; 
 
 
 
@@ -90,7 +91,8 @@ export default function App() {
           <Route path="/customers/new" element={<CustomerCreate />} />
           <Route path="/customers/:id" element={<CustomerDetails />} />
           <Route path="/customers/aging" element={<AgingReport />} />
- 
+          <Route path="/inventory/:id" element={<InventoryDetails />} />
+
 
 
         </Route>
