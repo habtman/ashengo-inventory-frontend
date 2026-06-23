@@ -10,39 +10,15 @@ export default function InventoryDetails() {
   const [movements, setMovements] = useState([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const load = async () => {
-    try {
-      console.log("Loading product", id);
+  const [showTransfer, setShowTransfer] =
+  useState(false);
 
-      const productData =
-        await inventoryApi.getById(id);
+  const [showAdjustment, setShowAdjustment] =
+    useState(false);
 
-      console.log("Product:", productData);
+  const [showSell, setShowSell] =
+    useState(false);
 
-      const stockData =
-        await inventoryApi.getStockByLocation(id);
-
-      console.log("Stock:", stockData);
-
-      const movementData =
-        await inventoryApi.getMovements(id);
-
-      console.log("Movements:", movementData);
-
-      setProduct(productData);
-      setStock(stockData);
-      setMovements(movementData);
-
-    } catch (err) {
-      console.error("LOAD ERROR:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  load();
-}, [id]);
 
 useEffect(() => {
     const load = async () => {
@@ -70,23 +46,34 @@ useEffect(() => {
     load();
   }, [id]);
 
+if (loading) {
+  return <div>Loading...</div>;
+}
 
+if (!product) {
+  return <div>Product not found</div>;
+}
 
-  if (loading) {
-    return (
-      <div className="p-6">
-        Loading...
-      </div>
-    );
-  }
+const totalStock =
+  stock.reduce(
+    (sum, s) => sum + Number(s.quantity),
+    0
+  );
 
-  if (!product) {
-    return (
-      <div className="p-6">
-        Product not found
-      </div>
-    );
-  }
+const threshold =
+  Number(product?.low_stock_threshold ?? 0);
+
+let status = "In Stock";
+let statusColor = "text-green-600";
+
+if (totalStock === 0) {
+  status = "Out of Stock";
+  statusColor = "text-red-600";
+} else if (totalStock <= threshold) {
+  status = "Low Stock";
+  statusColor = "text-yellow-600";
+}
+
 
   return (
     <div className="p-6 space-y-6">
@@ -96,10 +83,62 @@ useEffect(() => {
         <h1 className="text-3xl font-bold">
           {product.name}
         </h1>
+      </div>
+      <div className="border rounded p-4">
+        <div>SKU: {product.sku}</div>
+        <div>
+          Threshold:
+          {product.low_stock_threshold}
+        </div>
+        <div>
+          Created:
+          {new Date(
+            product.created_at
+          ).toLocaleDateString()}
+        </div>
+      </div>
 
-        <p className="text-gray-500">
-          SKU: {product.sku}
-        </p>
+      <div className="flex gap-3">
+
+        <button
+          onClick={() => setShowTransfer(true)}
+          className="
+            bg-blue-600
+            text-white
+            px-4 py-2
+            rounded
+            hover:bg-blue-700
+          "
+        >
+          Transfer Stock
+        </button>
+
+        <button
+          onClick={() => setShowAdjustment(true)}
+          className="
+            bg-yellow-600
+            text-white
+            px-4 py-2
+            rounded
+            hover:bg-yellow-700
+          "
+        >
+          Adjust Stock
+        </button>
+
+        <button
+          onClick={() => setShowSell(true)}
+          className="
+            bg-green-600
+            text-white
+            px-4 py-2
+            rounded
+            hover:bg-green-700
+          "
+        >
+          Sell
+        </button>
+
       </div>
 
       {/* Summary Cards */}
@@ -110,9 +149,9 @@ useEffect(() => {
             Total Stock
           </div>
 
-          <div className="text-2xl font-bold">
-            {product.total_stock}
-          </div>
+        <div className="text-2xl font-bold">
+          {totalStock}
+        </div>
         </div>
 
         <div className="border rounded p-4">
@@ -121,7 +160,7 @@ useEffect(() => {
           </div>
 
           <div className="text-2xl font-bold">
-            ${Number(product.price).toFixed(2)}
+            ${Number(product.price).toLocaleString()}
           </div>
         </div>
 
@@ -141,11 +180,7 @@ useEffect(() => {
           </div>
 
           <div className="text-2xl font-bold">
-            $
-            {(
-              Number(product.total_stock || 0) *
-              Number(product.cost_price || 0)
-            ).toFixed(2)}
+           {totalStock}
           </div>
         </div>
 
@@ -157,6 +192,19 @@ useEffect(() => {
         <h2 className="text-xl font-semibold mb-4">
           Stock By Location
         </h2>
+
+        <div className="border rounded p-4">
+          <div className="text-sm text-gray-500">
+            Status
+          </div>
+
+          <div className={`text-xl font-bold ${statusColor}`}>
+            {status}
+          </div>
+
+        </div>
+
+
 
         <table className="w-full">
 
@@ -186,6 +234,8 @@ useEffect(() => {
                   {location.quantity}
                 </td>
               </tr>
+
+              
             ))}
           </tbody>
 
@@ -212,6 +262,12 @@ useEffect(() => {
                 Type
               </th>
 
+              <th>From</th>
+
+              <th>To</th>
+
+              <th>User</th>
+
               <th className="text-left py-2">
                 Quantity
               </th>
@@ -223,7 +279,15 @@ useEffect(() => {
           </thead>
 
           <tbody>
-            {movements.map(movement => (
+            {movements.length === 0 ? (
+              <tr>
+                <td colSpan="7">
+                  No movement history found
+                </td>
+              </tr>
+            ) : 
+            
+            movements.map(movement => (
               <tr
                 key={movement.id}
                 className="border-b"
@@ -233,10 +297,15 @@ useEffect(() => {
                     movement.created_at
                   ).toLocaleDateString()}
                 </td>
-
                 <td className="py-2">
                   {movement.movement_type}
                 </td>
+
+                <td>{movement.from_location || "-"}</td>
+
+                <td>{movement.to_location || "-"}</td>
+
+                <td>{movement.created_by || "-"}</td>
 
                 <td className="py-2">
                   {movement.quantity}
