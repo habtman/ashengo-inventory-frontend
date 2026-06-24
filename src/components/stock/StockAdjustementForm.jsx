@@ -1,72 +1,168 @@
 import { useState } from "react";
-import stockApi from "../../api/stockApi";
+import useStockActions from "../../hooks/useStockActions";
+import LocationSelect from "../locations/LocationSelect";
 
 export default function StockAdjustmentForm({
   item,
   onSuccess,
   onCancel
 }) {
-  const [quantity, setQuantity] = useState("");
-  const [reason, setReason] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    adjustStock,
+    loading
+  } = useStockActions();
 
-    await stockApi.adjust({
-      inventoryId: item.id,
-      quantity: Number(quantity),
-      reason
+  const [form, setForm] =
+    useState({
+      locationId: "",
+      quantity: "",
+      reason: ""
     });
 
-    onSuccess?.();
-  };
+  const handleSubmit =
+    async (e) => {
+
+      e.preventDefault();
+
+      const qty =
+        Number(form.quantity);
+
+      if (
+        !form.locationId
+      ) {
+        alert(
+          "Select location"
+        );
+        return;
+      }
+
+      if (!qty) {
+        alert(
+          "Enter quantity"
+        );
+        return;
+      }
+
+      const result =
+        await adjustStock({
+          inventoryId:
+            item.id,
+          locationId:
+            Number(
+              form.locationId
+            ),
+          quantity: qty,
+          reason:
+            form.reason
+        });
+
+      if (
+        result.success
+      ) {
+        onSuccess?.();
+      }
+    };
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={
+        handleSubmit
+      }
       className="space-y-4"
     >
+
+      <LocationSelect
+        value={
+          form.locationId
+        }
+        onChange={(
+          value
+        ) =>
+          setForm({
+            ...form,
+            locationId:
+              value
+          })
+        }
+      />
+
       <div>
         <label>
-          Adjustment Quantity
+          Quantity
         </label>
 
         <input
           type="number"
-          value={quantity}
-          onChange={(e) =>
-            setQuantity(e.target.value)
+          value={
+            form.quantity
+          }
+          onChange={(
+            e
+          ) =>
+            setForm({
+              ...form,
+              quantity:
+                e.target
+                  .value
+            })
           }
           className="w-full border rounded px-3 py-2"
         />
+
+        <div className="text-xs text-gray-500">
+          Positive =
+          Add Stock
+
+          <br />
+
+          Negative =
+          Remove Stock
+        </div>
       </div>
 
-      <div>
-        <label>
-          Reason
-        </label>
-
-        <textarea
-          value={reason}
-          onChange={(e) =>
-            setReason(e.target.value)
-          }
-          className="w-full border rounded px-3 py-2"
-        />
-      </div>
+      <textarea
+        placeholder="Reason"
+        value={
+          form.reason
+        }
+        onChange={(
+          e
+        ) =>
+          setForm({
+            ...form,
+            reason:
+              e.target
+                .value
+          })
+        }
+        className="w-full border rounded px-3 py-2"
+      />
 
       <div className="flex justify-end gap-2">
+
         <button
           type="button"
-          onClick={onCancel}
+          onClick={
+            onCancel
+          }
         >
           Cancel
         </button>
 
-        <button type="submit">
-          Adjust
+        <button
+          type="submit"
+          disabled={
+            loading
+          }
+        >
+          {loading
+            ? "Saving..."
+            : "Adjust Stock"}
         </button>
+
       </div>
+
     </form>
   );
 }

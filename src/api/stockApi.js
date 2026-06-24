@@ -32,10 +32,13 @@ getMovements: (page = 1, limit = 20, filters = {}) => {
     limit,
     ...filters
   });
-
   return apiFetch(`/api/v1/stock/movements?${params.toString()}`);
 },
-
+adjust: (payload) =>
+  apiFetch("/api/v1/stock/adjust", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  }),
 
 
 getSalesHistory: (id) =>

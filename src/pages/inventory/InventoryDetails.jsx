@@ -7,6 +7,7 @@ import StockTransferModal from "../../components/stock/StockTransferModal";
 import StockTransferForm from "../../components/stock/StockTransferForm";
 import SellItemForm from "../../components/sell/SellItemForm";
 import SellItemModal from "../../components/sell/SellItemModal";
+import StockAdjustmentForm from "../../components/stock/StockAdjustmentForm";
 
 function SummaryCard({ title, value }) {
   return (
@@ -547,21 +548,30 @@ const totalPurchaseCost = purchases.reduce(
   </StockTransferModal>
 )}
 
-{showAdjustment && (
+{
+showAdjustment && (
   <StockTransferModal
     title="Adjust Stock"
-    onClose={() => setShowAdjustment(false)}
+    onClose={() =>
+      setShowAdjustment(false)
+    }
   >
     <StockAdjustmentForm
       item={product}
-      onCancel={() => setShowAdjustment(false)}
+      onCancel={() =>
+        setShowAdjustment(false)
+      }
       onSuccess={async () => {
+
         await load();
+
         setShowAdjustment(false);
+
       }}
     />
   </StockTransferModal>
-)}
+)
+}
 
     </div>
   );
