@@ -14,8 +14,12 @@ export default function SellItemForm({
       return "Quantity must be greater than 0";
     if (!form.sellingPrice || Number(form.sellingPrice) <= 0)
       return "Selling price must be greater than 0";
-    if (Number(form.quantity) > item.availableQuantity)
-      return `Only ${item.availableQuantity} units available at selected location`;
+    const available =
+      Number(item.total_stock || 0);
+
+    if (Number(form.quantity) > available) {
+      return `Only ${available} units available`;
+    }
     if (form.soldTo && form.soldTo.length > 100)
       return "Sold To name is too long";    
     return null;

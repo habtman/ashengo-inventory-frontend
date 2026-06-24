@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { inventoryApi } from "../../api/inventoryApi";
 import stockApi from "../../api/stockApi";
 
-import StockTransferModal from "../components/stock/StockTransferModal";
-import StockTransferForm from "../components/stock/StockTransferForm";
-import SellItemForm from "../components/sell/SellItemForm";
-import SellItemModal from "../components/sell/SellItemModal";
+import StockTransferModal from "../../components/stock/StockTransferModal";
+import StockTransferForm from "../../components/stock/StockTransferForm";
+import SellItemForm from "../../components/sell/SellItemForm";
+import SellItemModal from "../../components/sell/SellItemModal";
 
 function SummaryCard({ title, value }) {
   return (
@@ -551,10 +551,10 @@ const totalPurchaseCost = purchases.reduce(
 
 {showSell && (
   <StockTransferModal
-    title="Sell Product"
+    title={`Sell ${product.name}`}
     onClose={() => setShowSell(false)}
   >
-    <SellProductForm
+    <SellItemForm
       item={product}
       onCancel={() => setShowSell(false)}
       onSuccess={async () => {
