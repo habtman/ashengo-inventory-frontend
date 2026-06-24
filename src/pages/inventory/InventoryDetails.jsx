@@ -442,9 +442,13 @@ const totalPurchaseCost = purchases.reduce(
               {sale.quantity}
             </td>
 
-            <td className="p-2 text-right">
-              ${Number(sale.selling_price).toFixed(2)}
-            </td>
+              <td>
+                ${Number(sale.cost_price || 0).toFixed(2)}
+              </td>
+
+              <td>
+                ${Number(sale.total_cost || 0).toFixed(2)}
+              </td>
 
             <td className="p-2 text-right font-medium">
               ${Number(sale.total_amount).toFixed(2)}
