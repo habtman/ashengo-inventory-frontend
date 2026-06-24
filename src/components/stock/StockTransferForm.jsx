@@ -29,7 +29,7 @@ const [locationStock, setLocationStock] = useState({});
 //const isBulk = items.length > 1;
 useEffect(() => {
   stockApi
-    .getLocations()
+    .getLocationsById()
     .then(setLocations)
     .catch((err) => {
       console.error(err);
