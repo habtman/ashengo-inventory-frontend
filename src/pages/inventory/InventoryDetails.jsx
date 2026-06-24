@@ -442,13 +442,9 @@ const totalPurchaseCost = purchases.reduce(
               {sale.quantity}
             </td>
 
-              <td>
-                ${Number(sale.cost_price || 0).toFixed(2)}
-              </td>
-
-              <td>
-                ${Number(sale.total_cost || 0).toFixed(2)}
-              </td>
+            <td className="p-2 text-right">
+              ${Number(sale.selling_price).toFixed(2)}
+            </td>
 
             <td className="p-2 text-right font-medium">
               ${Number(sale.total_amount).toFixed(2)}
@@ -485,7 +481,7 @@ const totalPurchaseCost = purchases.reduce(
     <tbody>
       {purchases.length === 0 ? (
         <tr>
-          <td colSpan="7" className="p-4 text-center text-gray-500">
+          <td colSpan="8" className="p-4 text-center text-gray-500">
             No purchases found
           </td>
         </tr>
@@ -510,11 +506,13 @@ const totalPurchaseCost = purchases.reduce(
               {purchase.quantity}
             </td>
 
-            <td className="p-2 text-right">
-              ${Number(
-                purchase.cost_price
-              ).toFixed(2)}
-            </td>
+                <td>
+                ${Number(row.cost_price || 0).toFixed(2)}
+              </td>
+
+              <td>
+                ${Number(row.total_cost || 0).toFixed(2)}
+              </td>
 
             <td className="p-2 text-right font-medium">
               $
