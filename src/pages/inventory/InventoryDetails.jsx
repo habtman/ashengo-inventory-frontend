@@ -200,14 +200,7 @@ const totalPurchaseCost = purchases.reduce(
         <div className="text-2xl font-bold">
           {totalStock}
         </div>
-        <div className="text-2xl font-bold">
-            $
-            {(
-              totalStock *
-              Number(product.cost_price || 0)
-            ).toFixed(2)}
-          </div>
-        </div>
+       </div>
 
         <div className="border rounded p-4">
           <div className="text-sm text-gray-500">
@@ -234,8 +227,12 @@ const totalPurchaseCost = purchases.reduce(
             Inventory Value
           </div>
 
-          <div className="text-2xl font-bold">
-           {totalStock}
+        <div className="text-2xl font-bold">
+            $
+            {(
+              totalStock *
+              Number(product.cost_price || 0)
+            ).toFixed(2)}
           </div>
         </div>
 
