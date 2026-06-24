@@ -94,7 +94,7 @@ if (!items.length) {
   Number(locationStock[item.id] || 0);
 
 if (qty > available) {
-  return `Insufficient stock for ${item.name}`;
+  error = `Only ${available} available`;
 }
 
     setQuantities(prev => ({
@@ -129,15 +129,16 @@ setQtyErrors(prev => ({
 
     for (const item of items) {
       const qty = quantities[item.id];
+      const available =
+        Number(locationStock[item.id] || 0);
 
       if (!qty || qty <= 0) {
         return "Transfer quantity must be greater than zero";
       }
 
-      if (qty > item.total_stock) {
-      return `Insufficient stock for ${item.name}`;
-    }
-
+      if (qty > available) {
+        return "Quantity exceeds available stock";
+      }
     }
 
     return null;

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState} from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { inventoryApi } from "../../api/inventoryApi";
 import stockApi from "../../api/stockApi";
 
@@ -35,6 +35,7 @@ export default function InventoryDetails() {
       const [showSell, setShowSell] = useState(false);
       const [sales, setSales] = useState([]);
       const [purchases, setPurchases] = useState([]);
+      const navigate = useNavigate();
 
 
 
@@ -162,7 +163,11 @@ const totalPurchaseCost = purchases.reduce(
         </button>
 
         <button
-          onClick={() => setShowSell(true)}
+          onClick={() =>
+              navigate(
+                `/sales-orders/new?inventoryId=${product.id}`
+              )
+            }
           className="
             bg-green-600
             text-white
@@ -539,14 +544,6 @@ const totalPurchaseCost = purchases.reduce(
     title={`Sell ${product.name}`}
     onClose={() => setShowSell(false)}
   >
-    <SellItemForm
-      item={product}
-      onCancel={() => setShowSell(false)}
-      onSuccess={async () => {
-        await load();
-        setShowSell(false);
-      }}
-    />
   </StockTransferModal>
 )}
 
