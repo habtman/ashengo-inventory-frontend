@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useStockActions from "../../hooks/useStockActions";
 import LocationSelect from "../locations/LocationSelect";
+ 
 
 export default function StockAdjustmentForm({
   item,
