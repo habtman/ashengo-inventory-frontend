@@ -24,14 +24,7 @@ const hasQtyErrors = Object.values(qtyErrors).some(Boolean);
 const { transferStock, loading, error } = useStockActions();
 const [locationStock, setLocationStock] = useState({});
 
-const canSubmit =
-  fromLocation &&
-  toLocation &&
-  !locationError &&
-  !hasQtyErrors &&
-  items.every(
-    i => quantities[i.id] > 0
-  );
+
 
 //const isBulk = items.length > 1;
 useEffect(() => {
@@ -76,7 +69,14 @@ toLocation &&
 fromLocation === toLocation
   ? "Locations must be different"
   : "";
-
+const canSubmit =
+  fromLocation &&
+  toLocation &&
+  !locationError &&
+  !hasQtyErrors &&
+  items.every(
+    i => quantities[i.id] > 0
+  );
 
 
 // ❗ NOW you can conditionally render
@@ -88,32 +88,28 @@ if (!items.length) {
   );
 }
 
-  const handleQtyChange = (item, value) => {
+const handleQtyChange = (item, value) => {
   const qty = Number(value);
   const available =
-  Number(locationStock[item.id] || 0);
+    Number(locationStock[item.id] || 0);
 
-if (qty > available) {
-  error = `Only ${available} available`;
-}
+  setQuantities(prev => ({
+    ...prev,
+    [item.id]: qty,
+  }));
 
-    setQuantities(prev => ({
-      ...prev,
-      [item.id]: qty,
-    }));
+  let qtyError = null;
 
-let error = null;
+  if (!qty || qty <= 0) {
+    qtyError = "Quantity must be greater than zero";
+  } else if (qty > available) {
+    qtyError = `Only ${available} available`;
+  }
 
-if (!qty || qty <= 0) {
-  error = "Quantity must be greater than zero";
-} else if (qty > available) {
-  error = `Only ${available} available`;
-}
-
-setQtyErrors(prev => ({
-  ...prev,
-  [item.id]: error,
-}));
+  setQtyErrors(prev => ({
+    ...prev,
+    [item.id]: qtyError,
+  }));
 };
 
 
