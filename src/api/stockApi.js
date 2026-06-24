@@ -49,10 +49,10 @@ getSalesHistory: (id) =>
 
 getPurchaseHistory: (id) =>
   apiFetch(`/api/v1/stock/inventory/${id}/purchases`),
-getInventoryStockByLocation: (locationId) =>
+/*getInventoryStockByLocation: (locationId) =>
   apiFetch(
     `/api/v1/locations/${locationId}/stock`
-  ),
+  ),*/
 
 
 };

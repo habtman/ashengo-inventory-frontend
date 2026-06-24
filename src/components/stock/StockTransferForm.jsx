@@ -53,6 +53,7 @@ useEffect(() => {
         await stockApi.getLocationStock(
           fromLocation
         );
+        console.log("LOCATION STOCK", stock);
 
       const map = {};
 
@@ -60,6 +61,7 @@ useEffect(() => {
         map[item.inventory_id] =
           Number(item.quantity);
       });
+      console.log("MAP", map);
 
       setLocationStock(map);
 

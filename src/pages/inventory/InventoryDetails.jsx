@@ -42,9 +42,7 @@ export default function InventoryDetails() {
 
     const load = async () => {
       try {
-        console.log("stockApi", stockApi);
-console.log("getSalesHistory", stockApi.getSalesHistory);
-console.log("getPurchaseHistory", stockApi.getPurchaseHistory);
+
 const [
   productData,
   stockData,
