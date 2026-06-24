@@ -40,6 +40,9 @@ adjust: (payload) =>
     body: JSON.stringify(payload)
   }),
 
+getLocationById: (id) =>
+    apiFetch(`/api/v1/stock/locations/${id}/stock`, {
+    }),
 
 getSalesHistory: (id) =>
   apiFetch(`/api/v1/stock/inventory/${id}/sales`),
