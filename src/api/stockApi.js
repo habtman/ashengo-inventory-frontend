@@ -41,7 +41,7 @@ adjust: (payload) =>
   }),
 
 getLocationStock: (id) =>
-    apiFetch(`/api/v1/stock/locations/${id}/stock`, {
+    apiFetch(`/api/v1/locations/${id}/stock`, {
     }),
 
 getSalesHistory: (id) =>

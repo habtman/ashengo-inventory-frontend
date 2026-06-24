@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import stockApi from "../../api/stockApi";
 import useStockActions from "../../hooks/useStockActions";
 import StockTransferModal from "./StockTransferModal";
+import locationsApi from "../../api/locationsApi";
 
 
 
@@ -50,7 +51,7 @@ useEffect(() => {
       console.log(map);
 
       const stock =
-        await stockApi.getLocationStock(
+        await locationsApi.getLocationStock(
           fromLocation
         );
         console.log("LOCATION STOCK", stock);
@@ -107,8 +108,10 @@ if (!items.length) {
 
 const handleQtyChange = (item, value) => {
   const qty = Number(value);
-  const available =
-    Number(locationStock[item.id] || 0);
+  /*const available =
+    Number(locationStock[item.id] || 0);*/
+const available =
+  Number(item.total_stock || 0);
 
   setQuantities(prev => ({
     ...prev,
