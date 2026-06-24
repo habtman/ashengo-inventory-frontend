@@ -29,7 +29,7 @@ const [locationStock, setLocationStock] = useState({});
 //const isBulk = items.length > 1;
 useEffect(() => {
   stockApi
-    .getLocationsById()
+    .getLocations()
     .then(setLocations)
     .catch((err) => {
       console.error(err);
@@ -39,29 +39,44 @@ useEffect(() => {
 // 📦 Load locations
 useEffect(() => {
 
-  if (!fromLocation) return;
+  if (!fromLocation) {
+    setLocationStock({});
+    return;
+  }
 
   const loadStock = async () => {
+    try {
+      console.log(stock);
+      console.log(map);
 
-    const stock =
-      await stockApi.getInventoryStockByLocation(
-        fromLocation
-      );
+      const stock =
+        await stockApi.getLocationStock(
+          fromLocation
+        );
 
-    const map = {};
+      const map = {};
 
-    stock.forEach(item => {
-      map[item.inventory_id] =
-        item.quantity;
-    });
+      stock.forEach(item => {
+        map[item.inventory_id] =
+          Number(item.quantity);
+      });
 
-    setLocationStock(map);
+      setLocationStock(map);
 
+    } catch (err) {
+
+      console.error(err);
+
+      setLocationStock({});
+
+    }
   };
 
   loadStock();
+  
 
 }, [fromLocation]);
+
 
 const locationError =
 fromLocation &&
