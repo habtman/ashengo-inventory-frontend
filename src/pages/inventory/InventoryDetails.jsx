@@ -399,137 +399,123 @@ const totalPurchaseCost = purchases.reduce(
       {/* Sales History */}
 
 <div className="border rounded p-4">
-  <h2 className="text-xl font-semibold mb-4">
-    Sales History
-  </h2>
+<h2 className="text-xl font-semibold mb-4">
+  Sales History
+</h2>
 
-  <table className="w-full text-sm">
-    <thead>
-      <tr className="border-b bg-slate-50">
-        <th className="text-left p-2">Date</th>
-        <th className="text-left p-2">Customer</th>
-        <th className="text-left p-2">Location</th>
-        <th className="text-right p-2">Qty</th>
-        <th className="text-right p-2">Price</th>
-        <th className="text-right p-2">Total</th>
-        <th className="text-left p-2">Sold By</th>
+<table className="w-full">
+  <thead>
+    <tr className="border-b">
+      <th>Date</th>
+      <th>SO Number</th>
+      <th>Customer</th>
+      <th>Qty</th>
+      <th>Unit Price</th>
+      <th>Total</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {sales.length === 0 ? (
+      <tr>
+        <td colSpan="7">
+          No sales found
+        </td>
       </tr>
-    </thead>
-
-    <tbody>
-      {sales.length === 0 ? (
-        <tr>
-          <td colSpan="7" className="p-4 text-center text-gray-500">
-            No sales found
+    ) : (
+      sales.map((sale,index) => (
+        <tr key={index}>
+          <td>
+            {new Date(
+              sale.created_at
+            ).toLocaleDateString()}
           </td>
+
+          <td>{sale.so_number}</td>
+
+          <td>{sale.customer_name}</td>
+
+          <td>{sale.quantity}</td>
+
+          <td>
+            ${Number(
+              sale.unit_price
+            ).toFixed(2)}
+          </td>
+
+          <td>
+            ${Number(
+              sale.total_amount
+            ).toFixed(2)}
+          </td>
+
+          <td>{sale.status}</td>
         </tr>
-      ) : (
-        sales.map((sale) => (
-          <tr key={sale.id} className="border-b">
-            <td className="p-2">
-              {new Date(sale.created_at).toLocaleDateString()}
-            </td>
-
-            <td className="p-2">
-              {sale.sold_to || "Walk-in"}
-            </td>
-
-            <td className="p-2">
-              {sale.location_name || "-"}
-            </td>
-
-            <td className="p-2 text-right">
-              {sale.quantity}
-            </td>
-
-            <td className="p-2 text-right">
-              ${Number(sale.selling_price).toFixed(2)}
-            </td>
-
-            <td className="p-2 text-right font-medium">
-              ${Number(sale.total_amount).toFixed(2)}
-            </td>
-
-            <td className="p-2">
-              {sale.sold_by || "-"}
-            </td>
-          </tr>
-        ))
-      )}
-    </tbody>
-  </table>
+      ))
+    )}
+  </tbody>
+</table>
 </div>
 
 <div className="border rounded p-4">
-  <h2 className="text-xl font-semibold mb-4">
-    Purchase History
-  </h2>
+<h2 className="text-xl font-semibold mb-4">
+  Purchase History
+</h2>
 
-  <table className="w-full text-sm">
-    <thead>
-      <tr className="border-b bg-slate-50">
-        <th className="text-left p-2">GRN</th>
-        <th className="text-left p-2">Date</th>
-        <th className="text-left p-2">Location</th>
-        <th className="text-right p-2">Qty</th>
-        <th className="text-right p-2">Cost</th>
-        <th className="text-right p-2">Total Cost</th>
-        <th className="text-left p-2">Received By</th>
+<table className="w-full">
+  <thead>
+    <tr className="border-b">
+      <th>Date</th>
+      <th>GRN</th>
+      <th>Qty</th>
+      <th>Cost Price</th>
+      <th>Total Cost</th>
+      <th>Location</th>
+      <th>Received By</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {purchases.length === 0 ? (
+      <tr>
+        <td colSpan="7">
+          No purchases found
+        </td>
       </tr>
-    </thead>
-
-    <tbody>
-      {purchases.length === 0 ? (
-        <tr>
-          <td colSpan="7" className="p-4 text-center text-gray-500">
-            No purchases found
+    ) : (
+      purchases.map((purchase,index) => (
+        <tr key={index}>
+          <td>
+            {new Date(
+              purchase.received_at
+            ).toLocaleDateString()}
           </td>
+
+          <td>{purchase.grn_number}</td>
+
+          <td>{purchase.quantity}</td>
+
+          <td>
+            ${Number(
+              purchase.cost_price
+            ).toFixed(2)}
+          </td>
+
+          <td>
+            ${Number(
+              purchase.total_cost
+            ).toFixed(2)}
+          </td>
+
+          <td>{purchase.location_name}</td>
+
+          <td>{purchase.received_by}</td>
         </tr>
-      ) : (
-        purchases.map((purchase, index) => (
-          <tr key={index} className="border-b">
-            <td className="p-2">
-              {purchase.grn_number}
-            </td>
-
-            <td className="p-2">
-              {new Date(
-                purchase.received_at
-              ).toLocaleDateString()}
-            </td>
-
-            <td className="p-2">
-              {purchase.location_name}
-            </td>
-
-            <td className="p-2 text-right">
-              {purchase.quantity}
-            </td>
-
-                <td>
-                ${Number(purchase.cost_price || 0).toFixed(2)}
-              </td>
-
-              <td>
-                ${Number(purchase.total_cost || 0).toFixed(2)}
-              </td>
-
-            {/*<td className="p-2 text-right font-medium">
-              $
-              {(
-                Number(purchase.quantity) *
-                Number(purchase.cost_price)
-              ).toFixed(2)}
-            </td>*/}
-
-            <td className="p-2">
-              {purchase.received_by}
-            </td>
-          </tr>
-        ))
-      )}
-    </tbody>
-  </table>
+      ))
+    )}
+  </tbody>
+</table>
 </div>
 
 {showTransfer && (
