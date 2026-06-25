@@ -6,6 +6,7 @@ export default function InventoryForm({
   onCancel,
   submitting = false,
 }) {
+  
 
   const [form, setForm] = useState({
     name: initialData.name || "",
@@ -29,6 +30,10 @@ export default function InventoryForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (form.cost_price > form.price) {
+      alert("Selling price should be higher than cost price");
+      return;
+    }
     onSubmit(form);
   };
 

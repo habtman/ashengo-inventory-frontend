@@ -36,6 +36,8 @@ export default function InventoryDetails() {
       const [showSell, setShowSell] = useState(false);
       const [sales, setSales] = useState([]);
       const [purchases, setPurchases] = useState([]);
+      const [activeTab, setActiveTab] = useState("overview");
+
       const navigate = useNavigate();
 
 
@@ -193,7 +195,67 @@ const totalPurchaseCost = purchases.reduce(
 
       </div>
 
+      {/*Add Tab buttons*/}
+      <div className="flex gap-2 border-b pb-2 mb-4">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={`px-3 py-2 rounded ${
+            activeTab === "overview"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100"
+          }`}
+        >
+          Overview
+        </button>
+
+        <button
+          onClick={() => setActiveTab("locations")}
+          className={`px-3 py-2 rounded ${
+            activeTab === "locations"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100"
+          }`}
+        >
+          Locations
+        </button>
+
+        <button
+          onClick={() => setActiveTab("movements")}
+          className={`px-3 py-2 rounded ${
+            activeTab === "movements"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100"
+          }`}
+        >
+          Movements
+        </button>
+
+        <button
+          onClick={() => setActiveTab("purchases")}
+          className={`px-3 py-2 rounded ${
+            activeTab === "purchases"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100"
+          }`}
+        >
+          Purchases
+        </button>
+
+        <button
+          onClick={() => setActiveTab("sales")}
+          className={`px-3 py-2 rounded ${
+            activeTab === "sales"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100"
+          }`}
+        >
+          Sales
+        </button>
+      </div>
+
       {/* Summary Cards */}
+      {activeTab === "overview" && (
+        <>
       <div className="grid grid-cols-4 gap-4">
 
         <div className="border rounded p-4">
@@ -242,9 +304,35 @@ const totalPurchaseCost = purchases.reduce(
 
       </div>
 
- 
+      {/* Summary Cards*/}
+
+      <div className="grid grid-cols-4 gap-4">
+        <SummaryCard
+          title="Purchased"
+          value={totalPurchased}
+        />
+
+        <SummaryCard
+          title="Sold"
+          value={totalSold}
+        />
+
+        <SummaryCard
+          title="Sales Revenue"
+          value={`$${totalSalesRevenue.toFixed(2)}`}
+        />
+
+        <SummaryCard
+          title="Purchase Cost"
+          value={`$${totalPurchaseCost.toFixed(2)}`}
+        />
+      </div>
+        </>
+      )}
 
       {/* Stock by Location */}
+      {activeTab === "locations" && (
+        <>
       <div className="border rounded p-4">
 
         <h2 className="text-xl font-semibold mb-4">
@@ -300,8 +388,13 @@ const totalPurchaseCost = purchases.reduce(
         </table>
 
       </div>
+        </>
+      )}
 
-      {/* Movement History */}
+{/* Movement History */}
+      {activeTab === "movements" && (
+       <>
+      
       <div className="border rounded p-4">
 
         <h2 className="text-xl font-semibold mb-4">
@@ -379,148 +472,141 @@ const totalPurchaseCost = purchases.reduce(
         </table>
 
       </div>
-     <div className="grid grid-cols-4 gap-4">
-  <SummaryCard
-    title="Purchased"
-    value={totalPurchased}
-  />
+       </>
+    )}
 
-  <SummaryCard
-    title="Sold"
-    value={totalSold}
-  />
+    {/* Purchase History */}
+    {activeTab === "purchases" && (
+      <>
+      <div className="border rounded p-4">
+      <h2 className="text-xl font-semibold mb-4">
+        Purchase History
+      </h2>
 
-  <SummaryCard
-    title="Sales Revenue"
-    value={`$${totalSalesRevenue.toFixed(2)}`}
-  />
+      <table className="w-full">
+        <thead>
+          <tr className="border-b">
+            <th>Date</th>
+            <th>GRN</th>
+            <th>Qty</th>
+            <th>Cost Price</th>
+            <th>Total Cost</th>
+            <th>Location</th>
+            <th>Received By</th>
+          </tr>
+        </thead>
 
-  <SummaryCard
-    title="Purchase Cost"
-    value={`$${totalPurchaseCost.toFixed(2)}`}
-  />
-</div>
+        <tbody>
+          {purchases.length === 0 ? (
+            <tr>
+              <td colSpan="7">
+                No purchases found
+              </td>
+            </tr>
+          ) : (
+            purchases.map((purchase,index) => (
+              <tr key={index}>
+                <td>
+                  {new Date(
+                    purchase.received_at
+                  ).toLocaleDateString()}
+                </td>
+
+                <td>{purchase.grn_number}</td>
+
+                <td>{purchase.quantity}</td>
+
+                <td>
+                  ${Number(
+                    purchase.cost_price
+                  ).toFixed(2)}
+                </td>
+
+                <td>
+                  ${Number(
+                    purchase.total_cost
+                  ).toFixed(2)}
+                </td>
+
+                <td>{purchase.location_name}</td>
+
+                <td>{purchase.received_by}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+      </div>
+        </>
+    )}
+
+
       {/* Sales History */}
+    {activeTab === "sales" && (
+      <>
+      <div className="border rounded p-4">
+      <h2 className="text-xl font-semibold mb-4">
+        Sales History
+      </h2>
 
-<div className="border rounded p-4">
-<h2 className="text-xl font-semibold mb-4">
-  Sales History
-</h2>
+      <table className="w-full">
+        <thead>
+          <tr className="border-b">
+            <th>Date</th>
+            <th>SO Number</th>
+            <th>Customer</th>
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
 
-<table className="w-full">
-  <thead>
-    <tr className="border-b">
-      <th>Date</th>
-      <th>SO Number</th>
-      <th>Customer</th>
-      <th>Qty</th>
-      <th>Unit Price</th>
-      <th>Total</th>
-      <th>Status</th>
-    </tr>
-  </thead>
+        <tbody>
+          {sales.length === 0 ? (
+            <tr>
+              <td colSpan="7">
+                No sales found
+              </td>
+            </tr>
+          ) : (
+            sales.map((sale,index) => (
+              <tr key={index}>
+                <td>
+                  {new Date(
+                    sale.created_at
+                  ).toLocaleDateString()}
+                </td>
 
-  <tbody>
-    {sales.length === 0 ? (
-      <tr>
-        <td colSpan="7">
-          No sales found
-        </td>
-      </tr>
-    ) : (
-      sales.map((sale,index) => (
-        <tr key={index}>
-          <td>
-            {new Date(
-              sale.created_at
-            ).toLocaleDateString()}
-          </td>
+                <td>{sale.so_number}</td>
 
-          <td>{sale.so_number}</td>
+                <td>{sale.customer_name}</td>
 
-          <td>{sale.customer_name}</td>
+                <td>{sale.quantity}</td>
 
-          <td>{sale.quantity}</td>
+                <td>
+                  ${Number(
+                    sale.unit_price
+                  ).toFixed(2)}
+                </td>
 
-          <td>
-            ${Number(
-              sale.unit_price
-            ).toFixed(2)}
-          </td>
+                <td>
+                  ${Number(
+                    sale.total_amount
+                  ).toFixed(2)}
+                </td>
 
-          <td>
-            ${Number(
-              sale.total_amount
-            ).toFixed(2)}
-          </td>
-
-          <td>{sale.status}</td>
-        </tr>
-      ))
+                <td>{sale.status}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+      </div>
+        </>
     )}
-  </tbody>
-</table>
-</div>
 
-<div className="border rounded p-4">
-<h2 className="text-xl font-semibold mb-4">
-  Purchase History
-</h2>
 
-<table className="w-full">
-  <thead>
-    <tr className="border-b">
-      <th>Date</th>
-      <th>GRN</th>
-      <th>Qty</th>
-      <th>Cost Price</th>
-      <th>Total Cost</th>
-      <th>Location</th>
-      <th>Received By</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    {purchases.length === 0 ? (
-      <tr>
-        <td colSpan="7">
-          No purchases found
-        </td>
-      </tr>
-    ) : (
-      purchases.map((purchase,index) => (
-        <tr key={index}>
-          <td>
-            {new Date(
-              purchase.received_at
-            ).toLocaleDateString()}
-          </td>
-
-          <td>{purchase.grn_number}</td>
-
-          <td>{purchase.quantity}</td>
-
-          <td>
-            ${Number(
-              purchase.cost_price
-            ).toFixed(2)}
-          </td>
-
-          <td>
-            ${Number(
-              purchase.total_cost
-            ).toFixed(2)}
-          </td>
-
-          <td>{purchase.location_name}</td>
-
-          <td>{purchase.received_by}</td>
-        </tr>
-      ))
-    )}
-  </tbody>
-</table>
-</div>
 
 {showTransfer && (
   <StockTransferModal
