@@ -654,9 +654,8 @@ showAdjustment && (
       }}
     />
   </StockTransferModal>
-)
-}
-
+    )
+    }
     </div>
   );
 }
