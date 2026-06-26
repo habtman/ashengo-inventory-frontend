@@ -8,6 +8,7 @@ export default function InvoiceDetails() {
 
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
   if (!id || id === ":id") {

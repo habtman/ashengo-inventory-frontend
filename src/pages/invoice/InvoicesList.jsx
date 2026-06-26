@@ -9,6 +9,11 @@ export default function InvoicesList() {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [invoicePage, setInvoicePage] = useState(1);
+
+  const invoicePageSize = 10;
+
+
 
 
   useEffect(() => {
@@ -30,16 +35,27 @@ export default function InvoicesList() {
   loadInvoices();
 }, [search, startDate, endDate]);
 
+useEffect(() => {
+  setInvoicePage(1);
+}, [search]);
+
+const totalInvoicePages =
+  Math.ceil(invoices.length / invoicePageSize);
+
+const paginatedInvoices =
+  invoices.slice(
+    (invoicePage - 1) * invoicePageSize,
+    invoicePage * invoicePageSize
+  );
+
 
   if (loading) return <p>Loading invoices...</p>;
-  if (!invoices.length) return <p>No invoices found</p>;
+ 
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white shadow rounded-xl">
-      <h2 className="text-2xl font-bold mb-6">Invoices</h2>
    
-
-        <div className="flex justify-between items-center mb-6">
+     <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">
             Invoices
           </h1>
@@ -86,32 +102,138 @@ export default function InvoicesList() {
           <tr>
             <th className="border p-2">Invoice #</th>
             <th className="border p-2">Customer</th>
+            <th className="border p-2">Payment</th>
+            <th className="border p-2">Status</th>
             <th className="border p-2">Total</th>
             <th className="border p-2">Date</th>
             <th className="border p-2">Action</th>
           </tr>
         </thead>
         <tbody>
-          {invoices.map(inv => (
-            <tr key={inv.id}>
-              <td className="border p-2">{inv.invoice_number}</td>
-              <td className="border p-2">{inv.customer_name}</td>
-              <td className="border p-2">${inv.total_amount}</td>
-              <td className="border p-2">
-                {new Date(inv.created_at).toLocaleString()}
-              </td>
-              <td className="border p-2">
-                <button
-                  onClick={() => navigate(`/invoices/${inv.id}`)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded"
-                >
-                  View
-                </button>
+          {paginatedInvoices.length === 0 ? (
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center py-8 text-slate-500"
+              >
+                No invoices found
               </td>
             </tr>
-          ))}
+          ) : (
+            paginatedInvoices.map((inv) => (
+              <tr key={inv.id}>
+                <td className="border p-2">
+                  {inv.invoice_number}
+                </td>
+
+                <td className="border p-2">
+                  {inv.customer_name}
+                </td>
+
+                <td className="border p-2">
+                  {inv.payment_type === "CASH" ? (
+                    <span className="px-2 py-1 rounded bg-green-100 text-green-700">
+                      Cash
+                    </span>
+                  ) : (
+                    <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700">
+                      Credit
+                    </span>
+                  )}
+                </td>
+                <td className="border p-2">
+                  {inv.status === "PAID" && (
+                    <span className="px-2 py-1 rounded bg-green-100 text-green-700">
+                      Paid
+                    </span>
+                  )}
+
+                  {inv.status === "PARTIAL" && (
+                    <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700">
+                      Partial
+                    </span>
+                  )}
+
+                  {inv.status === "UNPAID" && (
+                    <span className="px-2 py-1 rounded bg-red-100 text-red-700">
+                      Unpaid
+                    </span>
+                  )}
+
+                  {inv.status === "VOID" && (
+                    <span className="px-2 py-1 rounded bg-gray-200 text-gray-700">
+                      Void
+                    </span>
+                  )}
+                </td>
+
+                <td className="border p-2">
+                  ${Number(inv.total_amount).toFixed(2)}
+                </td>
+
+                <td className="border p-2">
+                  {new Date(inv.created_at).toLocaleString()}
+                </td>
+
+                <td className="border p-2">
+                  <button
+                    onClick={() =>
+                      navigate(`/invoices/${inv.id}`)
+                    }
+                    className="px-3 py-1 bg-blue-600 text-white rounded"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
+
+      <div className="flex items-center justify-between mt-4">
+
+      <button
+        onClick={() =>
+          setInvoicePage((prev) =>
+            Math.max(prev - 1, 1)
+          )
+        }
+        disabled={invoicePage === 1}
+        className="px-3 py-2 border rounded disabled:opacity-50"
+      >
+        Previous
+      </button>
+
+      <span className="text-sm text-slate-600">
+        Page {invoicePage} of {totalInvoicePages || 1}
+        <br />
+
+        Showing{" "}
+        {invoices.length === 0
+          ? 0
+          : (invoicePage - 1) * invoicePageSize + 1}
+        -
+        {Math.min(
+          invoicePage * invoicePageSize,
+          invoices.length
+        )}{" "}
+        of {invoices.length}
+      </span>
+
+      <button
+        onClick={() =>
+          setInvoicePage((prev) =>
+            Math.min(prev + 1, totalInvoicePages)
+          )
+        }
+        disabled={invoicePage >= totalInvoicePages}
+        className="px-3 py-2 border rounded disabled:opacity-50"
+      >
+        Next
+      </button>
+
+    </div>
     </div>
   );
 }

@@ -37,6 +37,19 @@ export default function InventoryDetails() {
       const [sales, setSales] = useState([]);
       const [purchases, setPurchases] = useState([]);
       const [activeTab, setActiveTab] = useState("overview");
+      const [movementPage, setMovementPage] = useState(1);
+
+      const movementPageSize = 10;
+
+      const [purchasePage, setPurchasePage] = useState(1);
+
+      const [salesPage, setSalesPage] = useState(1);
+
+      const purchasePageSize = 10;
+      const salesPageSize = 10;
+      const [movementSearch, setMovementSearch] = useState("");
+      const [purchaseSearch, setPurchaseSearch] = useState("");
+      const [salesSearch, setSalesSearch] = useState("");
 
       const navigate = useNavigate();
 
@@ -74,6 +87,145 @@ useEffect(() => {
   load();
 }, [id]);
 
+useEffect(() => {
+  setMovementPage(1);
+}, [movementSearch]);
+
+useEffect(() => {
+  setPurchasePage(1);
+}, [purchaseSearch]);
+
+useEffect(() => {
+  setSalesPage(1);
+}, [salesSearch]);
+
+const filteredMovements = movements.filter((m) => {
+  const text = movementSearch.toLowerCase();
+
+  return (
+    (m.movement_type || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (m.from_location || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (m.to_location || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (m.created_by || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (m.details || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    String(m.quantity || "")
+      .includes(text)
+  );
+});
+
+const totalMovementPages =
+  Math.ceil(
+    filteredMovements.length /
+    movementPageSize
+  );
+
+const paginatedMovements =
+  filteredMovements.slice(
+    (movementPage - 1) *
+      movementPageSize,
+    movementPage *
+      movementPageSize
+  );
+
+  const filteredPurchases = purchases.filter((p) => {
+  const text = purchaseSearch.toLowerCase();
+
+  return (
+    (p.grn_number || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (p.location_name || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (p.received_by || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    String(p.quantity || "")
+      .includes(text) ||
+
+    String(p.cost_price || "")
+      .includes(text) ||
+
+    String(p.total_cost || "")
+      .includes(text)
+  );
+});
+
+  const totalPurchasePages =
+  Math.ceil(
+    filteredPurchases.length /
+    purchasePageSize
+  );
+
+const paginatedPurchases =
+  filteredPurchases.slice(
+    (purchasePage - 1) *
+      purchasePageSize,
+    purchasePage *
+      purchasePageSize
+  );
+
+const filteredSales = sales.filter((s) => {
+  const text = salesSearch.toLowerCase();
+
+  return (
+    (s.so_number || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (s.customer_name || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    (s.status || "")
+      .toLowerCase()
+      .includes(text) ||
+
+    String(s.quantity || "")
+      .includes(text) ||
+
+    String(s.unit_price || "")
+      .includes(text) ||
+
+    String(s.total_amount || "")
+      .includes(text)
+  );
+});
+
+  const totalSalesPages =
+  Math.ceil(
+    filteredSales.length /
+    salesPageSize
+  );
+
+const paginatedSales =
+  filteredSales.slice(
+    (salesPage - 1) *
+      salesPageSize,
+    salesPage *
+      salesPageSize
+  );
+
+
+
 if (loading) {
   return <div>Loading...</div>;
 }
@@ -88,7 +240,7 @@ const totalStock =
     0
   );
 
-const threshold =
+/*const threshold =
   Number(product?.low_stock_threshold ?? 0);
 
 let status = "In Stock";
@@ -100,7 +252,7 @@ if (totalStock === 0) {
 } else if (totalStock <= threshold) {
   status = "Low Stock";
   statusColor = "text-yellow-600";
-}
+}*/
 const totalSold = sales.reduce(
   (sum, sale) => sum + Number(sale.quantity),
   0
@@ -333,63 +485,117 @@ const totalPurchaseCost = purchases.reduce(
       {/* Stock by Location */}
       {activeTab === "locations" && (
         <>
-      <div className="border rounded p-4">
+<div className="bg-white rounded-lg border overflow-hidden">
 
-        <h2 className="text-xl font-semibold mb-4">
-          Stock By Location
-        </h2>
+  <div className="px-4 py-3 border-b">
+    <h3 className="font-semibold">
+      Stock by Location
+    </h3>
+  </div>
 
-        <div className="border rounded p-4">
-          <div className="text-sm text-gray-500">
-            Status
-          </div>
+  <div className="grid grid-cols-2 gap-4 mb-4">
 
-          <div className={`text-xl font-bold ${statusColor}`}>
-            {status}
-          </div>
+  <SummaryCard
+    title="Locations"
+    value={stock.length}
+  />
 
-        </div>
+  <SummaryCard
+    title="Total Value"
+    value={`$${stock
+      .reduce(
+        (sum, row) =>
+          sum +
+          row.quantity *
+            (product?.cost_price || 0),
+        0
+      )
+      .toFixed(2)}`}
+  />
 
+</div>
 
+  <table className="w-full text-sm">
 
-        <table className="w-full">
+    <thead className="bg-slate-50">
+      <tr>
+        <th className="text-left px-4 py-3">
+          Location
+        </th>
 
-          <thead>
-            <tr className="border-b">
-              <th className="text-left py-2">
-                Location
-              </th>
+        <th className="text-right px-4 py-3">
+          Quantity
+        </th>
 
-              <th className="text-left py-2">
-                Quantity
-              </th>
-            </tr>
-          </thead>
+        <th className="text-right px-4 py-3">
+          Stock Value
+        </th>
 
-          <tbody>
-            {stock.map(location => (
-              <tr
-                key={location.location_id}
-                className="border-b"
-              >
-                <td className="py-2">
-                  {location.location_name}
-                </td>
+        <th className="text-center px-4 py-3">
+          Status
+        </th>
+      </tr>
+    </thead>
 
-                <td className="py-2">
-                  {location.quantity}
-                </td>
-              </tr>
+    <tbody>
 
-              
-            ))}
-          </tbody>
+      {stock.map((row) => {
 
-        </table>
+        const value =
+          row.quantity *
+          (product?.cost_price || 0);
 
-      </div>
+        return (
+          <tr
+            key={row.location_id}
+            className="border-t"
+          >
+            <td className="px-4 py-3">
+              {row.location_name}
+            </td>
+
+            <td className="px-4 py-3 text-right">
+              {row.quantity}
+            </td>
+
+            <td className="px-4 py-3 text-right">
+              ${value.toFixed(2)}
+            </td>
+
+            <td className="px-4 py-3 text-center">
+
+              {row.quantity === 0 ? (
+                <span className="text-red-600">
+                  Out of Stock
+                </span>
+              ) : row.quantity <=
+                (product?.low_stock_threshold || 0)
+              ? (
+                <span className="text-yellow-600">
+                  Low Stock
+                </span>
+              ) : (
+                <span className="text-green-600">
+                  In Stock
+                </span>
+              )}
+
+            </td>
+
+          </tr>
+        );
+
+      })}
+
+    </tbody>
+
+  </table>
+
+</div>
         </>
       )}
+
+  
 
 {/* Movement History */}
       {activeTab === "movements" && (
@@ -400,6 +606,19 @@ const totalPurchaseCost = purchases.reduce(
         <h2 className="text-xl font-semibold mb-4">
           Movement History
         </h2>
+            <div className="flex justify-between mb-4">
+
+        <input
+          type="text"
+          placeholder="Search movements..."
+          value={movementSearch}
+          onChange={(e) =>
+            setMovementSearch(e.target.value)
+          }
+          className="border rounded px-3 py-2 w-72"
+        />
+
+      </div>
 
         <table className="w-full">
 
@@ -430,7 +649,7 @@ const totalPurchaseCost = purchases.reduce(
           </thead>
 
           <tbody>
-            {movements.length === 0 ? (
+            {filteredMovements.length === 0 ? (
               <tr>
                 <td colSpan="7">
                   No movement history found
@@ -438,7 +657,7 @@ const totalPurchaseCost = purchases.reduce(
               </tr>
             ) : 
             
-            movements.map(movement => (
+            paginatedMovements.map(movement => (
               <tr
                 key={movement.id}
                 className="border-b"
@@ -471,6 +690,43 @@ const totalPurchaseCost = purchases.reduce(
 
         </table>
 
+      <div className="flex items-center justify-between mt-4">
+
+        <button
+          onClick={() =>
+            setMovementPage(prev =>
+              Math.max(prev - 1, 1)
+            )
+          }
+          disabled={movementPage === 1}
+          className="px-3 py-2 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <span className="text-sm text-slate-600">
+          Page {movementPage} of {totalMovementPages || 1}
+        </span>
+
+        <button
+          onClick={() =>
+            setMovementPage(prev =>
+              Math.min(
+                prev + 1,
+                totalMovementPages
+              )
+            )
+          }
+          disabled={
+            movementPage >= totalMovementPages
+          }
+          className="px-3 py-2 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+
+      </div>
+
       </div>
        </>
     )}
@@ -482,6 +738,14 @@ const totalPurchaseCost = purchases.reduce(
       <h2 className="text-xl font-semibold mb-4">
         Purchase History
       </h2>
+      <input
+          placeholder="Search purchases..."
+          value={purchaseSearch}
+          onChange={(e)=>
+            setPurchaseSearch(e.target.value)
+          }
+          className="border rounded px-3 py-2 w-72"
+        />
 
       <table className="w-full">
         <thead>
@@ -497,14 +761,14 @@ const totalPurchaseCost = purchases.reduce(
         </thead>
 
         <tbody>
-          {purchases.length === 0 ? (
+          {filteredPurchases.length === 0 ? (
             <tr>
               <td colSpan="7">
                 No purchases found
               </td>
             </tr>
           ) : (
-            purchases.map((purchase,index) => (
+            paginatedPurchases.map((purchase,index) => (
               <tr key={index}>
                 <td>
                   {new Date(
@@ -536,6 +800,52 @@ const totalPurchaseCost = purchases.reduce(
           )}
         </tbody>
       </table>
+
+      <div className="flex items-center justify-between mt-4">
+
+        <button
+          onClick={() =>
+            setPurchasePage(prev =>
+              Math.max(prev - 1, 1)
+            )
+          }
+          disabled={purchasePage === 1}
+          className="px-3 py-2 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <span className="text-sm text-slate-600">
+          Showing{" "}
+          {filteredPurchases.length === 0
+            ? 0
+            : (purchasePage - 1) * purchasePageSize + 1}
+          -
+          {Math.min(
+            purchasePage * purchasePageSize,
+            filteredPurchases.length
+          )}
+          of {filteredPurchases.length}
+        </span>
+
+        <button
+          onClick={() =>
+            setPurchasePage(prev =>
+              Math.min(
+                prev + 1,
+                totalPurchasePages
+              )
+            )
+          }
+          disabled={
+            purchasePage >= totalPurchasePages
+          }
+          className="px-3 py-2 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+
+      </div>
       </div>
         </>
     )}
@@ -548,6 +858,15 @@ const totalPurchaseCost = purchases.reduce(
       <h2 className="text-xl font-semibold mb-4">
         Sales History
       </h2>
+
+      <input
+        placeholder="Search sales..."
+        value={salesSearch}
+        onChange={(e)=>
+          setSalesSearch(e.target.value)
+        }
+        className="border rounded px-3 py-2 w-72"
+      />
 
       <table className="w-full">
         <thead>
@@ -563,14 +882,14 @@ const totalPurchaseCost = purchases.reduce(
         </thead>
 
         <tbody>
-          {sales.length === 0 ? (
+          {filteredSales.length === 0 ? (
             <tr>
               <td colSpan="7">
                 No sales found
               </td>
             </tr>
           ) : (
-            sales.map((sale,index) => (
+            paginatedSales.map((sale,index) => (
               <tr key={index}>
                 <td>
                   {new Date(
@@ -602,6 +921,51 @@ const totalPurchaseCost = purchases.reduce(
           )}
         </tbody>
       </table>
+      <div className="flex items-center justify-between mt-4">
+
+        <button
+          onClick={() =>
+            setSalesPage(prev =>
+              Math.max(prev - 1, 1)
+            )
+          }
+          disabled={salesPage === 1}
+          className="px-3 py-2 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <span className="text-sm text-slate-600">
+      Showing{" "}
+        {filteredSales.length === 0
+          ? 0
+          : (salesPage - 1) * salesPageSize + 1}
+        -
+        {Math.min(
+          salesPage * salesPageSize,
+          filteredSales.length
+        )}
+        of {filteredSales.length}
+        </span>
+
+        <button
+          onClick={() =>
+            setSalesPage(prev =>
+              Math.min(
+                prev + 1,
+                totalSalesPages
+              )
+            )
+          }
+          disabled={
+            salesPage >= totalSalesPages
+          }
+          className="px-3 py-2 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+
+      </div>
       </div>
         </>
     )}
