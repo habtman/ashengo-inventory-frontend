@@ -102,9 +102,13 @@ const paginatedInvoices =
           <tr>
             <th className="border p-2">Invoice #</th>
             <th className="border p-2">Customer</th>
+            <th className="border p-2">Total</th>
+
             <th className="border p-2">Payment</th>
             <th className="border p-2">Status</th>
-            <th className="border p-2">Total</th>
+            <th className="border p-2">Paid</th>
+            <th className="border p-2">Balance</th>
+
             <th className="border p-2">Date</th>
             <th className="border p-2">Action</th>
           </tr>
@@ -130,46 +134,36 @@ const paginatedInvoices =
                   {inv.customer_name}
                 </td>
 
-                <td className="border p-2">
-                  {inv.payment_type === "CASH" ? (
-                    <span className="px-2 py-1 rounded bg-green-100 text-green-700">
-                      Cash
-                    </span>
-                  ) : (
-                    <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700">
-                      Credit
-                    </span>
-                  )}
-                </td>
-                <td className="border p-2">
-                  {inv.status === "PAID" && (
-                    <span className="px-2 py-1 rounded bg-green-100 text-green-700">
-                      Paid
-                    </span>
-                  )}
 
-                  {inv.status === "PARTIAL" && (
-                    <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700">
-                      Partial
-                    </span>
-                  )}
-
-                  {inv.status === "UNPAID" && (
-                    <span className="px-2 py-1 rounded bg-red-100 text-red-700">
-                      Unpaid
-                    </span>
-                  )}
-
-                  {inv.status === "VOID" && (
-                    <span className="px-2 py-1 rounded bg-gray-200 text-gray-700">
-                      Void
-                    </span>
-                  )}
-                </td>
 
                 <td className="border p-2">
                   ${Number(inv.total_amount).toFixed(2)}
                 </td>
+
+              <td>{inv.payment_type}</td>
+
+              <td>
+                <span
+                  className={
+                    inv.status === "PAID"
+                      ? "text-green-600"
+                      : inv.status === "PARTIAL"
+                      ? "text-yellow-600"
+                      : "text-red-600"
+                  }
+                >
+                  {inv.status}
+                </span>
+                  </td>
+
+                  <td>
+                    ${Number(inv.amount_paid || 0).toFixed(2)}
+                  </td>
+
+                  <td>
+                    ${Number(inv.balance_due || 0).toFixed(2)}
+                  </td>
+
 
                 <td className="border p-2">
                   {new Date(inv.created_at).toLocaleString()}
