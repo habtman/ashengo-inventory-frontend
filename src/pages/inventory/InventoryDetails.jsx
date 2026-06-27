@@ -5,8 +5,6 @@ import stockApi from "../../api/stockApi";
 
 import StockTransferModal from "../../components/stock/StockTransferModal";
 import StockTransferForm from "../../components/stock/StockTransferForm";
-import SellItemForm from "../../components/sell/SellItemForm";
-import SellItemModal from "../../components/sell/SellItemModal";
 import StockAdjustmentForm from "../../components/stock/StockAdjustmentForm";
 
 function SummaryCard({ title, value }) {
@@ -33,7 +31,7 @@ export default function InventoryDetails() {
 
       const [showTransfer, setShowTransfer] = useState(false);
       const [showAdjustment, setShowAdjustment] = useState(false);
-      const [showSell, setShowSell] = useState(false);
+
       const [sales, setSales] = useState([]);
       const [purchases, setPurchases] = useState([]);
       const [activeTab, setActiveTab] = useState("overview");
@@ -53,51 +51,63 @@ export default function InventoryDetails() {
 
       const navigate = useNavigate();
 
+      const [locations, setLocations] = useState([]);
+      const [locationId, setLocationId] = useState("");
+
+      useEffect(() => {
+          stockApi.getLocations().then(setLocations);
+      }, []);
+
 
 
     const load = async () => {
       try {
 
-const [
-  productData,
-  stockData,
-  movementData,
-  salesData,
-  purchaseData
-] = await Promise.all([
-  inventoryApi.getById(id),
-  inventoryApi.getStockByLocation(id),
-  inventoryApi.getMovements(id),
-  stockApi.getSalesHistory(id),
-  stockApi.getPurchaseHistory(id)
-]);
-        setProduct(productData);
-        setStock(stockData);
-        setMovements(movementData);
-        setSales(salesData);
-        setPurchases(purchaseData);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-useEffect(() => {
-  load();
-}, [id]);
+      const [
+        productData,
+        stockData,
+        movementData,
+        salesData,
+        purchaseData,
+        locationData,
 
-useEffect(() => {
-  setMovementPage(1);
-}, [movementSearch]);
+      ] = await Promise.all([
+        inventoryApi.getById(id),
+        inventoryApi.getStockByLocation(id),
+        inventoryApi.getMovements(id),
+        stockApi.getSalesHistory(id),
+        stockApi.getPurchaseHistory(id),
+        stockApi.getLocationStock(id),
 
-useEffect(() => {
-  setPurchasePage(1);
-}, [purchaseSearch]);
+      ]);
+              setProduct(productData);
+              setStock(stockData);
+              setMovements(movementData);
+              setSales(salesData);
+              setPurchases(purchaseData);
+              setLocationId(locationData);
+            } catch (err) {
+              console.error(err);
+            } finally {
+              setLoading(false);
+            }
+          };
+          
+      useEffect(() => {
+        load();
+      }, [id]);
 
-useEffect(() => {
-  setSalesPage(1);
-}, [salesSearch]);
+      useEffect(() => {
+        setMovementPage(1);
+      }, [movementSearch]);
+
+      useEffect(() => {
+        setPurchasePage(1);
+      }, [purchaseSearch]);
+
+      useEffect(() => {
+        setSalesPage(1);
+      }, [salesSearch]);
 
 const filteredMovements = movements.filter((m) => {
   const text = movementSearch.toLowerCase();
@@ -286,6 +296,30 @@ const totalPurchaseCost = purchases.reduce(
           {product.name}
         </h1>
       </div>
+
+    <div>
+      <label>Location</label>
+
+      <select
+          value={locationId}
+          onChange={(e)=>setLocationId(e.target.value)}
+          required
+      >
+          <option value="">
+              Select location
+          </option>
+
+          {locations.map(location=>(
+              <option
+                  key={location.id}
+                  value={location.id}
+              >
+                  {location.name}
+              </option>
+          ))}
+      </select>
+  </div>
+
       <div className="border rounded p-4">
         <div>SKU: {product.sku}</div>
         <div>
@@ -317,10 +351,10 @@ const totalPurchaseCost = purchases.reduce(
 
         <button
           onClick={() =>
-              navigate(
-                `/sales-orders/new?inventoryId=${product.id}`
-              )
-            }
+            navigate(
+              `/sales-orders/new?inventoryId=${product.id}`
+            )
+          }
           className="
             bg-green-600
             text-white
@@ -329,7 +363,7 @@ const totalPurchaseCost = purchases.reduce(
             hover:bg-green-700
           "
         >
-          Sell
+          Create Sales Order
         </button>
 
         <button
@@ -988,13 +1022,6 @@ const totalPurchaseCost = purchases.reduce(
   </StockTransferModal>
 )}
 
-{showSell && (
-  <StockTransferModal
-    title={`Sell ${product.name}`}
-    onClose={() => setShowSell(false)}
-  >
-  </StockTransferModal>
-)}
 
 {
 showAdjustment && (
