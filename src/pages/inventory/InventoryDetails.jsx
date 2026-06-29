@@ -48,7 +48,13 @@ export default function InventoryDetails() {
       const [movementSearch, setMovementSearch] = useState("");
       const [purchaseSearch, setPurchaseSearch] = useState("");
       const [salesSearch, setSalesSearch] = useState("");
+      const [invoice, setInvoice] = useState(null);
 
+      const [paymentType, setPaymentType] =
+      useState("CASH");
+
+      const [creditDays, setCreditDays] =
+      useState(30);
       const navigate = useNavigate();
 
 
@@ -281,25 +287,56 @@ const totalPurchaseCost = purchases.reduce(
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">
-          {product.name}
-        </h1>
+        <h2 className="text-2xl font-bold">
+           Invoice #{invoice.invoice_number}
+      </h2>
       </div>
       
-      <div className="border rounded p-4">
-        <div>SKU: {product.sku}</div>
-        <div>
-          Threshold:
-          {product.low_stock_threshold}
-        </div>
-        <div>
-          Created:
-          {new Date(
-            product.created_at
-          ).toLocaleDateString()}
-        </div>
-      </div>
+ <div className="grid grid-cols-2 gap-4 mt-6 bg-white shadow rounded p-6">
 
+    <div>
+        <p className="text-gray-500">Customer</p>
+        <p className="font-semibold">
+            {invoice.customer_name}
+        </p>
+    </div>
+
+    <div>
+        <p className="text-gray-500">Payment Type</p>
+        <p className="font-semibold">
+            {invoice.payment_type}
+        </p>
+    </div>
+
+    <div>
+        <p className="text-gray-500">Credit Days</p>
+        <p>
+            {invoice.credit_days || "-"}
+        </p>
+    </div>
+
+    <div>
+        <p className="text-gray-500">Status</p>
+        <p>{invoice.status}</p>
+    </div>
+
+    <div>
+        <p className="text-gray-500">Created</p>
+        <p>
+            {new Date(invoice.created_at).toLocaleDateString()}
+        </p>
+    </div>
+
+    <div>
+        <p className="text-gray-500">Due Date</p>
+        <p>
+            {invoice.due_date
+                ? new Date(invoice.due_date).toLocaleDateString()
+                : "-"}
+        </p>
+    </div>
+
+</div>
       <div className="flex gap-3">
 
         <button
