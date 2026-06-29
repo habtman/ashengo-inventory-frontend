@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { inventoryApi } from "../../api/inventoryApi";
 import customerApi from "../../api/customerApi";
+import locationsApi from "../../api/locationsApi";  
    
 
 export default function SalesOrderForm() {
@@ -11,6 +12,9 @@ export default function SalesOrderForm() {
   const [customerId, setCustomerId] = useState("");
   const [customers, setCustomers] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
+  const [locationId, setLocationId] = useState("");
+  const [locations, setLocations] = useState([]);
+  
   const [items, setItems] = useState([
   {
     inventoryId: "",
@@ -19,29 +23,29 @@ export default function SalesOrderForm() {
   }
 ]);
 
-const [paymentType, setPaymentType] =
-  useState("CASH");
-
-const [creditDays, setCreditDays] =
-  useState(30);
 
 useEffect(() => {
   const load = async () => {
-    try {
-      console.log("Loading inventory...");
+  try {
+    const inventoryData =
+      await inventoryApi.getAllForInvoice();
 
-      const data = await inventoryApi.getAllForInvoice();
-      setInventoryList(data);
+    setInventoryList(inventoryData);
 
-      const customerData =
-        await customerApi.getAll();
+    const customerData =
+      await customerApi.getAll();
 
-      setCustomers(customerData);
+    setCustomers(customerData);
 
-    } catch (err) {
-      console.error("Inventory load failed:", err);
-    }
-  };
+    const locationData =
+      await locationsApi.getLocations();
+
+    setLocations(locationData);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   load();
 }, []);
@@ -68,16 +72,31 @@ const total = items.reduce(
   0
 );
 
-  const handleSubmit = async () => {
-    const res = await salesOrderApi.create({
-      customerId,
-      paymentType,
-      creditDays,
-      items
-    });
+const handleSubmit = async () => {
 
-    navigate(`/sales-orders/${res.soId}`);
-  };
+  if (!customerId) {
+    alert("Please select a customer");
+    return;
+  }
+
+  if (!locationId) {
+    alert("Please select a location");
+    return;
+  }
+
+  if (items.length === 0) {
+    alert("Please add at least one item");
+    return;
+  }
+
+  const res = await salesOrderApi.create({
+    customerId,
+    locationId,
+    items
+  });
+
+  navigate(`/sales-orders/${res.soId}`);
+};;
 
 
   return (
@@ -85,6 +104,7 @@ const total = items.reduce(
 
       <h2 className="text-xl font-bold mb-4">Create Sales Order</h2>
 
+    {/* Customer Dropdown */}
         <select
           value={customerId}
           onChange={(e) =>
@@ -107,43 +127,28 @@ const total = items.reduce(
             </option>
           ))}
         </select>
-      <select
-        value={paymentType}
-        onChange={(e) =>
-          setPaymentType(e.target.value)
-        }
-      >
-        <option value="CASH">
-          Cash
-        </option>
 
-        <option value="CREDIT">
-          Credit
-        </option>
-      </select>
+{/* Location Dropddown */}
+          <select
+            value={locationId}
+            onChange={(e) =>
+              setLocationId(Number(e.target.value))
+            }
+            className="border p-2 mb-4 w-full"
+          >
+            <option value="">
+              Select Warehouse / Location
+            </option>
 
-      {paymentType === "CREDIT" && (
-        <select
-          value={creditDays}
-          onChange={(e) =>
-            setCreditDays(
-              Number(e.target.value)
-            )
-          }
-        >
-          <option value={30}>
-            30 Days
-          </option>
-
-          <option value={45}>
-            45 Days
-          </option>
-
-          <option value={60}>
-            60 Days
-          </option>
-        </select>
-      )}
+            {locations.map((location) => (
+              <option
+                key={location.id}
+                value={location.id}
+              >
+                {location.name}
+              </option>
+            ))}
+          </select>
 
       <div className="mb-4">
         Products Loaded: {inventoryList.length}

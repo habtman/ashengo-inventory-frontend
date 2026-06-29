@@ -10,6 +10,15 @@ const invoiceApi = {
     return await apiFetch(`/api/v1/invoices/${id}`);
   },
 
+  update: (id,data)=>
+    apiFetch(
+        `/api/v1/invoices/${id}`,
+        {
+            method:"PUT",
+            body:JSON.stringify(data)
+        }
+    ),
+
   createInvoice: async (data) => {
     return await apiFetch("/api/v1/invoices", {
       method: "POST",

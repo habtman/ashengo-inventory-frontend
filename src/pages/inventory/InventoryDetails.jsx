@@ -51,12 +51,6 @@ export default function InventoryDetails() {
 
       const navigate = useNavigate();
 
-      const [locations, setLocations] = useState([]);
-      const [locationId, setLocationId] = useState("");
-
-      useEffect(() => {
-          stockApi.getLocations().then(setLocations);
-      }, []);
 
 
 
@@ -68,24 +62,19 @@ export default function InventoryDetails() {
         stockData,
         movementData,
         salesData,
-        purchaseData,
-        locationData,
-
+        purchaseData
       ] = await Promise.all([
         inventoryApi.getById(id),
         inventoryApi.getStockByLocation(id),
         inventoryApi.getMovements(id),
         stockApi.getSalesHistory(id),
-        stockApi.getPurchaseHistory(id),
-        stockApi.getLocationStock(id),
-
+        stockApi.getPurchaseHistory(id)
       ]);
               setProduct(productData);
               setStock(stockData);
               setMovements(movementData);
               setSales(salesData);
               setPurchases(purchaseData);
-              setLocationId(locationData);
             } catch (err) {
               console.error(err);
             } finally {
@@ -296,30 +285,7 @@ const totalPurchaseCost = purchases.reduce(
           {product.name}
         </h1>
       </div>
-
-    <div>
-      <label>Location</label>
-
-      <select
-          value={locationId}
-          onChange={(e)=>setLocationId(e.target.value)}
-          required
-      >
-          <option value="">
-              Select location
-          </option>
-
-          {locations.map(location=>(
-              <option
-                  key={location.id}
-                  value={location.id}
-              >
-                  {location.name}
-              </option>
-          ))}
-      </select>
-  </div>
-
+      
       <div className="border rounded p-4">
         <div>SKU: {product.sku}</div>
         <div>
