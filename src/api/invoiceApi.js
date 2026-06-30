@@ -18,6 +18,11 @@ const invoiceApi = {
             body:JSON.stringify(data)
         }
     ),
+  recordPayment: (id, data) =>
+  apiFetch(`/api/v1/invoices/${id}/payments`, {
+    method: "POST",
+    body: JSON.stringify(data)
+  }),
 
   createInvoice: async (data) => {
     return await apiFetch("/api/v1/invoices", {

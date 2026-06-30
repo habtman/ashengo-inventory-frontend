@@ -59,18 +59,6 @@ const paginatedInvoices =
           <h1 className="text-2xl font-bold">
             Invoices
           </h1>
-
-          <Link
-            to="/invoices/new"
-            className="
-              bg-blue-600
-              text-white
-              px-4 py-2
-              rounded
-            "
-          >
-            + Create Invoice
-          </Link>
         </div>
       <div className="mb-4 flex gap-2">
         <input
@@ -101,6 +89,7 @@ const paginatedInvoices =
         <thead className="bg-gray-100">
           <tr>
             <th className="border p-2">Invoice #</th>
+            <th className="border p-2">Sales Order #</th>
             <th className="border p-2">Customer</th>
             <th className="border p-2">Total</th>
 
@@ -123,65 +112,77 @@ const paginatedInvoices =
                 No invoices found
               </td>
             </tr>
-          ) : (
-            paginatedInvoices.map((inv) => (
-              <tr key={inv.id}>
-                <td className="border p-2">
-                  {inv.invoice_number}
-                </td>
+          ) : (paginatedInvoices.map((inv) => (
+          <tr key={inv.id}>
+            <td className="border p-2">
+              {inv.invoice_number}
+            </td>
 
-                <td className="border p-2">
-                  {inv.customer_name}
-                </td>
+            <td className="border p-2">
+              {inv.so_number}
+            </td>
 
+            <td className="border p-2">
+              {inv.customer_name}
+            </td>
 
+            <td className="border p-2">
+              ${Number(inv.total_amount).toFixed(2)}
+            </td>
 
-                <td className="border p-2">
-                  ${Number(inv.total_amount).toFixed(2)}
-                </td>
+            <td className="border p-2">
+              {inv.payment_method}
+            </td>
 
-              <td>{inv.payment_method}</td>
+            <td className="border p-2">
+              <span
+                className={
+                  inv.status === "PAID"
+                    ? "text-green-600 font-semibold"
+                    : inv.status === "PARTIALLY_PAID"
+                    ? "text-orange-600 font-semibold"
+                    : "text-red-600 font-semibold"
+                }
+              >
+                {inv.status}
+              </span>
+            </td>
 
-              <td>
-                <span
-                  className={
-                    inv.status === "PAID"
-                      ? "text-green-600"
-                      : inv.status === "PARTIAL"
-                      ? "text-yellow-600"
-                      : "text-red-600"
-                  }
-                >
-                  {inv.status}
-                </span>
-                  </td>
+            <td className="border p-2">
+              ${Number(inv.amount_paid || 0).toFixed(2)}
+            </td>
 
-                  <td>
-                    ${Number(inv.amount_paid || 0).toFixed(2)}
-                  </td>
+            <td className="border p-2">
+              ${Number(inv.balance_due || 0).toFixed(2)}
+            </td>
 
-                  <td>
-                    ${Number(inv.balance_due || 0).toFixed(2)}
-                  </td>
+            <td className="border p-2">
+              {new Date(inv.created_at).toLocaleString()}
+            </td>
 
+             <td className="border p-2">
+              <button
+                onClick={() => navigate(`/invoices/${inv.id}`)}
+                className="px-3 py-1 bg-blue-600 text-white rounded"
+              >
+                View
+              </button>
 
-                <td className="border p-2">
-                  {new Date(inv.created_at).toLocaleString()}
-                </td>
-
-                <td className="border p-2">
-                  <button
-                    onClick={() =>
-                      navigate(`/invoices/${inv.id}`)
-                    }
-                    className="px-3 py-1 bg-blue-600 text-white rounded"
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
+              <button
+                onClick={() =>
+                  window.open(
+                    `/invoices/${inv.id}/print`,
+                    "_blank"
+                  )
+                }
+                className="px-3 py-1 bg-green-600 text-white rounded"
+              >
+                Print
+              </button>
+            </td>
+          </tr>
+        ))
+        )}
         </tbody>
       </table>
 

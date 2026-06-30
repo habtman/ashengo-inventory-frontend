@@ -8,6 +8,21 @@ export default function InvoiceDetails() {
 
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [showPaymentModal, setShowPaymentModal] =
+  useState(false);
+
+  const [paymentAmount, setPaymentAmount] =
+    useState("");
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("CASH");
+
+  const [referenceNumber, setReferenceNumber] =
+    useState("");
+
+  const [notes, setNotes] =
+    useState("");
   
 
   useEffect(() => {
@@ -67,6 +82,16 @@ export default function InvoiceDetails() {
   <p>{invoice.customer_name}</p>
 </div>
 
+<div className="border rounded p-3">
+  <p className="text-sm text-gray-500">
+    Sales Order
+  </p>
+
+  <p className="font-semibold">
+    {invoice.so_number}
+  </p>
+</div>
+
 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
 
   <div className="border rounded p-3">
@@ -119,7 +144,7 @@ export default function InvoiceDetails() {
 
     </div>
 
-    {invoice.payment_method === "CREDIT" && (
+  {/*  {invoice.payment_method === "CREDIT" && (
   <div className="border rounded p-4 bg-yellow-50 mb-6">
 
     <div className="flex justify-between">
@@ -153,7 +178,7 @@ export default function InvoiceDetails() {
     </div>
 
   </div>
-)}
+)}*/}
 
       <table className="w-full border">
         <thead className="bg-gray-100">
@@ -187,6 +212,14 @@ export default function InvoiceDetails() {
         Total: ${Number(invoice.total_amount).toFixed(2)}
       </div>
 
+      <div className="flex justify-end gap-3 mt-6">
+
+      <button
+        className="bg-green-600 text-white px-4 py-2 rounded"
+      >
+      Record Payment
+      </button>
+
       <button
         onClick={() =>
           window.open(
@@ -196,8 +229,17 @@ export default function InvoiceDetails() {
         }
         className="bg-indigo-600 text-white px-4 py-2 rounded"
       >
-        Print Invoice
+      Print Invoice
       </button>
+
+      <button
+        onClick={() => setShowPaymentModal(true)}
+        className="bg-green-600 text-white px-4 py-2 rounded ml-2"
+      >
+        Record Payment
+      </button>
+
+      </div>
 
     </div>
   );
