@@ -271,6 +271,13 @@ const handleRecordPayment = async () => {
           Print Invoice
         </button>
 
+        <button
+            onClick={() => setShowPaymentModal(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded"
+          >
+            Record Payment
+          </button>
+
         {invoice.balance_due > 0 && (
 
           <button
