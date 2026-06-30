@@ -140,7 +140,7 @@ const paginatedInvoices =
                   ${Number(inv.total_amount).toFixed(2)}
                 </td>
 
-              <td>{inv.payment_type}</td>
+              <td>{inv.payment_method}</td>
 
               <td>
                 <span

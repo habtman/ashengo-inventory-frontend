@@ -119,7 +119,7 @@ export default function InvoiceDetails() {
 
     </div>
 
-    {invoice.payment_type === "CREDIT" && (
+    {invoice.payment_method === "CREDIT" && (
   <div className="border rounded p-4 bg-yellow-50 mb-6">
 
     <div className="flex justify-between">
