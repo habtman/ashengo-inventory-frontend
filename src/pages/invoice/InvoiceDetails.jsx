@@ -75,7 +75,7 @@ export default function InvoiceDetails() {
     </p>
 
     <p className="font-semibold">
-      {invoice.payment_type}
+      {invoice.payment_method}
     </p>
   </div>
 
