@@ -9,21 +9,23 @@ export default function InvoiceDetails() {
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [showPaymentModal, setShowPaymentModal] =
+ const [showPaymentModal, setShowPaymentModal] =
   useState(false);
 
-  const [paymentAmount, setPaymentAmount] =
-    useState("");
+const [paymentAmount, setPaymentAmount] =
+  useState("");
 
-  const [paymentMethod, setPaymentMethod] =
-    useState("CASH");
+const [paymentMethod, setPaymentMethod] =
+  useState("CASH");
 
-  const [referenceNumber, setReferenceNumber] =
-    useState("");
+const [referenceNumber, setReferenceNumber] =
+  useState("");
 
-  const [notes, setNotes] =
-    useState("");
-  
+const [notes, setNotes] =
+  useState("");
+
+const [savingPayment, setSavingPayment] =
+  useState(false);
 
   useEffect(() => {
   if (!id || id === ":id") {
@@ -52,6 +54,49 @@ export default function InvoiceDetails() {
   return <p>Invalid invoice ID</p>;
 }
 
+const handleRecordPayment = async () => {
+
+  try {
+
+    setSavingPayment(true);
+
+    await invoiceApi.recordPayment(
+      invoice.id,
+      {
+        amount: Number(paymentAmount),
+        paymentMethod,
+        referenceNumber,
+        notes
+      }
+    );
+
+    const updated =
+      await invoiceApi.getInvoiceById(invoice.id);
+
+    setInvoice(updated);
+
+    setShowPaymentModal(false);
+
+    setPaymentAmount("");
+    setReferenceNumber("");
+    setNotes("");
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert(
+      err.message ||
+      "Payment failed"
+    );
+
+  } finally {
+
+    setSavingPayment(false);
+
+  }
+
+};
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded-xl">
@@ -212,34 +257,154 @@ export default function InvoiceDetails() {
         Total: ${Number(invoice.total_amount).toFixed(2)}
       </div>
 
-      <div className="flex justify-end gap-3 mt-6">
+      <div className="flex gap-3 mt-6">
 
-      <button
-        className="bg-green-600 text-white px-4 py-2 rounded"
-      >
-      Record Payment
-      </button>
+        <button
+          onClick={() =>
+            window.open(
+              `/invoices/${invoice.id}/print`,
+              "_blank"
+            )
+          }
+          className="bg-indigo-600 text-white px-4 py-2 rounded"
+        >
+          Print Invoice
+        </button>
 
-      <button
-        onClick={() =>
-          window.open(
-            `/invoices/${invoice.id}/print`,
-            "_blank"
-          )
-        }
-        className="bg-indigo-600 text-white px-4 py-2 rounded"
-      >
-      Print Invoice
-      </button>
+        {invoice.balance_due > 0 && (
 
-      <button
-        onClick={() => setShowPaymentModal(true)}
-        className="bg-green-600 text-white px-4 py-2 rounded ml-2"
-      >
-        Record Payment
-      </button>
+          <button
+            onClick={() =>
+              setShowPaymentModal(true)
+            }
+            className="bg-green-600 text-white px-4 py-2 rounded"
+          >
+            Record Payment
+          </button>
+
+        )}
 
       </div>
+
+      {showPaymentModal && (
+
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+
+    <h2 className="text-xl font-bold mb-4">
+      Record Payment
+    </h2>
+
+    <div className="space-y-4">
+
+      <div>
+        <label className="block text-sm mb-1">
+          Amount
+        </label>
+
+        <input
+          type="number"
+          className="border rounded w-full p-2"
+          value={paymentAmount}
+          onChange={(e)=>
+            setPaymentAmount(e.target.value)
+          }
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm mb-1">
+          Payment Method
+        </label>
+
+        <select
+          className="border rounded w-full p-2"
+          value={paymentMethod}
+          onChange={(e)=>
+            setPaymentMethod(e.target.value)
+          }
+        >
+          <option value="CASH">
+            Cash
+          </option>
+
+          <option value="BANK">
+            Bank
+          </option>
+
+          <option value="CHEQUE">
+            Cheque
+          </option>
+
+          <option value="MOBILE">
+            Mobile Money
+          </option>
+        </select>
+
+      </div>
+
+      <div>
+        <label className="block text-sm mb-1">
+          Reference Number
+        </label>
+
+        <input
+          className="border rounded w-full p-2"
+          value={referenceNumber}
+          onChange={(e)=>
+            setReferenceNumber(e.target.value)
+          }
+        />
+      </div>
+
+      <div>
+
+        <label className="block text-sm mb-1">
+          Notes
+        </label>
+
+        <textarea
+          className="border rounded w-full p-2"
+          rows={3}
+          value={notes}
+          onChange={(e)=>
+            setNotes(e.target.value)
+          }
+        />
+
+      </div>
+
+    </div>
+
+    <div className="flex justify-end gap-3 mt-6">
+
+      <button
+        onClick={()=>
+          setShowPaymentModal(false)
+        }
+        className="px-4 py-2 border rounded"
+      >
+        Cancel
+      </button>
+
+      <button
+        onClick={handleRecordPayment}
+        disabled={savingPayment}
+        className="bg-green-600 text-white px-4 py-2 rounded"
+      >
+        {savingPayment
+          ? "Saving..."
+          : "Save Payment"}
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+)}
 
     </div>
   );
