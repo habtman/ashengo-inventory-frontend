@@ -189,7 +189,7 @@ const handleRecordPayment = async () => {
 
     </div>
 
-  {/*  {invoice.payment_method === "CREDIT" && (
+  {invoice.payment_method === "CREDIT" && (
   <div className="border rounded p-4 bg-yellow-50 mb-6">
 
     <div className="flex justify-between">
@@ -223,7 +223,7 @@ const handleRecordPayment = async () => {
     </div>
 
   </div>
-)}*/}
+)}
 
       <table className="w-full border">
         <thead className="bg-gray-100">
@@ -257,6 +257,79 @@ const handleRecordPayment = async () => {
         Total: ${Number(invoice.total_amount).toFixed(2)}
       </div>
 
+      {invoice.payments?.length > 0 && (
+
+      <div className="mt-8">
+
+        <h3 className="text-xl font-bold mb-3">
+          Payment History
+        </h3>
+
+        <table className="w-full border">
+
+          <thead className="bg-gray-100">
+
+            <tr>
+
+              <th className="border p-2">
+                Date
+              </th>
+
+              <th className="border p-2">
+                Method
+              </th>
+
+              <th className="border p-2">
+                Reference
+              </th>
+
+              <th className="border p-2">
+                Amount
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {invoice.payments.map(payment => (
+
+            <tr key={payment.id}>
+
+              <td className="border p-2">
+                {new Date(
+                  payment.payment_date
+                ).toLocaleString()}
+              </td>
+
+              <td className="border p-2">
+                {payment.payment_method}
+              </td>
+
+              <td className="border p-2">
+                {payment.reference_number || "-"}
+              </td>
+
+              <td className="border p-2">
+
+                $
+                {Number(payment.amount).toFixed(2)}
+
+              </td>
+
+            </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      )}
+
       <div className="flex gap-3 mt-6">
 
         <button
@@ -271,12 +344,12 @@ const handleRecordPayment = async () => {
           Print Invoice
         </button>
 
-        <button
+       {/* <button
             onClick={() => setShowPaymentModal(true)}
             className="bg-green-600 text-white px-4 py-2 rounded"
           >
             Record Payment
-          </button>
+          </button>*/}
 
         {invoice.balance_due > 0 && (
 
