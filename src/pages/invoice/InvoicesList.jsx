@@ -168,7 +168,7 @@ const paginatedInvoices =
                 View
               </button>
 
-              <button
+              {/*<button
                 onClick={() =>
                   window.open(
                     `/invoices/${inv.id}/print`,
@@ -178,7 +178,7 @@ const paginatedInvoices =
                 className="px-3 py-1 bg-green-600 text-white rounded"
               >
                 Print
-              </button>
+              </button>*/}
             </td>
           </tr>
         ))
