@@ -14,7 +14,7 @@ export default function CustomerDetails() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [ledger, setLedger] = useState({
       customer: {},
-      salesOrders: [],
+      invoices: [],
       payments: []
     });
 
@@ -38,9 +38,9 @@ useEffect(() => {
   if (!customer) return null;
 
   const outstanding =
-  ledger.salesOrders?.reduce(
-    (sum, so) =>
-      sum + Number(so.balance_due || 0),
+  ledger.invoices?.reduce(
+    (sum, io) =>
+      sum + Number(io.balance_due || 0),
     0
   ) || 0;
 
@@ -125,8 +125,8 @@ const totalPaid =
 
           <RecordPaymentModal
             customerId={id}
-            salesOrders={
-              ledger.salesOrders || []
+            invoices={
+              ledger.invoices || []
             }
             onClose={() =>
               setShowPaymentModal(false)

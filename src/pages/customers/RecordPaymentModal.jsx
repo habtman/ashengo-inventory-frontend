@@ -3,13 +3,13 @@ import customerPaymentApi from "../../api/customerPaymentApi";
 
 export default function RecordPaymentModal({
   customerId,
-  salesOrders,
+  invoices,
   onClose,
   onSuccess
 }) {
 
-  const [salesOrderId,
-    setSalesOrderId] = useState("");
+  const [invoiceId,
+    setInvoiceId] = useState("");
 
   const [amount,
     setAmount] = useState("");
@@ -23,7 +23,7 @@ export default function RecordPaymentModal({
 
       await customerPaymentApi.create({
         customerId,
-        salesOrderId,
+        invoiceId,
         amount,
         paymentMethod
       });
@@ -59,33 +59,33 @@ export default function RecordPaymentModal({
 
         <select
           className="border p-2 w-full mb-3"
-          value={salesOrderId}
+          value={invoiceId}
           onChange={(e) =>
-            setSalesOrderId(
+            setInvoiceId(
               e.target.value
             )
           }
         >
 
           <option value="">
-            Select Sales Order
+            Select Invoice  
           </option>
 
-          {salesOrders
+          {invoices
             .filter(
-              so =>
+              io =>
                 Number(
-                  so.balance_due
+                  io.balance_due
                 ) > 0
             )
-            .map(so => (
+            .map(io => (
               <option
-                key={so.id}
-                value={so.id}
+                key={io.id}
+                value={io.id}
               >
-                {so.so_number}
+                {io.so_number}
                 {" - "}
-                {so.balance_due}
+                {io.balance_due}
               </option>
             ))}
 
