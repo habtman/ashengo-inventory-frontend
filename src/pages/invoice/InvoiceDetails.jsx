@@ -212,11 +212,36 @@ const handleRecordPayment = async () => {
           Due Date
         </p>
 
-        <p className="font-semibold">
+        <p
+          className={
+            invoice.status !== "PAID" &&
+            invoice.due_date &&
+            new Date(invoice.due_date) < new Date()
+              ? "font-semibold text-red-600"
+              : "font-semibold"
+          }
+        >
           {invoice.due_date
             ? new Date(invoice.due_date).toLocaleDateString()
             : "-"}
         </p>
+
+
+        <p className="text-sm text-gray-500 mt-2">
+  {invoice.due_date
+    ? (() => {
+        const days = Math.ceil(
+          (new Date(invoice.due_date) - new Date()) /
+          (1000 * 60 * 60 * 24)
+        );
+
+        if (days < 0)
+          return `${Math.abs(days)} day(s) overdue`;
+
+        return `${days} day(s) remaining`;
+      })()
+    : ""}
+</p>
 
       </div>
 

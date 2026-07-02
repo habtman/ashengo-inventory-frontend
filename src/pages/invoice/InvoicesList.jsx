@@ -97,7 +97,7 @@ const paginatedInvoices =
             <th className="border p-2">Status</th>
             <th className="border p-2">Paid</th>
             <th className="border p-2">Balance</th>
-
+            <th className="border p-2">Due Date</th>
             <th className="border p-2">Date</th>
             <th className="border p-2">Action</th>
           </tr>
@@ -154,6 +154,21 @@ const paginatedInvoices =
 
             <td className="border p-2">
               ${Number(inv.balance_due || 0).toFixed(2)}
+            </td>
+
+            <td
+              className={
+                inv.status !== "PAID" &&
+                inv.due_date &&
+                new Date(inv.due_date) < new Date()
+                  ? "border p-2 text-red-600 font-semibold"
+                  : "border p-2"
+              }
+            >
+              {inv.due_date
+                ? new Date(inv.due_date)
+                    .toLocaleDateString()
+                : "-"}
             </td>
 
             <td className="border p-2">
