@@ -58,18 +58,34 @@ export default function CustomerStatement({
             return (
               <tr key={idx}>
 
-                <td>{row.date}</td>
+                <td>
+                    {new Date(row.date).toLocaleDateString()}
+                </td>
 
-                <td>{row.type}</td>
+                <td>
+                <span
+                    className={
+                      row.type === "INVOICE"
+                        ? "text-blue-600 font-semibold"
+                        : "text-green-600 font-semibold"
+                    }
+                  >
+                    {row.type}
+                  </span>
+                </td>
 
                 <td>{row.reference}</td>
 
-                <td>{row.debit}</td>
-
-                <td>{row.credit}</td>
+                <td>
+                  ${Number(row.debit).toFixed(2)}
+                </td>
 
                 <td>
-                  {row.balance.toFixed(2)}
+                  ${Number(row.credit).toFixed(2)}
+                </td>
+
+                <td className="font-semibold">
+                  ${Number(row.balance).toFixed(2)}
                 </td>
 
               </tr>
