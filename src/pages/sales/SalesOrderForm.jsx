@@ -14,6 +14,8 @@ export default function SalesOrderForm() {
   const [inventoryList, setInventoryList] = useState([]);
   const [locationId, setLocationId] = useState("");
   const [locations, setLocations] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("CASH"); 
+  const [creditDays, setCreditDays] = useState(30);
   
   const [items, setItems] = useState([
   {
@@ -72,6 +74,14 @@ const total = items.reduce(
   0
 );
 
+const dueDate =
+  paymentMethod === "CREDIT"
+    ? new Date(
+        Date.now() +
+        creditDays * 24 * 60 * 60 * 1000
+      )
+    : null;
+
 const handleSubmit = async () => {
 
   if (!customerId) {
@@ -94,6 +104,14 @@ const handleSubmit = async () => {
     locationId,
     items
   });
+  
+  const salesOrderId = res.soId; // or createRes.id if that's what your API returns
+
+  await salesOrderApi.confirm(salesOrderId, {
+    paymentMethod,
+    creditDays
+  });
+
 
   navigate(`/sales-orders/${res.soId}`);
 };;
@@ -149,6 +167,49 @@ const handleSubmit = async () => {
               </option>
             ))}
           </select>
+
+          <h3 className="font-semibold mt-6">
+            Payment Method
+          </h3>
+
+          <select
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="border rounded p-2"
+          >
+            <option value="CASH">Cash</option>
+            <option value="CREDIT">Credit</option>
+          </select>
+
+          {paymentMethod === "CREDIT" && (
+            <div className="mt-4">
+
+              <label>Credit Days</label>
+
+              <select
+                value={creditDays}
+                onChange={(e) =>
+                  setCreditDays(Number(e.target.value))
+                }
+                className="border rounded p-2"
+              >
+                <option value={7}>7 Days</option>
+                <option value={15}>15 Days</option>
+                <option value={30}>30 Days</option>
+                <option value={60}>60 Days</option>
+                <option value={90}>90 Days</option>
+              </select>
+
+              <p>
+              Due Date:
+              {dueDate?.toLocaleDateString()}
+            </p>
+
+
+            </div>
+          )}
+
+
 
       <div className="mb-4">
         Products Loaded: {inventoryList.length}

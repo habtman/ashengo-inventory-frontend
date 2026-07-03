@@ -15,14 +15,16 @@ const salesOrderApi = {
   getById: (id) =>
     apiFetch(`/api/v1/sales-orders/${id}`),
 
-  create: (data) =>
-    apiFetch(
-      "/api/v1/sales-orders",
-      {
+create(data) {
+    return apiFetch("/sales-orders", {
         method: "POST",
-        body: JSON.stringify(data)
-      }
-    ),
+        body: JSON.stringify({
+            customerId: data.customerId,
+            locationId: data.locationId,
+            items: data.items
+        })
+    });
+},
 
   confirm: (id) =>
     apiFetch(
