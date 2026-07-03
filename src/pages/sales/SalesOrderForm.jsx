@@ -83,6 +83,51 @@ const dueDate =
     : null;
 
 const handleSubmit = async () => {
+  try {
+    if (!customerId) {
+      alert("Please select a customer");
+      return;
+    }
+
+    if (!locationId) {
+      alert("Please select a location");
+      return;
+    }
+
+    if (items.length === 0) {
+      alert("Please add at least one item");
+      return;
+    }
+
+    const createRes = await salesOrderApi.create({
+      customerId,
+      locationId,
+      paymentMethod,
+      creditDays,
+      items
+    });
+
+    console.log("CREATE RESPONSE:", createRes);
+
+    const salesOrderId = createRes.soId;
+
+    const confirmRes = await salesOrderApi.confirm(salesOrderId, {
+      paymentMethod,
+      creditDays
+    });
+
+    console.log("CONFIRM RESPONSE:", confirmRes);
+
+    navigate(`/sales-orders/${salesOrderId}`);
+
+  } catch (err) {
+    console.error(err);
+
+    alert(err.message || "Failed to create sales order");
+  }
+};
+
+/*const handleSubmit = async () => {
 
   if (!customerId) {
     alert("Please select a customer");
@@ -100,9 +145,11 @@ const handleSubmit = async () => {
   }
 
   const res = await salesOrderApi.create({
-    customerId,
-    locationId,
-    items
+      customerId,
+      locationId,
+      paymentMethod,
+      creditDays,
+      items
   });
   
   const salesOrderId = res.soId; // or createRes.id if that's what your API returns
@@ -114,7 +161,7 @@ const handleSubmit = async () => {
 
 
   navigate(`/sales-orders/${res.soId}`);
-};;
+};*/
 
 
   return (
