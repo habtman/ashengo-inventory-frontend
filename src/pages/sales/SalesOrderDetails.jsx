@@ -75,13 +75,17 @@ const handleConfirm = async () => {
         {so.customer_name}      
         </p>
       <p>
-        <strong>Payment Type:</strong>
-        {so.payment_type}
+        <strong>Payment Method:</strong>
+        {so.payment_method || "-"}  
       </p>
 
       <p>
         <strong>Credit Terms:</strong>
         {so.credit_days || "-"} Days
+      </p>
+      <p>
+        <strong>Balance Due:</strong>
+        {so.balance_due}  
       </p>
 
       <p>
