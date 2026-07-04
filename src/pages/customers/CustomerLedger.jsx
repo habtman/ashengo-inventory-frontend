@@ -29,6 +29,7 @@ export default function CustomerLedger({ customerId }) {
           <tr>
             <th>Invoice</th>
             <th>Date</th>
+            <th>Payment</th>
             <th>Total</th>
             <th>Paid</th>
             <th>Balance</th>
@@ -42,36 +43,49 @@ export default function CustomerLedger({ customerId }) {
           {(ledger.invoices || []).map((invoice) => (
             <tr key={invoice.id}>
 
-              <td>{invoice.invoice_number}</td>
+          <td>{invoice.invoice_number}</td>
 
-              <td>
-                {new Date(invoice.created_at).toLocaleDateString()}
-              </td>
+          <td>
+              {new Date(invoice.created_at).toLocaleDateString()}
+          </td>
 
-              <td>
-                ${Number(invoice.total_amount).toFixed(2)}
-              </td>
+          <td>{invoice.payment_method}</td>
 
-              <td>
-                ${Number(invoice.amount_paid || 0).toFixed(2)}
-              </td>
+          <td>
+              {invoice.payment_method === "CREDIT"
+                  ? new Date(invoice.due_date).toLocaleDateString()
+                  : "-"}
+          </td>
 
-              <td>
-                ${Number(invoice.balance_due || 0).toFixed(2)}
-              </td>
+          <td>
+              ${Number(invoice.total_amount).toFixed(2)}
+          </td>
 
-              <td>{invoice.status}</td>
+          <td>
+              ${Number(invoice.amount_paid).toFixed(2)}
+          </td>
 
-              <td>
-                <Link
-                  to={`/invoices/${invoice.id}`}
-                  className="text-blue-600 underline"
-                >
-                  View
-                </Link>
-              </td>
+          <td>
+              ${Number(invoice.balance_due).toFixed(2)}
+          </td>
 
-            </tr>
+          <td>
+              <span
+                  className={
+                      invoice.status === "PAID"
+                          ? "text-green-600"
+                          : invoice.status === "OVERDUE"
+                          ? "text-red-600"
+                          : invoice.status === "PARTIALLY_PAID"
+                          ? "text-yellow-600"
+                          : "text-gray-600"
+                  }
+              >
+                  {invoice.status}
+              </span>
+          </td>
+
+      </tr>
           ))}
 
         </tbody>
