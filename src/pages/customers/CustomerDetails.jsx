@@ -6,6 +6,7 @@ import CustomerStatement from "./CustomerStatement";
 import RecordPaymentModal from "./RecordPaymentModal";
 
 export default function CustomerDetails() {
+  const [activeTab, setActiveTab] = useState("invoices");
 
   const { id } = useParams();
 
@@ -110,17 +111,70 @@ const totalPaid =
 
       </div>
 
-        <div className="grid grid-cols-2 gap-6">
+<div className="mt-8 bg-white rounded-lg shadow">
 
-        <CustomerLedger
-          customerId={id}
-        />
+  <div className="flex border-b">
 
-        <CustomerStatement
-          customerId={id}
-        />
+    <button
+      onClick={() => setActiveTab("invoices")}
+      className={`px-6 py-3 ${
+        activeTab === "invoices"
+          ? "border-b-2 border-blue-600 font-semibold"
+          : "text-gray-500"
+      }`}
+    >
+      Invoices
+    </button>
 
-      </div>
+    <button
+      onClick={() => setActiveTab("payments")}
+      className={`px-6 py-3 ${
+        activeTab === "payments"
+          ? "border-b-2 border-blue-600 font-semibold"
+          : "text-gray-500"
+      }`}
+    >
+      Payments
+    </button>
+
+    <button
+      onClick={() => setActiveTab("statement")}
+      className={`px-6 py-3 ${
+        activeTab === "statement"
+          ? "border-b-2 border-blue-600 font-semibold"
+          : "text-gray-500"
+      }`}
+    >
+      Statement
+    </button>
+
+  </div>
+
+  <div className="p-6">
+
+    {activeTab === "invoices" && (
+      <CustomerLedger
+        customerId={id}
+        mode="invoices"
+      />
+    )}
+
+    {activeTab === "payments" && (
+      <CustomerLedger
+        customerId={id}
+        mode="payments"
+      />
+    )}
+
+    {activeTab === "statement" && (
+      <CustomerStatement
+        customerId={id}
+      />
+    )}
+
+  </div>
+
+</div>
              {showPaymentModal && (
 
           <RecordPaymentModal

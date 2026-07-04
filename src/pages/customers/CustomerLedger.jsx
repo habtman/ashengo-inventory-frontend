@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
 
-export default function CustomerLedger({ customerId }) {
+export default function CustomerLedger({ customerId, mode }) {
   const [ledger, setLedger] = useState(null);
 
   useEffect(() => {
@@ -19,9 +19,7 @@ export default function CustomerLedger({ customerId }) {
   return (
     <div className="mt-8">
 
-      <h2 className="text-lg font-bold mb-4">
-        Invoices
-      </h2>
+{mode === "invoices" && (
 
       <table className="w-full border mb-8">
 
@@ -66,7 +64,15 @@ export default function CustomerLedger({ customerId }) {
           </td>
 
           <td>
+              <p
+              className={
+              Number(invoice.balance_due)===0
+              ?"text-green-600 font-semibold"
+              :"text-red-600 font-semibold"
+              }
+              >
               ${Number(invoice.balance_due).toFixed(2)}
+              </p>
           </td>
 
           <td>
@@ -91,10 +97,10 @@ export default function CustomerLedger({ customerId }) {
         </tbody>
 
       </table>
+  )}
 
-      <h2 className="text-lg font-bold mb-4">
-        Payments
-      </h2>
+
+{mode === "payments" && (
 
       <table className="w-full border">
 
@@ -125,7 +131,16 @@ export default function CustomerLedger({ customerId }) {
               </td>
 
               <td>
+                <span
+                className={`px-2 py-1 rounded text-xs font-semibold
+                ${
+                payment.payment_method==="CASH"
+                ?"bg-green-100 text-green-700"
+                :"bg-blue-100 text-blue-700"
+                }`}
+                >
                 {payment.payment_method}
+                </span>
               </td>
 
             </tr>
@@ -134,6 +149,7 @@ export default function CustomerLedger({ customerId }) {
         </tbody>
 
       </table>
+      )}
 
     </div>
   );
