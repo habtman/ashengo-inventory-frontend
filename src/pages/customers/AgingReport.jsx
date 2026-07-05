@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
+import { Link } from "react-router-dom";
 
 export default function AgingReport() {
 
@@ -22,6 +23,8 @@ export default function AgingReport() {
     useEffect(() => {
     load();
   }, []);
+
+
 
   const totalCurrent =
     rows.reduce(
@@ -51,12 +54,72 @@ export default function AgingReport() {
       0
     );
 
+    const outstanding = (row) =>
+    Number(row.current_bucket || 0) +
+    Number(row.days_31_60 || 0) +
+    Number(row.days_61_90 || 0) +
+    Number(row.over_90 || 0);
+
+  
+
+  const rowClass = (row) =>
+    Number(row.over_90) > 0
+      ? "bg-red-50"
+      : Number(row.days_61_90) > 0
+      ? "bg-orange-50"
+      : "";
+
+  const totalOutstanding =
+  totalCurrent +
+  total31 +
+  total61 +
+  total90;
+
   return (
     <div className="p-6">
 
-      <h1 className="text-2xl font-bold mb-4">
-        Customer Aging Report
-      </h1>
+<h1 className="text-2xl font-bold mb-6">
+  Customer Aging Report
+</h1>
+
+<div className="grid grid-cols-5 gap-4 mb-8">
+
+  <div className="bg-white rounded shadow p-4">
+    <p className="text-gray-500 text-sm">Current</p>
+    <p className="text-2xl font-bold text-green-600">
+      ${totalCurrent.toFixed(2)}
+    </p>
+  </div>
+
+  <div className="bg-white rounded shadow p-4">
+    <p className="text-gray-500 text-sm">31–60</p>
+    <p className="text-2xl font-bold text-yellow-600">
+      ${total31.toFixed(2)}
+    </p>
+  </div>
+
+  <div className="bg-white rounded shadow p-4">
+    <p className="text-gray-500 text-sm">61–90</p>
+    <p className="text-2xl font-bold text-orange-600">
+      ${total61.toFixed(2)}
+    </p>
+  </div>
+
+      <div className="bg-white rounded shadow p-4">
+        <p className="text-gray-500 text-sm">90+</p>
+        <p className="text-2xl font-bold text-red-600">
+          ${total90.toFixed(2)}
+        </p>
+      </div>
+
+      <div className="bg-indigo-600 rounded shadow p-4 text-white">
+        <p>Total Receivable</p>
+        <p className="text-3xl font-bold">
+          ${(totalCurrent + total31 + total61 + total90).toFixed(2)}
+        </p>
+      </div>
+
+    </div>
 
       <div className="bg-white rounded shadow overflow-x-auto">
 
@@ -74,6 +137,10 @@ export default function AgingReport() {
               </th>
 
               <th className="p-3 text-right">
+                Outstanding
+              </th>
+
+              <th className="p-3 text-right">
                 31-60 Days
               </th>
 
@@ -83,6 +150,10 @@ export default function AgingReport() {
 
               <th className="p-3 text-right">
                 Over 90
+              </th>
+
+              <th className="p-3">
+                  Action
               </th>
             </tr>
 
@@ -94,32 +165,41 @@ export default function AgingReport() {
 
               <tr
                 key={row.id}
-                className="border-t"
+                className={`border-t ${rowClass}`}
               >
 
-                <td className="p-3">
+              <td className="p-3">
+                <Link
+                  to={`/customers/${row.id}`}
+                  className="text-blue-600 hover:underline font-medium"
+                >
                   {row.name}
-                </td>
+                </Link>
+              </td>
 
-                <td className="p-3 text-right">
+                <td className="p-3 text-right text-green-600">
                   {Number(
                     row.current_bucket
                   ).toFixed(2)}
                 </td>
 
-                <td className="p-3 text-right">
+                <td className="p-3 text-right font-semibold">
+                  {outstanding.toFixed(2)}
+                </td>
+
+                <td className="p-3 text-right text-yellow-600">
                   {Number(
                     row.days_31_60
                   ).toFixed(2)}
                 </td>
 
-                <td className="p-3 text-right">
+                <td className="p-3 text-right text-orange-600">
                   {Number(
                     row.days_61_90
                   ).toFixed(2)}
                 </td>
 
-                <td className="p-3 text-right">
+                <td className="p-3 text-right text-red-600 font-bold">
                   {Number(
                     row.over_90
                   ).toFixed(2)}
@@ -153,6 +233,10 @@ export default function AgingReport() {
 
               <td className="p-3 text-right">
                 {total90.toFixed(2)}
+              </td>
+
+              <td className="p-3 text-right">
+                {totalOutstanding.toFixed(2)}
               </td>
 
             </tr>

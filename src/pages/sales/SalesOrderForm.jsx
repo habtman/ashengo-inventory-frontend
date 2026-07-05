@@ -14,16 +14,17 @@ export default function SalesOrderForm() {
   const [inventoryList, setInventoryList] = useState([]);
   const [locationId, setLocationId] = useState("");
   const [locations, setLocations] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("CASH"); 
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [creditDays, setCreditDays] = useState(30);
+  const [dueDate, setDueDate] = useState(null);
   
   const [items, setItems] = useState([
-  {
-    inventoryId: "",
-    quantity: 1,
-    unitPrice: 0
-  }
-]);
+    {
+      inventoryId: "",
+      quantity: 1,
+      unitPrice: 0
+    }
+  ]);
 
 
 useEffect(() => {
@@ -74,13 +75,18 @@ const total = items.reduce(
   0
 );
 
-const dueDate =
-  paymentMethod === "CREDIT"
-    ? new Date(
+useEffect(() => {
+  if (paymentMethod === "CREDIT") {
+    setDueDate(
+      new Date(
         Date.now() +
         creditDays * 24 * 60 * 60 * 1000
       )
-    : null;
+    );
+  } else {
+    setDueDate(null);
+  }
+}, [paymentMethod, creditDays]);
 
 const handleSubmit = async () => {
   try {

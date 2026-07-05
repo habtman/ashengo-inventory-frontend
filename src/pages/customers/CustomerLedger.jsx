@@ -28,7 +28,8 @@ export default function CustomerLedger({ customerId, mode }) {
             <th>Invoice</th>
             <th>Date</th>
             <th>Payment</th>
-            <th>Total</th>
+            <th>Due Date</th>
+            <th>Amount</th> 
             <th>Paid</th>
             <th>Balance</th>
             <th>Status</th>

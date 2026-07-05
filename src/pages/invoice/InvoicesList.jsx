@@ -89,7 +89,6 @@ const paginatedInvoices =
         <thead className="bg-gray-100">
           <tr>
             <th className="border p-2">Invoice #</th>
-            <th className="border p-2">Sales Order #</th>
             <th className="border p-2">Customer</th>
             <th className="border p-2">Total</th>
 
@@ -106,7 +105,7 @@ const paginatedInvoices =
           {paginatedInvoices.length === 0 ? (
             <tr>
               <td
-                colSpan={5}
+                colSpan={10}
                 className="text-center py-8 text-slate-500"
               >
                 No invoices found
@@ -118,9 +117,9 @@ const paginatedInvoices =
               {inv.invoice_number}
             </td>
 
-            <td className="border p-2">
+           {/* <td className="border p-2">
               {inv.so_number}
-            </td>
+            </td>*/}
 
             <td className="border p-2">
               {inv.customer_name}
@@ -182,18 +181,6 @@ const paginatedInvoices =
               >
                 View
               </button>
-
-              {/*<button
-                onClick={() =>
-                  window.open(
-                    `/invoices/${inv.id}/print`,
-                    "_blank"
-                  )
-                }
-                className="px-3 py-1 bg-green-600 text-white rounded"
-              >
-                Print
-              </button>*/}
             </td>
           </tr>
         ))
