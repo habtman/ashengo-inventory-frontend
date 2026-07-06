@@ -24,6 +24,16 @@ export default function AgingReport() {
     load();
   }, []);
 
+  useEffect(() => {
+  const load = async () => {
+    const data = await customerApi.getAgingReport();
+    console.log(data);
+    setRows(data);
+  };
+
+  load();
+}, []);
+
 
 
   const totalCurrent =
@@ -54,11 +64,6 @@ export default function AgingReport() {
       0
     );
 
-    const outstanding = (row) =>
-    Number(row.current_bucket || 0) +
-    Number(row.days_31_60 || 0) +
-    Number(row.days_61_90 || 0) +
-    Number(row.over_90 || 0);
 
   
 
@@ -74,6 +79,14 @@ export default function AgingReport() {
   total31 +
   total61 +
   total90;
+
+
+ const outstanding = (row) =>
+    Number(row.current_bucket || 0) +
+    Number(row.days_31_60 || 0) +
+    Number(row.days_61_90 || 0) +
+    Number(row.over_90 || 0);
+
 
   return (
     <div className="p-6">
@@ -183,9 +196,9 @@ export default function AgingReport() {
                   ).toFixed(2)}
                 </td>
 
-                <td className="p-3 text-right font-semibold">
-                  {outstanding.toFixed(2)}
-                </td>
+                <td>
+                  {outstanding(row).toFixed(2)}
+              </td>
 
                 <td className="p-3 text-right text-yellow-600">
                   {Number(
