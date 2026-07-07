@@ -98,6 +98,31 @@ const handleRecordPayment = async () => {
 
 };
 
+const handlePrint = async () => {
+
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch(
+    `https://ashengo-inventory-production.fly.dev/api/v1/invoices/${invoice.id}/pdf`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (!response.ok) {
+    alert("Failed to load PDF");
+    return;
+  }
+
+  const blob = await response.blob();
+
+  const url = window.URL.createObjectURL(blob);
+
+  window.open(url, "_blank");
+};
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded-xl">
 
@@ -365,6 +390,13 @@ const handleRecordPayment = async () => {
             )
           }
           className="bg-indigo-600 text-white px-4 py-2 rounded"
+        >
+          Print Invoice
+        </button>
+
+        <button
+          onClick={handlePrint}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
         >
           Print Invoice
         </button>
