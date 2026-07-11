@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import adminApi from "../../api/adminApi";
+import Pagination from "../../components/inventory/Pagination"; 
 
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState([]);
