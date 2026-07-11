@@ -4,9 +4,20 @@ const adminApi = {
   getDashboard: () =>
     apiFetch("/api/v1/admin/dashboard"),
 
-  getAuditLogs: () =>
-    apiFetch("/api/v1/admin/audit-logs"),
+ /*getAuditLogs: (page = 1, limit = 20) =>
+    apiFetch(
+        `/api/v1/admin/audit-logs?page=${page}&limit=${limit}`
+    ),*/
 
+getAuditLogs: ({
+    page = 1,
+    limit = 20,
+    search = "",
+  } = {}) =>
+    apiFetch(
+      `/api/v1/audit-logs?page=${page}&limit=${limit}&search=${search}`
+    ),
+    
   getUsers: () =>
     apiFetch("/api/v1/admin/users"),
 

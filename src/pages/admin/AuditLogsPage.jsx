@@ -4,25 +4,26 @@ import adminApi from "../../api/adminApi";
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    loadLogs();
-  }, []);
-
+useEffect(() => {
   const loadLogs = async () => {
     try {
-      const data =
-        await adminApi.getAuditLogs();
-
-      setLogs(data);
-
+      const data = await adminApi.getAuditLogs({ page, limit: 20, search });
+      setLogs(data.items);
+      setTotalPages(data.totalPages);
     } catch (err) {
       console.error(err);
-
     } finally {
       setLoading(false);
     }
   };
+
+  loadLogs();
+
+}, [page, search]);
 
   if (loading) {
     return <p>Loading audit logs...</p>;
@@ -34,6 +35,23 @@ export default function AuditLogsPage() {
       <h1 className="text-2xl font-bold mb-6">
         Audit Logs
       </h1>
+      <div className="mb-4">
+
+      <input
+          type="text"
+          placeholder="Search email, action or entity..."
+          value={search}
+          onChange={(e)=>{
+
+              setPage(1);
+
+              setSearch(e.target.value);
+
+          }}
+          className="w-full md:w-96 border rounded px-3 py-2"
+      />
+
+      </div>
 
       <div className="overflow-x-auto">
 
@@ -93,6 +111,12 @@ export default function AuditLogsPage() {
         </table>
 
       </div>
+
+      <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+      />
 
     </div>
   );
