@@ -4,9 +4,9 @@ const adminApi = {
   getDashboard: () =>
     apiFetch("/api/v1/admin/dashboard"),
         getAuditLogs({
-          page,
+          page=1,
           limit = 20,
-          search,
+          search="",  
           action,
       } = {}) {
 
