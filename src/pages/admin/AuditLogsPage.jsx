@@ -37,22 +37,7 @@ useEffect(() => {
       <h1 className="text-2xl font-bold mb-6">
         Audit Logs
       </h1>
-      <div className="mb-4">
-
-      <input
-          type="text"
-          placeholder="Search email, action or entity..."
-          value={search}
-          onChange={(e)=>{
-
-              setPage(1);
-
-              setSearch(e.target.value);
-
-          }}
-          className="w-full md:w-96 border rounded px-3 py-2"
-      />
-      </div>
+      
 
         <div className="mb-4 flex gap-4 flex-wrap">
 
