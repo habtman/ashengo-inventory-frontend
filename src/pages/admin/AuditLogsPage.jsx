@@ -8,6 +8,7 @@ export default function AuditLogsPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [action, setAction] = useState(""); 
 
 useEffect(() => {
   const loadLogs = async () => {
@@ -51,6 +52,31 @@ useEffect(() => {
           }}
           className="w-full md:w-96 border rounded px-3 py-2"
       />
+
+      <select
+        value={action}
+        onChange={(e)=>{
+
+        setPage(1);
+        setAction(e.target.value);
+
+            }}
+            className="border rounded px-3 py-2"
+        >
+
+        <option value="">All Actions</option>
+
+        <option value="CREATE_CUSTOMER">Create Customer</option>
+        <option value="UPDATE_CUSTOMER">Update Customer</option>
+        <option value="DELETE_CUSTOMER">Delete Customer</option>
+
+        <option value="CREATE_PURCHASE_ORDER">Create Purchase Order</option>
+
+        <option value="CONFIRM_SALES_ORDER">Confirm Sales Order</option>
+
+        <option value="RECEIVE_PAYMENT">Receive Payment</option>
+
+        </select>
 
       </div>
 
