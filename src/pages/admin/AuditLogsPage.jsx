@@ -52,33 +52,52 @@ useEffect(() => {
           }}
           className="w-full md:w-96 border rounded px-3 py-2"
       />
-
-      <select
-        value={action}
-        onChange={(e)=>{
-
-        setPage(1);
-        setAction(e.target.value);
-
-            }}
-            className="border rounded px-3 py-2"
-        >
-
-        <option value="">All Actions</option>
-
-        <option value="CREATE_CUSTOMER">Create Customer</option>
-        <option value="UPDATE_CUSTOMER">Update Customer</option>
-        <option value="DELETE_CUSTOMER">Delete Customer</option>
-
-        <option value="CREATE_PURCHASE_ORDER">Create Purchase Order</option>
-
-        <option value="CONFIRM_SALES_ORDER">Confirm Sales Order</option>
-
-        <option value="RECEIVE_PAYMENT">Receive Payment</option>
-
-        </select>
-
       </div>
+
+        <div className="mb-4 flex gap-4 flex-wrap">
+
+          <input
+              type="text"
+              placeholder="Search email, action or entity..."
+              value={search}
+              onChange={(e) => {
+                  setPage(1);
+                  setSearch(e.target.value);
+              }}
+              className="w-full md:w-96 border rounded px-3 py-2"
+          />
+
+          <select
+              value={action}
+              onChange={(e) => {
+                  setPage(1);
+                  setAction(e.target.value);
+              }}
+              className="border rounded px-3 py-2"
+          >
+
+              <option value="">All Actions</option>
+
+              <option value="CREATE_CUSTOMER">Create Customer</option>
+              <option value="UPDATE_CUSTOMER">Update Customer</option>
+              <option value="DELETE_CUSTOMER">Delete Customer</option>
+
+              <option value="CREATE_PURCHASE_ORDER">Create Purchase Order</option>
+              <option value="UPDATE_PURCHASE_ORDER">Update Purchase Order</option>
+
+              <option value="CREATE_SALES_ORDER">Create Sales Order</option>
+              <option value="CONFIRM_SALES_ORDER">Confirm Sales Order</option>
+
+              <option value="CREATE_INVOICE">Create Invoice</option>
+
+              <option value="RECEIVE_PAYMENT">Receive Payment</option>
+
+              <option value="LOGIN">Login</option>
+              <option value="LOGOUT">Logout</option>
+
+          </select>
+
+        </div>
 
       <div className="overflow-x-auto">
 
