@@ -13,7 +13,7 @@ export default function AuditLogsPage() {
 useEffect(() => {
   const loadLogs = async () => {
     try {
-      const data = await adminApi.getAuditLogs({ page, limit: 20, search });
+      const data = await adminApi.getAuditLogs({ page, limit: 20, search, action });
       setLogs(data.items);
       setTotalPages(data.totalPages);
     } catch (err) {
@@ -25,7 +25,7 @@ useEffect(() => {
 
   loadLogs();
 
-}, [page, search]);
+}, [page, search, action]); 
 
   if (loading) {
     return <p>Loading audit logs...</p>;
