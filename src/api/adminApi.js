@@ -3,19 +3,18 @@ import { apiFetch } from "./api";
 const adminApi = {
   getDashboard: () =>
     apiFetch("/api/v1/admin/dashboard"),
-        getAuditLogs({
-          page=1,
+      getAuditLogs({
+          page = 1,
           limit = 20,
-          search="",  
-          action,
+          search = "",
+          action = ""
       } = {}) {
 
-    return apiFetch(
-        `/api/v1/admin/audit-logs?page=${page}
-        &limit=${limit}&search=${encodeURIComponent(search)}&action=${encodeURIComponent(action)}`
-    );
+          return apiFetch(
+              `/api/v1/admin/audit-logs?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&action=${encodeURIComponent(action)}`
+          );
 
-},
+      },
 
  /*getAuditLogs: (page = 1, limit = 20) =>
     apiFetch(
