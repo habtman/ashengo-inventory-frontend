@@ -80,7 +80,6 @@ useEffect(() => {
           <select
               value={action}
               onChange={(e) => {
-                console.log("Selected user:", e.target.value);
                   setPage(1);
                   setAction(e.target.value);
                   
