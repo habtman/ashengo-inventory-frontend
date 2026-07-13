@@ -9,13 +9,16 @@ export default function AuditLogsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [action, setAction] = useState(""); 
+  const [users, setUsers] = useState([]);
+  const [userId, setUserId] = useState("");
 
 useEffect(() => {
   const loadLogs = async () => {
     try {
-      const data = await adminApi.getAuditLogs({ page, limit: 20, search, action });
+      const data = await adminApi.getAuditLogs({ page, limit: 20, search, action, userId });
       setLogs(data.items);
       setTotalPages(data.totalPages);
+      setUsers(data.users || []); 
     } catch (err) {
       console.error(err);
     } finally {
@@ -25,7 +28,7 @@ useEffect(() => {
 
   loadLogs();
 
-}, [page, search, action]); 
+}, [page, search, action, userId]); 
 
   if (loading) {
     return <p>Loading audit logs...</p>;
@@ -81,6 +84,34 @@ useEffect(() => {
               <option value="LOGOUT">Logout</option>
 
           </select>
+
+          <select
+            value={userId}
+            onChange={(e)=>{
+
+                setPage(1);
+
+                setUserId(e.target.value);
+                
+
+            }}
+            className="border rounded px-3 py-2"
+        >
+
+        <option value="">All Users</option>
+
+        {users.map(user=>(
+
+            <option
+                key={user.id}
+                value={user.id}
+            >
+                {user.email}
+            </option>
+
+        ))}
+
+        </select>
 
         </div>
 
