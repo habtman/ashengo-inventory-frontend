@@ -1,11 +1,12 @@
 import { apiFetch } from "./api";
 
+// Base URL for direct fetch calls. Set via environment variable if available.
+const API_BASE = "https://ashengo-inventory-production.fly.dev";
+
 const adminApi = {
   getDashboard: () =>
     apiFetch("/api/v1/admin/dashboard"),
-getAuditLogs({
-    page = 1,
-    limit = 20,
+exportAuditLogs({
     search = "",
     action = "",
     userId = "",
@@ -13,15 +14,20 @@ getAuditLogs({
     to = ""
 } = {}) {
 
-    return apiFetch(
+    return fetch(
 
-        `/api/v1/admin/audit-logs?page=${page}` +
-        `&limit=${limit}` +
-        `&search=${encodeURIComponent(search)}` +
+        `${API_BASE}/api/v1/admin/audit-logs/export?` +
+        `search=${encodeURIComponent(search)}` +
         `&action=${encodeURIComponent(action)}` +
         `&userId=${encodeURIComponent(userId)}` +
         `&from=${encodeURIComponent(from)}` +
-        `&to=${encodeURIComponent(to)}`
+        `&to=${encodeURIComponent(to)}`,
+
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        }
 
     );
 

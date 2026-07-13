@@ -56,6 +56,38 @@ useEffect(() => {
 
 }, []);
 
+const handleExport = async () => {
+
+    const response =
+        await adminApi.exportAuditLogs({
+
+            search,
+            action,
+            userId,
+            from,
+            to
+
+        });
+
+    const blob =
+        await response.blob();
+
+    const url =
+        window.URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download = "audit_logs.xlsx";
+
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+
+};
+
   if (loading) {
     return <p>Loading audit logs...</p>;
   }
@@ -159,6 +191,13 @@ useEffect(() => {
             }}
             className="border rounded px-3 py-2"
         />
+
+        <button
+            onClick={handleExport}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+        >
+            Export Excel
+        </button>
 
         </div>
 

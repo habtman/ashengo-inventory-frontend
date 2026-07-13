@@ -39,7 +39,7 @@ export async function apiFetch(endpoint, options = {}) {
     try {
       const errorData = await res.json();
       errorMessage = errorData.error || errorMessage;
-    } catch (e) {
+    } catch {
       errorMessage = res.statusText;
     }
 
