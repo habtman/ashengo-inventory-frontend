@@ -1,11 +1,33 @@
 import { apiFetch } from "./api";
-
-// Base URL for direct fetch calls. Set via environment variable if available.
 const API_BASE = "https://ashengo-inventory-production.fly.dev";
 
 const adminApi = {
   getDashboard: () =>
     apiFetch("/api/v1/admin/dashboard"),
+getAuditLogs({
+    page = 1,
+    limit = 20,
+    search = "",
+    action = "",
+    userId = "",
+    from = "",
+    to = ""
+} = {}) {
+
+    return apiFetch(
+
+        `/api/v1/admin/audit-logs?page=${page}` +
+        `&limit=${limit}` +
+        `&search=${encodeURIComponent(search)}` +
+        `&action=${encodeURIComponent(action)}` +
+        `&userId=${encodeURIComponent(userId)}` +
+        `&from=${encodeURIComponent(from)}` +
+        `&to=${encodeURIComponent(to)}`
+
+    );
+
+},
+
 exportAuditLogs({
     search = "",
     action = "",
