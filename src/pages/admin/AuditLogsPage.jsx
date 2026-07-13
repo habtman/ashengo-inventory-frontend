@@ -11,11 +11,15 @@ export default function AuditLogsPage() {
   const [action, setAction] = useState(""); 
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
 useEffect(() => {
   const loadLogs = async () => {
     try {
-      const data = await adminApi.getAuditLogs({ page, limit: 20, search, action, userId });
+      const data = await adminApi.getAuditLogs({
+         page, limit: 20, search, action, userId, from, to
+      });
       setLogs(data.items);
       setTotalPages(data.totalPages);  
     } catch (err) {
@@ -27,7 +31,7 @@ useEffect(() => {
 
   loadLogs();
 
-}, [page, search, action, userId]); 
+}, [page, search, action, userId, from, to]); 
 
 // Load users for the user filter dropdown
 useEffect(() => {
@@ -130,6 +134,30 @@ useEffect(() => {
             ))}
 
         </select>
+
+        <input
+            type="date"
+            value={from}
+            onChange={(e)=>{
+
+                setPage(1);
+                setFrom(e.target.value);
+
+            }}
+            className="border rounded px-3 py-2"
+        />
+
+        <input
+            type="date"
+            value={to}
+            onChange={(e)=>{
+
+                setPage(1);
+                setTo(e.target.value);
+
+            }}
+            className="border rounded px-3 py-2"
+        />
 
         </div>
 

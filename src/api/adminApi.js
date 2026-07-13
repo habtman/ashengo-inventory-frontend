@@ -8,12 +8,19 @@ const adminApi = {
           limit = 20,
           search = "",
           action = "",
-          userId = ""
+          userId = "",
+          from = "",
+          to = ""
       } = {}) {
 
           return apiFetch(
-              `/api/v1/admin/audit-logs?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&action=${encodeURIComponent(action)}&userId=${encodeURIComponent(userId)}`
-          );
+              `/api/v1/admin/audit-logs?page=${page}&limit=${limit}
+                  &search=${encodeURIComponent(search)}
+                  &action=${encodeURIComponent(action)}
+                  &userId=${encodeURIComponent(userId)}
+                  &from=${encodeURIComponent(from)}
+                  &to=${encodeURIComponent(to)}`
+              );
 
       },
 
