@@ -7,22 +7,18 @@ const adminApi = {
           page = 1,
           limit = 20,
           search = "",
-          action = "",
-          userId = ""
+          action = ""
       } = {}) {
 
           return apiFetch(
-
-              `/api/v1/admin/audit-logs?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&action=${encodeURIComponent(action)}&userId=${userId}`
-
+              `/api/v1/admin/audit-logs?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&action=${encodeURIComponent(action)}`
           );
 
       },
 
- /*getAuditLogs: (page = 1, limit = 20) =>
-    apiFetch(
-        `/api/v1/admin/audit-logs?page=${page}&limit=${limit}`
-    ),*/
+    getAuditUsers() {
+        return apiFetch("/api/v1/admin/audit-users");
+    },
 
 
   getUsers: () =>

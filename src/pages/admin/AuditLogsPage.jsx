@@ -17,8 +17,7 @@ useEffect(() => {
     try {
       const data = await adminApi.getAuditLogs({ page, limit: 20, search, action, userId });
       setLogs(data.items);
-      setTotalPages(data.totalPages);
-      setUsers(data.users || []); 
+      setTotalPages(data.totalPages);  
     } catch (err) {
       console.error(err);
     } finally {
@@ -29,6 +28,29 @@ useEffect(() => {
   loadLogs();
 
 }, [page, search, action, userId]); 
+
+// Load users for the user filter dropdown
+useEffect(() => {
+
+    const loadUsers = async () => {
+
+        try {
+
+            const data = await adminApi.getAuditUsers();
+
+            setUsers(data);
+
+        } catch (err) {
+
+            console.error(err);
+
+        }
+
+    };
+
+    loadUsers();
+
+}, []);
 
   if (loading) {
     return <p>Loading audit logs...</p>;
