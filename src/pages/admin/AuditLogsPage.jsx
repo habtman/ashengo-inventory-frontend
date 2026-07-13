@@ -118,6 +118,7 @@ useEffect(() => {
                 setPage(1);
                 setUserId(e.target.value);
             }}
+            className="border rounded px-3 py-2"
         >
 
             <option value="">All Users</option>
