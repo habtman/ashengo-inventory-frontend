@@ -80,8 +80,10 @@ useEffect(() => {
           <select
               value={action}
               onChange={(e) => {
+                console.log("Selected user:", e.target.value);
                   setPage(1);
                   setAction(e.target.value);
+                  
               }}
               className="border rounded px-3 py-2"
           >
@@ -109,29 +111,24 @@ useEffect(() => {
 
           <select
             value={userId}
-            onChange={(e)=>{
-
+            onChange={(e) => {
                 setPage(1);
-
                 setUserId(e.target.value);
-                
-
             }}
-            className="border rounded px-3 py-2"
         >
 
-        <option value="">All Users</option>
+            <option value="">All Users</option>
 
-        {users.map(user=>(
+            {users.map((user) => (
 
-            <option
-                key={user.id}
-                value={user.id}
-            >
-                {user.email}
-            </option>
+                <option
+                    key={user.id}
+                    value={user.id}
+                >
+                    {user.email}
+                </option>
 
-        ))}
+            ))}
 
         </select>
 
