@@ -83,7 +83,7 @@ useEffect(() => {
           <tr className="bg-gray-100">
             <th>PO #</th>
             <th>Supplier</th>
-            <th>Total</th>
+            <th>Total in Birr</th>
             <th>Status</th>
             <th>Date</th>
             <th></th>
@@ -102,7 +102,7 @@ useEffect(() => {
       <tr key={po.id}>
         <td>{po.po_number}</td>
         <td>{po.supplier_name}</td>
-        <td>${po.total_amount}</td>
+        <td>ETB{po.total_amount}</td> 
 
         <td>
           <span
