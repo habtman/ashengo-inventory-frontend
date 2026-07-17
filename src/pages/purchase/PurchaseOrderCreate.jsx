@@ -9,7 +9,7 @@ export default function PurchaseOrderCreate() {
   const [supplierName, setSupplierName] = useState("");
   const [inventoryList, setInventoryList] = useState([]);
   const [items, setItems] = useState([
-    { inventoryId: "", quantity: 1, unitPrice: 0 }
+    { inventoryId: "", quantity: 1, costPrice: 0 }
   ]);
 
   const [currency, setCurrency] = useState("ETB");
@@ -23,6 +23,18 @@ export default function PurchaseOrderCreate() {
     load();
   }, []);
 
+  useEffect(() => {
+  const load = async () => {
+    const data = await inventoryApi.getAllForInvoice();
+
+    console.log(data); // <-- add this
+
+    setInventoryList(data);
+  };
+
+  load();
+}, []);
+
   const updateItem = (i, field, value) => {
     const updated = [...items];
     updated[i][field] = value;
@@ -30,7 +42,7 @@ export default function PurchaseOrderCreate() {
   };
 
   const addItem = () => {
-    setItems([...items, { inventoryId: "", quantity: 1, unitPrice: 0 }]);
+    setItems([...items, { inventoryId: "", quantity: 1, costPrice: 0 }]);
   };
 
   const removeItem = (i) => {
@@ -47,7 +59,7 @@ const handleSubmit = async () => {
     if(item.quantity<=0)
         return alert("Invalid quantity");
 
-    if(item.unitPrice<=0)
+    if(item.costPrice<=0)
         return alert("Invalid price");
 
     }
@@ -77,13 +89,14 @@ const foreignTotalAmount = items.reduce((sum, item) => {
     return (
         sum +
         Number(item.quantity || 0) *
-        Number(item.unitPrice || 0)
+        Number(item.costPrice || 0)
     );
 
 }, 0);
 
 const localTotalAmount =
     foreignTotalAmount * Number(exchangeRate || 1);
+
 
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
@@ -170,9 +183,23 @@ const localTotalAmount =
               <td>
                 <select
                   value={item.inventoryId}
-                  onChange={(e) =>
-                    updateItem(i, "inventoryId", e.target.value)
-                  }
+                  onChange={(e) => {
+                    const inventoryId = Number(e.target.value);
+
+                    const inventory = inventoryList.find(
+                        item => item.id === inventoryId
+                    );
+
+                    const updated = [...items];
+
+                    updated[i] = {
+                        ...updated[i],
+                        inventoryId,
+                        costPrice: Number(inventory?.cost_price || 0)
+                    };
+
+                    setItems(updated);
+                }}
                 >
                   <option value="">Select</option>
                   {inventoryList.map(inv => (
@@ -196,14 +223,14 @@ const localTotalAmount =
               <td>
                 <input
                   type="number"
-                  value={item.unitPrice}
+                  value={item.costPrice}
                   onChange={(e) =>
-                    updateItem(i, "unitPrice", Number(e.target.value))
+                    updateItem(i, "costPrice", Number(e.target.value))
                   }
                 />
               </td>
 
-              <td>{item.quantity * item.unitPrice}</td>
+              <td>{item.quantity * item.costPrice}</td>
 
               <td>
                 <button onClick={() => removeItem(i)}>X</button>

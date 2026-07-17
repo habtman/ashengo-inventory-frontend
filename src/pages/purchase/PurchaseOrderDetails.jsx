@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import { useAuth } from "../../context/useAuth";   
 import locationsApi from "../../api/locationsApi";
-import PurchaseOrderSummary from "../../components/purchaseOrders/PurchaseOrderSummary";
-import PurchaseOrderProgress from "../../components/purchaseOrders/PurchaseOrderProgress";
-import PurchaseOrderItemsTable from "../../components/purchaseOrders/PurchaseOrderItemsTable";
-import PurchaseOrderReceiveModal from "../../components/purchaseOrders/PurchaseOrderReceiveModal";
-import PurchaseOrderActions from "../../components/purchaseOrders/PurchaseOrderActions";
+import PurchaseOrderSummary from "../../components/purchase/PurchaseOrderSummary";
+import PurchaseOrderProgress from "../../components/purchase/PurchaseOrderProgress";
+import PurchaseOrderItemsTable from "../../components/purchase/PurchaseOrderItemsTable";
+import PurchaseOrderReceiveModal from "../../components/purchase/PurchaseOrderReceiveModal";
+import PurchaseOrderActions from "../../components/purchase/PurchaseOrderActions";
 
 
 export default function PurchaseOrderDetails() {
@@ -228,6 +228,8 @@ const handleReceive = useCallback(async () => {
           </div>
         );
       }
+
+  console.log(po);
 
   return (
     <div className="print-area">

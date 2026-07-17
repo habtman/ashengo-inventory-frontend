@@ -1,169 +1,95 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
+import PurchaseOrderFilters from "../../components/purchase/PurchaseOrderFilters";
+import PurchaseOrderTable from "../../components/purchase/PurchaseOrderTable";
+import PurchaseOrderPagination from "../../components/purchase/PurchaseOrderPagination";
 
 export default function PurchaseOrdersList() {
-  const [orders, setOrders] = useState([]);
+
   const navigate = useNavigate();
 
+  const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState(""); 
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
 
-useEffect(() => {
-  const loadOrders = async () => {
-    setLoading(true);
-    const data = await purchaseOrderApi.getAll({
-    
-    page,
-    limit: 10,
-    search,
-    status
-  });
+  useEffect(() => {
 
-  setLoading(false);
+    const loadOrders = async () => {
 
+      try {
 
-  setOrders(data.items || []);
-  setTotalPages(data.totalPages || 1);
-  };
+        setLoading(true);
 
+        const data = await purchaseOrderApi.getAll({
+          page,
+          limit: 10,
+          search,
+          status,
+        });
 
+        setOrders(data.items || []);
+        setTotalPages(data.totalPages || 1);
 
-  loadOrders();
-}, [page, search, status]);
+      } catch (err) {
 
+        console.error(err);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+    loadOrders();
+
+  }, [page, search, status]);
 
   return (
-    <div className="p-6 bg-white rounded shadow">
-      <div className="flex justify-between mb-4">
-        <h2 className="text-xl font-bold">Purchase Orders</h2>
+
+    <div className="p-6 bg-white rounded-lg shadow">
+
+      <div className="flex justify-between items-center mb-6">
+
+        <h2 className="text-2xl font-bold">
+          Purchase Orders
+        </h2>
+
         <button
           onClick={() => navigate("/purchase-orders/new")}
-          className="bg-indigo-600 text-white px-4 py-2 rounded"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
         >
-          New PO
+          New Purchase Order
         </button>
 
       </div>
 
-      <div className="flex gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="Search PO or supplier..."
-          value={search}
-          onChange={(e) => {
-            setPage(1);
-            setSearch(e.target.value);
-          }}
-          className="border px-3 py-2 rounded flex-1"
-        />
+      <PurchaseOrderFilters
+        search={search}
+        setSearch={setSearch}
+        status={status}
+        setStatus={setStatus}
+        setPage={setPage}
+      />
 
-        <select
-          value={status}
-          onChange={(e) => {
-            setPage(1);
-            setStatus(e.target.value);
-          }}
-          className="border px-3 py-2 rounded"
-        >
-          <option value="">All Statuses</option>
-          <option value="DRAFT">Draft</option>
-          <option value="PENDING_APPROVAL">Pending Approval</option>
-          <option value="APPROVED">Approved</option>
-          <option value="REJECTED">Rejected</option>
-          <option value="RECEIVED">Received</option>
-        </select>
-      </div>
+      <PurchaseOrderTable
+        orders={orders}
+        loading={loading}
+      />
 
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th>PO #</th>
-            <th>Supplier</th>
-            <th>Total in Birr</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th></th>
-          </tr>
-        </thead>
+      <PurchaseOrderPagination
+        page={page}
+        totalPages={totalPages}
+        setPage={setPage}
+      />
 
-<tbody>
-  {orders.length === 0 ? (
-    <tr>
-      <td colSpan="6" className="text-center py-4 text-gray-500">
-        No purchase orders found
-      </td>
-    </tr>
-  ) : (
-    orders.map((po) => (
-      <tr key={po.id}>
-        <td>{po.po_number}</td>
-        <td>{po.supplier_name}</td>
-        <td>ETB{po.total_amount}</td> 
-
-        <td>
-          <span
-            className={`px-2 py-1 rounded text-xs font-medium
-              ${
-                po.status === "DRAFT"
-                  ? "bg-gray-100 text-gray-700"
-                  : po.status === "PENDING_APPROVAL"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : po.status === "APPROVED"
-                  ? "bg-blue-100 text-blue-700"
-                  : po.status === "REJECTED"
-                  ? "bg-red-100 text-red-700"
-                  : "bg-green-100 text-green-700"
-              }`}
-          >
-            {po.status.replace("_", " ")}
-          </span>
-        </td>
-
-        <td>{new Date(po.created_at).toLocaleString()}</td>
-
-        <td>
-          <button
-            onClick={() => navigate(`/purchase-orders/${po.id}`)}
-            className="text-blue-600"
-          >
-            View
-          </button>
-        </td>
-      </tr>
-    ))
-  )}
-</tbody>
-      </table>
-      <div className="flex justify-center gap-2 mt-4">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-3 py-1 border rounded"
-          >
-            Previous
-          </button>
-
-          <span>
-            Page {page} of {totalPages}
-          </span>
-
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-3 py-1 border rounded"
-          >
-            Next
-          </button>
-          {loading && (
-            <div className="text-center py-4">
-              Loading purchase orders...
-            </div>
-          )}
-        </div>
     </div>
+
   );
+
 }
