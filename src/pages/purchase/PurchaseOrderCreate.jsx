@@ -22,7 +22,7 @@ useEffect(() => {
     const inventory = await inventoryApi.getAllForInvoice();
     setInventoryList(inventory);
 
-    const supplierData = await supplierApi.getAll();
+    const supplierData = await supplierApi.getSupplierPurchaseOrders();
     setSuppliers(supplierData);
   };
 

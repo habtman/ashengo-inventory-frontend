@@ -29,7 +29,7 @@ export default function SuppliersPage() {
 
 async function loadSuppliers() {
   try {
-    const data = await supplierApi.getSuppliers();
+    const data = await supplierApi.getAll();
     setSuppliers(data);
   } catch (err) {
     console.error(err);

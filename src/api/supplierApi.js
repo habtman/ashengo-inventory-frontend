@@ -1,8 +1,8 @@
 import { apiFetch } from "./api";
 
 const supplierApi = {
-  getSuppliers: () =>
-    apiFetch("/api/v1/suppliers"),
+getAll: () =>
+  apiFetch("/api/v1/suppliers"),
 
   getSupplierById: (id) =>
     apiFetch(`/api/v1/suppliers/${id}`),
