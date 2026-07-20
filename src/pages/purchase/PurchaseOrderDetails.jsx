@@ -229,7 +229,6 @@ const handleReceive = useCallback(async () => {
         );
       }
 
-  console.log(po);
 
   return (
     <div className="print-area">

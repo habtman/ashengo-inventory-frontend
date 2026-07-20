@@ -20,7 +20,7 @@ useEffect(() => {
       setLoading(true);
 
       const data = await grnApi.getById(id);
-      console.log(data);
+
 
       setGrn(data);
     } catch (err) {
@@ -49,23 +49,6 @@ const handleReverse = async () => {
   }
 };
 
-const items = grn.items || [];
-
-const totalQuantity = grn.items.reduce(
-  (sum, item) => sum + Number(item.received_quantity || 0),
-  0
-);
-
-const foreignTotal =
-  Number(grn.foreign_total || 0);
-
-const exchangeRate =
-  Number(grn.exchange_rate || 1);
-
-const localTotal =
-  Number(grn.total_amount || 0);
-
-
 if (loading) {
   return (
     <div className="p-10 text-center">
@@ -82,10 +65,26 @@ if (error) {
   );
 }
 
-console.log(grn);
 if (!grn) {
   return null;
 }
+
+// -------------------------
+// NOW grn definitely exists
+// -------------------------
+
+const items = grn.items || [];
+
+const totalQuantity = items.reduce(
+  (sum, item) => sum + Number(item.received_quantity || 0),
+  0
+);
+
+const foreignTotal = Number(grn.foreign_total || 0);
+
+const exchangeRate = Number(grn.exchange_rate || 1);
+
+const localTotal = Number(grn.total_amount || 0);
 
   return (
     <div id="grn-print">
@@ -110,7 +109,7 @@ if (!grn) {
       onClick={handleReverse}
       className="bg-red-600 text-white px-4 py-2 rounded"
     >
-      Reverse Receipt
+      Reverse Goods Receipt
     </button>
 
   </div>
@@ -154,7 +153,6 @@ if (!grn) {
         <tr className="bg-gray-100">
             <th>SKU</th>
             <th>Item</th>
-            <th>Ordered</th>
             <th>Received</th>
             <th>Unit Cost</th>
             <th>Line Total</th>
@@ -172,8 +170,6 @@ if (!grn) {
             <td>{item.sku}</td>
 
             <td>{item.item_name}</td>
-
-            <td>{item.ordered_quantity}</td>
 
             <td>{item.received_quantity}</td>
 

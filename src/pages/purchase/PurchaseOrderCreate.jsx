@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import { inventoryApi } from "../../api/inventoryApi";
+import supplierApi from "../../api/supplierApi";
 
 export default function PurchaseOrderCreate() {
   const navigate = useNavigate();
 
-  const [supplierName, setSupplierName] = useState("");
+  const [supplierId, setSupplierId] = useState("");
+  const [suppliers, setSuppliers] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
   const [items, setItems] = useState([
     { inventoryId: "", quantity: 1, costPrice: 0 }
@@ -15,21 +17,13 @@ export default function PurchaseOrderCreate() {
   const [currency, setCurrency] = useState("ETB");
   const [exchangeRate, setExchangeRate] = useState(1);
 
-  useEffect(() => {
-    const load = async () => {
-      const data = await inventoryApi.getAllForInvoice();
-      setInventoryList(data);
-    };
-    load();
-  }, []);
-
-  useEffect(() => {
+useEffect(() => {
   const load = async () => {
-    const data = await inventoryApi.getAllForInvoice();
+    const inventory = await inventoryApi.getAllForInvoice();
+    setInventoryList(inventory);
 
-    console.log(data); // <-- add this
-
-    setInventoryList(data);
+    const supplierData = await supplierApi.getAll();
+    setSuppliers(supplierData);
   };
 
   load();
@@ -66,7 +60,7 @@ const handleSubmit = async () => {
 
     const res = await purchaseOrderApi.create({
 
-        supplierName,
+        supplierId,
 
         currency,
 
@@ -103,12 +97,22 @@ const localTotalAmount =
 
       <h2 className="text-xl font-bold mb-4">Create Purchase Order</h2>
 
-      <input
-        placeholder="Supplier Name"
-        value={supplierName}
-        onChange={(e) => setSupplierName(e.target.value)}
+      <select
+        value={supplierId}
+        onChange={(e) => setSupplierId(Number(e.target.value))}
         className="border p-2 mb-4 w-full"
-      />
+      >
+        <option value="">Select Supplier</option>
+
+        {suppliers.map((supplier) => (
+          <option
+            key={supplier.id}
+            value={supplier.id}
+          >
+            {supplier.supplier_code} — {supplier.supplier_name}
+          </option>
+        ))}
+      </select>
 
       <div className="mt-4">
 
