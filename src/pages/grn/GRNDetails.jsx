@@ -132,7 +132,7 @@ const localTotal = Number(grn.total_amount || 0);
         </p>
 
         <p>
-          <b>Supplier:</b> {grn.supplier_name}
+          <b>Supplier:</b> {grn.supplier_code} - {grn.supplier_name}
         </p>
 
         <p>

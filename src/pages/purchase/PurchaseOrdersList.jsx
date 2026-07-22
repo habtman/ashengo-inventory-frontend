@@ -82,11 +82,11 @@ export default function PurchaseOrdersList() {
         loading={loading}
       />
 
-      <PurchaseOrderPagination
-        page={page}
-        totalPages={totalPages}
-        setPage={setPage}
-      />
+    <GRNPagination
+      page={page}
+      totalPages={totalPages}
+      setPage={setPage}
+    />
 
     </div>
 
