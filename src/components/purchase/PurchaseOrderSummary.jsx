@@ -14,11 +14,18 @@ export default function PurchaseOrderSummary({
         {/* Supplier */}
         <div>
           <p className="text-sm text-gray-500">
-            Supplier
+          <strong>Supplier:</strong>{" "}
+            {po.supplier_code} - {po.supplier_name}
+          </p>  
+
+          <p className="text-sm text-gray-500">
+            <strong >Created By:</strong>{" "}
+            {po.created_by_name}
           </p>
 
-          <p className="font-semibold">
-            {po.supplier_name}
+          <p className="text-sm text-gray-500">
+            <strong>Approved By:</strong>{" "}
+            {po.approved_by_name || "Not yet approved"}
           </p>
         </div>
 

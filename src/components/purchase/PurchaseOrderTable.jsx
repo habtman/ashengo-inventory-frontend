@@ -26,6 +26,10 @@ export default function PurchaseOrderTable({
 
           <th className="p-3 text-left">Supplier</th>
 
+          <th className="p-3 text-left">Created By</th>
+
+          <th className="p-3 text-left">Approved By</th>
+
           <th className="p-3 text-right">Total</th>
 
           <th className="p-3 text-center">Status</th>
@@ -45,7 +49,7 @@ export default function PurchaseOrderTable({
           <tr>
 
             <td
-              colSpan={6}
+              colSpan={8}
               className="text-center py-10 text-gray-500"
             >
               Loading purchase orders...
@@ -58,7 +62,7 @@ export default function PurchaseOrderTable({
           <tr>
 
             <td
-              colSpan={6}
+              colSpan={8}
               className="text-center py-10 text-gray-500"
             >
               No purchase orders found
@@ -79,8 +83,14 @@ export default function PurchaseOrderTable({
                 {po.po_number}
               </td>
 
-              <td className="p-3">
-                {po.supplier_name}
+              <td>
+                {po.supplier_code} - {po.supplier_name}
+              </td>
+
+              <td>{po.created_by_name}</td>
+
+              <td>
+                  {po.approved_by_name || "Pending"}
               </td>
 
               <td className="p-3 text-right font-semibold">

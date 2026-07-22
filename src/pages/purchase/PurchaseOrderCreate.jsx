@@ -8,6 +8,7 @@ export default function PurchaseOrderCreate() {
   const navigate = useNavigate();
 
   const [supplierId, setSupplierId] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
   const [items, setItems] = useState([
@@ -22,7 +23,7 @@ useEffect(() => {
     const inventory = await inventoryApi.getAllForInvoice();
     setInventoryList(inventory);
 
-    const supplierData = await supplierApi.getSupplierPurchaseOrders();
+    const supplierData = await supplierApi.getAll();
     setSuppliers(supplierData);
   };
 
@@ -44,6 +45,13 @@ useEffect(() => {
   };
 
 const handleSubmit = async () => {
+console.log({
+    supplierId,
+    items
+});
+
+  if (!supplierId)
+    return alert("Select supplier");
 
     for(const item of items){
 
@@ -97,22 +105,46 @@ const localTotalAmount =
 
       <h2 className="text-xl font-bold mb-4">Create Purchase Order</h2>
 
-      <select
-        value={supplierId}
-        onChange={(e) => setSupplierId(Number(e.target.value))}
-        className="border p-2 mb-4 w-full"
-      >
-        <option value="">Select Supplier</option>
+    <div className="mb-4">
 
-        {suppliers.map((supplier) => (
-          <option
-            key={supplier.id}
-            value={supplier.id}
-          >
-            {supplier.supplier_code} — {supplier.supplier_name}
-          </option>
-        ))}
+      <label className="block text-sm font-medium mb-1">
+        Supplier
+      </label>
+
+      <select
+          value={selectedSupplier?.id || ""}
+          
+          onChange={(e) => {
+
+              const id = Number(e.target.value);
+
+              const supplier = suppliers.find(
+                  s => s.id === id
+              );
+
+              setSupplierId(id);
+
+              setSelectedSupplier(supplier);
+
+              setCurrency(supplier?.currency || "ETB");
+
+              if (supplier?.currency === "ETB") {
+                  setExchangeRate(1);
+              }
+          }}
+      >
+          <option value="">Select supplier</option>
+
+          {suppliers.map(s => (
+            <option key={s.id} value={s.id}>
+              {(s.supplier_code || `SUP-${String(s.id).padStart(4, "0")}`)}
+              {" — "}
+              {s.supplier_name}
+            </option>
+          ))}
       </select>
+
+    </div>
 
       <div className="mt-4">
 
@@ -123,18 +155,16 @@ const localTotalAmount =
         <select
             value={currency}
             onChange={(e) => {
+                const newCurrency = e.target.value;
 
-              const value = e.target.value;
+                setCurrency(newCurrency);
 
-              setCurrency(value);
+                if (newCurrency === "ETB") {
+                    setExchangeRate(1);
+                }
+            }}
 
-              if (value === "ETB") {
-
-                  setExchangeRate(1);
-
-              }
-
-          }}
+       
             className="w-full border rounded px-3 py-2"
         >
             <option value="ETB">ETB</option>
