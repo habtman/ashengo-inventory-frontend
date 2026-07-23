@@ -149,9 +149,10 @@ useEffect(() => {
       <table className="w-full border border-collapse">
         <thead>
           <tr className="bg-gray-100">
-            <th>#</th>
             <th>Item</th>
-            <th>Qty</th>
+            <th>Ordered</th>
+            <th>Received</th>
+            <th>Remaining</th>
             <th>Unit Cost</th>
             <th>Total</th>
           </tr>
@@ -165,9 +166,11 @@ useEffect(() => {
                 {item.item_name}
               </td>
 
-              <td className="border p-2 text-center">
-                {item.quantity}
-              </td>
+              <td>{item.quantity}</td>
+
+              <td>{item.received_quantity}</td>
+
+              <td>{item.quantity - item.received_quantity}</td>
 
               <td className="border p-2 text-right">
                 {Number(
