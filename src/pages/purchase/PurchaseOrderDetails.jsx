@@ -8,6 +8,7 @@ import PurchaseOrderProgress from "../../components/purchase/PurchaseOrderProgre
 import PurchaseOrderItemsTable from "../../components/purchase/PurchaseOrderItemsTable";
 import PurchaseOrderReceiveModal from "../../components/purchase/PurchaseOrderReceiveModal";
 import PurchaseOrderActions from "../../components/purchase/PurchaseOrderActions";
+import PurchaseOrderTimeline from "../../components/purchase/PurchaseOrderTimeline";
 
 
 
@@ -36,6 +37,8 @@ export default function PurchaseOrderDetails() {
     );
 };
 
+const [history, setHistory] = useState([]);
+
 
    const { user } = useAuth();
 
@@ -52,10 +55,14 @@ export default function PurchaseOrderDetails() {
     
     // "submit" | "approve" | "reject" | null
 
+  
+
   const load = useCallback(async () => {
     try {
       const data = await purchaseOrderApi.getById(id);
-      setPo(data);
+        setPo(data);
+      const historyData = await purchaseOrderApi.getHistory(id);
+        setHistory(historyData);
     } catch (err) {
       console.error(err);
       alert("Failed to load purchase order");
@@ -83,6 +90,8 @@ useEffect(() => {
 
   loadLocations();
 }, []);
+
+
 
 
 
@@ -222,6 +231,8 @@ const handleReceive = useCallback(async () => {
       }
     }, [id, load]);
 
+
+
       if (!id) {
         return (
           <div className="p-10 text-center">
@@ -281,6 +292,10 @@ const handleReceive = useCallback(async () => {
       totalOrdered={totalOrdered}
       totalReceived={totalReceived}
       progress={progress}
+    />
+
+    <PurchaseOrderTimeline
+    history={history}
     />
 
     <PurchaseOrderActions

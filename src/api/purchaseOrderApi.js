@@ -38,6 +38,8 @@ receive(id, payload) {
 
     reject: (id) =>
       apiFetch(`/api/v1/purchase-orders/${id}/reject`, { method: "POST" }),
+    getHistory: (id) =>
+  apiFetch(`/api/v1/purchase-orders/${id}/history`),
 
 };
 
