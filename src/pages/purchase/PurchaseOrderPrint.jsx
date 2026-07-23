@@ -94,34 +94,33 @@ useEffect(() => {
 
       </div>
 
-        <div className="grid grid-cols-2 gap-10 mb-8">
+  <div className="grid grid-cols-2 gap-8 mb-8">
 
-          <div>
-            <p><strong>Supplier</strong></p>
-            <p>{po.supplier_code}</p>
-            <p>{po.supplier_name}</p>
-          </div>
+  <div>
+    <h3 className="font-bold border-b mb-2">
+      Supplier
+    </h3>
 
-          <div className="text-right">
+    <p><strong>Code:</strong> {po.supplier_code}</p>
+    <p><strong>Name:</strong> {po.supplier_name}</p>
+    <p><strong>Contact:</strong> {po.contact_person || "-"}</p>
+    <p><strong>Phone:</strong> {po.phone || "-"}</p>
+    <p><strong>Email:</strong> {po.email || "-"}</p>
+    <p><strong>Address:</strong> {po.address || "-"}</p>
+  </div>
 
-            <p>
-              <strong>Date:</strong>{" "}
-              {new Date(po.created_at).toLocaleDateString()}
-            </p>
+  <div className="text-right">
+    <h3 className="font-bold border-b mb-2">
+      Purchase Order
+    </h3>
 
-            <p>
-              <strong>Status:</strong>{" "}
-              {po.status}
-            </p>
+    <p><strong>PO No:</strong> {po.po_number}</p>
+    <p><strong>Date:</strong> {new Date(po.created_at).toLocaleDateString()}</p>
+    <p><strong>Status:</strong> {po.status}</p>
+    <p><strong>Currency:</strong> {po.currency}</p>
+  </div>
 
-            <p>
-              <strong>Currency:</strong>{" "}
-              {po.currency}
-            </p>
-
-          </div>
-
-        </div>
+</div>
 
         <div className="bg-gray-100 rounded p-4 mt-6">
 
