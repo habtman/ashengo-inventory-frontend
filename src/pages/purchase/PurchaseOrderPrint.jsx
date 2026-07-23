@@ -73,74 +73,94 @@ useEffect(() => {
   </p>
 
 </div>
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold">
-          PURCHASE ORDER
-        </h1>
+      <div className="flex items-center justify-between border-b pb-4 mb-8">
+
+        <div>
+          {/* logo */}
+          <img
+            src="/logo.png"
+            alt="Ashengo"
+            className="h-16"
+          />
+        </div>
+
+        <div className="text-right">
+          <h1 className="text-3xl font-bold">
+            PURCHASE ORDER
+          </h1>
+
+          <p>{po.po_number}</p>
+        </div>
+
       </div>
 
-      <div className="mb-6">
+        <div className="grid grid-cols-2 gap-10 mb-8">
+
+          <div>
+            <p><strong>Supplier</strong></p>
+            <p>{po.supplier_code}</p>
+            <p>{po.supplier_name}</p>
+          </div>
+
+          <div className="text-right">
+
+            <p>
+              <strong>Date:</strong>{" "}
+              {new Date(po.created_at).toLocaleDateString()}
+            </p>
+
+            <p>
+              <strong>Status:</strong>{" "}
+              {po.status}
+            </p>
+
+            <p>
+              <strong>Currency:</strong>{" "}
+              {po.currency}
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="bg-gray-100 rounded p-4 mt-6">
+
+          <h3 className="font-semibold mb-2">
+          Approval
+          </h3>
+
         <p>
-          <strong>PO Number:</strong>{" "}
-          {po.po_number}
+          Approved By:
+          <strong> {po.approved_by_name || "-"}</strong>
         </p>
 
         <p>
-          <strong>Supplier:</strong>{" "}
-          {po.supplier_name}
+          Approved At:
+          <strong>
+          {" "}
+          {po.approved_at
+          ? new Date(po.approved_at).toLocaleString()
+          : "-"}
+          </strong>
         </p>
 
-        <p>
-          <strong>Status:</strong>{" "}
-          {po.status}
-        </p>
-
-        <p>
-          <strong>Date:</strong>{" "}
-          {new Date(
-            po.created_at
-          ).toLocaleDateString()}
-        </p>
-      </div>
-
-      <div style={{ marginTop: "12px" }}>
-  <p>
-    <strong>Approved By:</strong>{" "}
-    {po.approved_by_name || "-"}
-  </p>
-
-  <p>
-    <strong>Approved At:</strong>{" "}
-    {po.approved_at
-      ? new Date(po.approved_at).toLocaleString()
-      : "-"}
-  </p>
-</div>
+        </div>
 
       <table className="w-full border border-collapse">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border p-2 text-left">
-              Item
-            </th>
-
-            <th className="border p-2">
-              Qty
-            </th>
-
-            <th className="border p-2">
-              Unit Cost
-            </th>
-
-            <th className="border p-2">
-              Total
-            </th>
+            <th>#</th>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Unit Cost</th>
+            <th>Total</th>
           </tr>
         </thead>
 
         <tbody>
-          {po.items.map(item => (
+          {po.items.map((item,index) => (
             <tr key={item.inventory_id}>
+              <td>{index+1}</td>
               <td className="border p-2">
                 {item.item_name}
               </td>
@@ -166,34 +186,51 @@ useEffect(() => {
       </table>
 
       <div className="mt-6 text-right">
+        <p>
+          <strong>Currency:</strong> {po.currency}
+        </p>
+
+        {po.currency !== "ETB" && (
+          <p>
+            <strong>Exchange Rate:</strong> {po.exchange_rate}
+          </p>
+        )}
+
         <h2 className="text-xl font-bold">
-          Total: $
-          {Number(
-            po.total_amount
-          ).toFixed(2)}
+          Total ({po.currency}):{" "}
+          {Number(po.foreign_total).toLocaleString(undefined,{
+            minimumFractionDigits:2
+          })}
         </h2>
+
+        {po.currency !== "ETB" && (
+          <h3 className="text-lg font-semibold">
+            ETB Total:{" "}
+            {Number(po.total_amount).toLocaleString(undefined,{
+              minimumFractionDigits:2
+            })}
+          </h3>
+        )}
       </div>
-      <div className="mt-10 border-t pt-4 text-sm">
+      <div className="grid grid-cols-3 gap-8 mt-16 text-center">
 
-        <div className="flex justify-between">
+      <div>
+        ____________________
+        <br/>
+        Prepared By
+      </div>
 
-          <div>
-            ______________________
-            <br />
-            Prepared By
-          </div>
+      <div>
+        ____________________
+        <br/>
+        Checked By
+      </div>
 
-          <div>
-            ______________________
-            <br />
-            Approved By
-          </div>
-
-        </div>
-
-        <div className="mt-6 text-center text-gray-500">
-          Generated by Ashengo Inventory Management System
-        </div>
+      <div>
+        ____________________
+        <br/>
+        Approved By
+      </div>
 
       </div>
 
