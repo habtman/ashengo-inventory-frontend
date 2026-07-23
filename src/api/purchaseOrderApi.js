@@ -38,8 +38,43 @@ receive(id, payload) {
 
     reject: (id) =>
       apiFetch(`/api/v1/purchase-orders/${id}/reject`, { method: "POST" }),
+
     getHistory: (id) =>
-  apiFetch(`/api/v1/purchase-orders/${id}/history`),
+       apiFetch(`/api/v1/purchase-orders/${id}/history`),
+       uploadAttachment(id, file) {
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    return apiFetch(
+        `/purchase-orders/${id}/attachments`,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+},
+
+getAttachments(id) {
+
+    return apiFetch(
+        `/purchase-orders/${id}/attachments`
+    );
+
+},
+
+deleteAttachment(attachmentId) {
+
+    return apiFetch(
+        `/purchase-orders/attachments/${attachmentId}`,
+        {
+            method: "DELETE"
+        }
+    );
+
+},
 
 };
 

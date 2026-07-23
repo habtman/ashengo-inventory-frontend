@@ -9,6 +9,7 @@ import PurchaseOrderItemsTable from "../../components/purchase/PurchaseOrderItem
 import PurchaseOrderReceiveModal from "../../components/purchase/PurchaseOrderReceiveModal";
 import PurchaseOrderActions from "../../components/purchase/PurchaseOrderActions";
 import PurchaseOrderTimeline from "../../components/purchase/PurchaseOrderTimeline";
+import PurchaseOrderAttachments from "../../components/purchase/PurchaseOrderAttachments";
 
 
 
@@ -277,6 +278,10 @@ const handleReceive = useCallback(async () => {
 
     <PurchaseOrderItemsTable
       items={po.items}
+    />
+
+    <PurchaseOrderAttachments
+      poId={po.id}
     />
 
     <PurchaseOrderReceiveModal
