@@ -10,6 +10,7 @@ export default function PurchaseOrderActions({
   setModal,
   handleAction,
   onPrint,
+  onDownloadPdf,
   onReceive
 }) {
   return (
@@ -69,6 +70,13 @@ export default function PurchaseOrderActions({
             className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded"
         >
             Print
+        </button>
+
+        <button
+            onClick={onDownloadPdf}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+        >
+            Download PDF
         </button>
 
         </div>

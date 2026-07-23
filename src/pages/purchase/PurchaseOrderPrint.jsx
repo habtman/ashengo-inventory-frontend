@@ -1,12 +1,17 @@
 import { useEffect, useState} from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
+import html2pdf from "html2pdf.js";
 
 
 export default function PurchaseOrderPrint() {
   const { id } = useParams();
 
   const [po, setPo] = useState(null);
+  const location = useLocation();
+
+  const download =
+      new URLSearchParams(location.search).get("download");
 
 
   useEffect(() => {
@@ -21,19 +26,39 @@ export default function PurchaseOrderPrint() {
 
 
 useEffect(() => {
-  const handleAfterPrint = () => {
-    window.close();
-  };
+  if (!po) return;
 
-  window.addEventListener("afterprint", handleAfterPrint);
+  const timer = setTimeout(() => {
 
-  return () => {
-    window.removeEventListener(
-      "afterprint",
-      handleAfterPrint
-    );
-  };
-}, []);
+    if (download) {
+
+      html2pdf()
+        .from(document.getElementById("print-area"))
+        .set({
+          margin: 10,
+          filename: `${po.po_number}.pdf`,
+          html2canvas: {
+            scale: 2
+          },
+          jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait"
+          }
+        })
+        .save();
+
+    } else {
+
+      window.print();
+
+    }
+
+  }, 500);
+
+  return () => clearTimeout(timer);
+
+}, [po, download]);
 
 useEffect(() => {
   if (!po) return;

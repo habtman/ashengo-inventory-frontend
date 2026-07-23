@@ -29,6 +29,13 @@ export default function PurchaseOrderDetails() {
       navigate(`/purchase-orders/${po.id}/print`);
   };
 
+  const handleDownloadPdf = () => {
+    window.open(
+        `/purchase-orders/${po.id}/print?download=1`,
+        "_blank"
+    );
+};
+
 
    const { user } = useAuth();
 
@@ -289,7 +296,7 @@ const handleReceive = useCallback(async () => {
         handleAction={handleAction}
         onReceive={openReceiveModal}  
         onPrint ={handlePrint}
-        
+        onDownloadPdf={handleDownloadPdf}
 
     />
 
