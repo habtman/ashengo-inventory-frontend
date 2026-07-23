@@ -2,9 +2,6 @@ export default function PurchaseOrderActions({
   po,
   user,
   statusColor,
-  progress,
-  totalOrdered,
-  totalReceived,
   actionLoading,
   modal,
   setModal,
@@ -78,49 +75,6 @@ export default function PurchaseOrderActions({
         >
             Download PDF
         </button>
-
-        </div>
-
-        {/* Progress */}
-
-        <div className="mb-6">
-
-          <div className="flex justify-between mb-2">
-
-            <span className="font-medium">
-              Receiving Progress
-            </span>
-
-            <span>
-              {totalReceived} / {totalOrdered}
-              {" "}
-              ({progress}%)
-            </span>
-
-          </div>
-
-          <div className="w-full bg-gray-200 rounded-full h-4">
-
-            <div
-              className={`h-4 rounded-full ${
-                progress === 100
-                  ? "bg-green-600"
-                  : "bg-yellow-500"
-              }`}
-              style={{
-                width: `${progress}%`
-              }}
-            />
-
-          </div>
-
-          <p className="text-sm text-gray-600 mt-2">
-
-            {progress === 100
-              ? "All goods have been received."
-              : `${totalOrdered - totalReceived} units remaining to receive.`}
-
-          </p>
 
         </div>
 
