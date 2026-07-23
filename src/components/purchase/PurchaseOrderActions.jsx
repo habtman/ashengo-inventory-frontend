@@ -9,6 +9,7 @@ export default function PurchaseOrderActions({
   modal,
   setModal,
   handleAction,
+  onPrint,
   onReceive
 }) {
   return (
@@ -62,6 +63,13 @@ export default function PurchaseOrderActions({
               Receive Goods
             </button>
           )}
+
+        <button
+            onClick={onPrint}
+            className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded"
+        >
+            Print
+        </button>
 
         </div>
 

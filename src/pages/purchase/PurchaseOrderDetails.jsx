@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import { useAuth } from "../../context/useAuth";   
 import locationsApi from "../../api/locationsApi";
@@ -8,6 +8,8 @@ import PurchaseOrderProgress from "../../components/purchase/PurchaseOrderProgre
 import PurchaseOrderItemsTable from "../../components/purchase/PurchaseOrderItemsTable";
 import PurchaseOrderReceiveModal from "../../components/purchase/PurchaseOrderReceiveModal";
 import PurchaseOrderActions from "../../components/purchase/PurchaseOrderActions";
+
+
 
 
 export default function PurchaseOrderDetails() {
@@ -21,6 +23,11 @@ export default function PurchaseOrderDetails() {
   const [receiving, setReceiving] = useState(false);
   const [locationId, setLocationId] = useState("");
   const [locations, setLocations] = useState([]);
+  const navigate = useNavigate();
+
+  const handlePrint = () => {
+      navigate(`/purchase-orders/${po.id}/print`);
+  };
 
 
    const { user } = useAuth();
@@ -281,6 +288,8 @@ const handleReceive = useCallback(async () => {
         setModal={setModal}
         handleAction={handleAction}
         onReceive={openReceiveModal}  
+        onPrint ={handlePrint}
+        
 
     />
 
