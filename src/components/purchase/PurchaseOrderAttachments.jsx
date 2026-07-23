@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 
 export default function PurchaseOrderAttachments({ poId }) {
@@ -28,6 +28,7 @@ export default function PurchaseOrderAttachments({ poId }) {
         load();
 
     }, [load]);
+
 
     const upload = async (e) => {
 
