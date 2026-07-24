@@ -20,61 +20,57 @@ const purchaseOrderApi = {
       body: JSON.stringify(data),
     }),
 
-receive(id, payload) {
-  return apiFetch(
-    `/api/v1/purchase-orders/${id}/receive`,
-    {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }
-  );
-},
-
-    submit: (id) =>
-      apiFetch(`/api/v1/purchase-orders/${id}/submit`, { method: "POST" }),
-
-    approve: (id) =>
-      apiFetch(`/api/v1/purchase-orders/${id}/approve`, { method: "POST" }),
-
-    reject: (id) =>
-      apiFetch(`/api/v1/purchase-orders/${id}/reject`, { method: "POST" }),
-
-    getHistory: (id) =>
-       apiFetch(`/api/v1/purchase-orders/${id}/history`),
-       uploadAttachment(id, file) {
-
-    const formData = new FormData();
-
-    formData.append("file", file);
-
-    return apiFetch(
-        `/purchase-orders/${id}/attachments`,
+    receive(id, payload) {
+      return apiFetch(
+        `/api/v1/purchase-orders/${id}/receive`,
         {
-            method: "POST",
-            body: formData
+          method: "POST",
+          body: JSON.stringify(payload)
         }
-    );
+      );
+    },
 
-},
+        submit: (id) =>
+          apiFetch(`/api/v1/purchase-orders/${id}/submit`, { method: "POST" }),
 
-getAttachments(id) {
+        approve: (id) =>
+          apiFetch(`/api/v1/purchase-orders/${id}/approve`, { method: "POST" }),
 
-    return apiFetch(
-        `/purchase-orders/${id}/attachments`
-    );
+        reject: (id) =>
+          apiFetch(`/api/v1/purchase-orders/${id}/reject`, { method: "POST" }),
 
-},
 
-deleteAttachment(attachmentId) {
+        getHistory: (id) =>
+          apiFetch(`/api/v1/purchase-orders/${id}/history`),
 
-    return apiFetch(
-        `/purchase-orders/attachments/${attachmentId}`,
-        {
-            method: "DELETE"
-        }
-    );
 
-},
+    uploadAttachment(id, file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        return apiFetch(
+            `/api/v1/purchase-orders/${id}/attachments`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+    },
+
+    getAttachments(id) {
+        return apiFetch(
+            `/api/v1/purchase-orders/${id}/attachments`
+        );
+    },
+
+    deleteAttachment(attachmentId) {
+        return apiFetch(
+            `/api/v1/purchase-orders/attachments/${attachmentId}`,
+            {
+                method: "DELETE"
+            }
+        );
+    },
 
 };
 
