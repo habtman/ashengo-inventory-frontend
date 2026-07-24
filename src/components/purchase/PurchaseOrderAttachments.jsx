@@ -112,47 +112,34 @@ export default function PurchaseOrderAttachments({ poId }) {
 
                     </div>
 
-                    <div className="flex gap-2">
+                <div className="flex gap-2">
 
-                        <a
-                            href={`${import.meta.env.VITE_API_BASE_URL}/purchase-orders/attachments/${file.id}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-blue-600"
-                        >
-                        </a>
+                    <button
+                        className="text-blue-600 hover:underline"
+                        onClick={() =>
+                            purchaseOrderApi.downloadAttachment(file)
+                        }
+                    >
+                        Download
+                    </button>
 
-                        <button
-                            onClick={() =>
-                                purchaseOrderApi.downloadAttachment(attachments)
-                            }
-                        >
-                            Download
-                        </button>
+                    <button
+                        className="text-red-600 hover:underline"
+                        onClick={async () => {
 
-                        <button
-                            className="text-red-600"
-                            onClick={async () => {
+                            if (!window.confirm("Delete attachment?"))
+                                return;
 
-                                if (
-                                    !window.confirm(
-                                        "Delete attachment?"
-                                    )
-                                )
-                                    return;
+                            await purchaseOrderApi.deleteAttachment(file.id);
 
-                                await purchaseOrderApi.deleteAttachment(
-                                    file.id
-                                );
+                            load();
 
-                                load();
+                        }}
+                    >
+                        Delete
+                    </button>
 
-                            }}
-                        >
-                            Delete
-                        </button>
-
-                    </div>
+                </div>
 
                 </div>
 

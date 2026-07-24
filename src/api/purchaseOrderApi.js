@@ -43,39 +43,40 @@ const purchaseOrderApi = {
         getHistory: (id) =>
           apiFetch(`/api/v1/purchase-orders/${id}/history`),
 
-        downloadAttachment: async (attachment) => {
-            const token = localStorage.getItem("accessToken");
+downloadAttachment: async (file) => {
 
-            const res = await fetch(
-                `https://ashengo-inventory-production.fly.dev/api/v1/purchase-orders/attachments/${attachment.id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+    const token = localStorage.getItem("accessToken");
 
-            if (!res.ok) {
-                throw new Error("Failed to download attachment");
+    const res = await fetch(
+        `https://ashengo-inventory-production.fly.dev/api/v1/purchase-orders/attachments/${file.id}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
             }
+        }
+    );
 
-            const blob = await res.blob();
+    if (!res.ok) {
+        throw new Error("Failed to download");
+    }
 
-            const url = window.URL.createObjectURL(blob);
+    const blob = await res.blob();
 
-            const link = document.createElement("a");
+    const url = window.URL.createObjectURL(blob);
 
-            link.href = url;
-            link.download = attachment.file_name;
+    const link = document.createElement("a");
 
-            document.body.appendChild(link);
+    link.href = url;
+    link.download = file.file_name;
 
-            link.click();
+    document.body.appendChild(link);
 
-            link.remove();
+    link.click();
 
-            window.URL.revokeObjectURL(url);
-        },
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+},
 
 
         uploadAttachment(id, file) {
