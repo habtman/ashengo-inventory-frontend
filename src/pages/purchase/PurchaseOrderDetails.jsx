@@ -234,19 +234,19 @@ const handleReceive = useCallback(async () => {
 
     const handleEmail = async () => {
 
-    try {
+        try {
 
-        await purchaseOrderApi.email(po.id);
+            await purchaseOrderApi.email(po.id);
 
-        alert("Purchase Order emailed successfully.");
+            alert("Purchase Order emailed successfully.");
 
-    } catch (err) {
+        } catch (err) {
 
-        alert(err.message);
+            alert(err.message);
 
-    }
+        }
 
-};
+    };
 
 
 

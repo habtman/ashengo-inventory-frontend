@@ -170,93 +170,119 @@ useEffect(() => {
 
         </div>
 
-      <table className="w-full border border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th>Item</th>
-            <th>Ordered</th>
-            <th>Received</th>
-            <th>Remaining</th>
-            <th>Unit Cost</th>
-            <th>Total</th>
-          </tr>
-        </thead>
+      <table className="w-full border border-collapse text-sm">
+      <thead>
 
-        <tbody>
-          {po.items.map((item,index) => (
-            <tr key={item.inventory_id}>
-              <td>{index+1}</td>
-              <td className="border p-2">
-                {item.item_name}
-              </td>
+      <tr className="bg-gray-100">
 
-              <td>{item.quantity}</td>
+        <th className="border p-3 text-left">
+          #
+        </th>
 
-              <td>{item.received_quantity}</td>
+        <th className="border p-3 text-left">
+          Item
+        </th>
 
-              <td>{item.quantity - item.received_quantity}</td>
+        <th className="border p-3">
+          Qty
+        </th>
 
-              <td className="border p-2 text-right">
-                {Number(
-                  item.cost_price
-                ).toFixed(2)}
-              </td>
+        <th className="border p-3">
+          Unit Cost
+        </th>
 
-              <td className="border p-2 text-right">
-                {Number(
-                  item.total_amount
-                ).toFixed(2)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        <th className="border p-3">
+          Total
+        </th>
+
+      </tr>
+
+      </thead>
+
+      <tbody>
+
+      {po.items.map((item, index) => (
+
+      <tr key={item.inventory_id}>
+
+        <td className="border p-2">
+          {index + 1}
+        </td>
+
+        <td className="border p-2">
+          {item.item_name}
+        </td>
+
+        <td className="border p-2 text-center">
+          {item.quantity}
+        </td>
+
+        <td className="border p-2 text-right">
+          {Number(item.cost_price).toFixed(2)}
+        </td>
+
+        <td className="border p-2 text-right">
+          {Number(item.total_amount).toFixed(2)}
+        </td>
+
+      </tr>
+
+      ))}
+
+      </tbody>
       </table>
 
-      <div className="mt-6 text-right">
-        <p>
-          <strong>Currency:</strong> {po.currency}
-        </p>
+      <div className="flex justify-end mt-8">
 
-        {po.currency !== "ETB" && (
-          <p>
-            <strong>Exchange Rate:</strong> {po.exchange_rate}
-          </p>
-        )}
+        <table className="w-72 border">
 
-        <h2 className="text-xl font-bold">
-          Total ({po.currency}):{" "}
-          {Number(po.foreign_total).toLocaleString(undefined,{
-            minimumFractionDigits:2
-          })}
-        </h2>
+          <tbody>
 
-        {po.currency !== "ETB" && (
-          <h3 className="text-lg font-semibold">
-            ETB Total:{" "}
-            {Number(po.total_amount).toLocaleString(undefined,{
-              minimumFractionDigits:2
-            })}
-          </h3>
-        )}
+            <tr>
+
+              <td className="border p-2 font-semibold">
+                Currency
+              </td>
+
+              <td className="border p-2 text-right">
+                {po.currency || "ETB"}
+              </td>
+
+            </tr>
+
+            <tr>
+
+              <td className="border p-2 font-bold text-lg">
+                Grand Total
+              </td>
+
+              <td className="border p-2 text-right font-bold text-lg">
+                {Number(po.total_amount).toFixed(2)}
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
       </div>
       <div className="grid grid-cols-3 gap-8 mt-16 text-center">
 
       <div>
-        ____________________
-        <br/>
         Prepared By
+
+        ______________________
+
+        {po.created_by_name || ""}
       </div>
 
       <div>
-        ____________________
-        <br/>
-        Checked By
-      </div>
-
-      <div>
-        ____________________
-        <br/>
         Approved By
+
+        ______________________
+
+        {po.approved_by_name || ""}
       </div>
 
       </div>
