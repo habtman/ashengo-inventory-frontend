@@ -269,10 +269,13 @@ useEffect(() => {
       </div>
       <div className="grid grid-cols-3 gap-8 mt-16 text-center">
 
+
+
       <div>
         Prepared By
 
         ______________________
+        <br/>
 
         {po.created_by_name || ""}
       </div>
@@ -281,6 +284,7 @@ useEffect(() => {
         Approved By
 
         ______________________
+        <br/>
 
         {po.approved_by_name || ""}
       </div>
