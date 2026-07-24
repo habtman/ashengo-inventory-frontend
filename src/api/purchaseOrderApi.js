@@ -46,8 +46,10 @@ const purchaseOrderApi = {
         getHistory: (id) =>
           apiFetch(`/api/v1/purchase-orders/${id}/history`),
 
-        downloadAttachment: async (file) => {
-            const token = localStorage.getItem("accessToken");
+downloadAttachment: async (file) => {
+    try {
+
+        const token = localStorage.getItem("accessToken");
 
         const res = await fetch(
             `${API_BASE}/api/v1/purchase-orders/attachments/${file.id}`,
@@ -59,27 +61,29 @@ const purchaseOrderApi = {
             }
         );
 
+        console.log("Status:", res.status);
 
-            console.log("Download status:", res.status);
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
 
-            if (!res.ok) {
-                const text = await res.text();
-                console.log(text);
-                throw new Error(`Download failed (${res.status})`);
-            }
+        const blob = await res.blob();
 
-            const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
 
-            const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = file.file_name;
+        a.click();
 
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = file.file_name;
-            link.click();
+        URL.revokeObjectURL(url);
 
-            URL.revokeObjectURL(url);
-        },
+    } catch (err) {
 
+        console.error("Download error:", err);
+
+    }
+},
 
         uploadAttachment(id, file) {
             const formData = new FormData();
