@@ -49,14 +49,15 @@ const purchaseOrderApi = {
         downloadAttachment: async (file) => {
             const token = localStorage.getItem("accessToken");
 
-            const res = await fetch(
-                `${API_BASE}/api/v1/purchase-orders/attachments/${file.id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+        const res = await fetch(
+            `${API_BASE}/api/v1/purchase-orders/attachments/${file.id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                credentials: "include"
+            }
+        );
 
 
             console.log("Download status:", res.status);
