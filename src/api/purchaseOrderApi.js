@@ -1,4 +1,7 @@
 import { apiFetch } from "./api";
+const API_BASE =
+    "https://ashengo-inventory-production.fly.dev";
+
 
 const purchaseOrderApi = {
   getAll: ({
@@ -47,13 +50,14 @@ const purchaseOrderApi = {
             const token = localStorage.getItem("accessToken");
 
             const res = await fetch(
-                `https://ashengo-inventory-production.fly.dev/api/v1/purchase-orders/attachments/${file.id}`,
+                `${API_BASE}/api/v1/purchase-orders/attachments/${file.id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
+
 
             console.log("Download status:", res.status);
 
