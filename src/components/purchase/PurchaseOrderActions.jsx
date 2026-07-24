@@ -7,6 +7,7 @@ export default function PurchaseOrderActions({
   setModal,
   handleAction,
   onPrint,
+  onEmail,
   onDownloadPdf,
   onReceive
 }) {
@@ -67,6 +68,13 @@ export default function PurchaseOrderActions({
             className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded"
         >
             Print
+        </button>
+
+        <button
+            onClick={onEmail}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+        >
+            Email Supplier
         </button>
 
         <button

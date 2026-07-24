@@ -113,6 +113,15 @@ downloadAttachment: async (file) => {
             );
         },
 
+        email(id) {
+            return apiFetch(
+                `/api/v1/purchase-orders/${id}/email`,
+                {
+                    method: "POST"
+                }
+            );
+        },
+
 };
 
 export default purchaseOrderApi;
