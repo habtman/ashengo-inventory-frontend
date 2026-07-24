@@ -43,6 +43,40 @@ const purchaseOrderApi = {
         getHistory: (id) =>
           apiFetch(`/api/v1/purchase-orders/${id}/history`),
 
+        downloadAttachment: async (attachment) => {
+            const token = localStorage.getItem("accessToken");
+
+            const res = await fetch(
+                `https://ashengo-inventory-production.fly.dev/api/v1/purchase-orders/attachments/${attachment.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error("Failed to download attachment");
+            }
+
+            const blob = await res.blob();
+
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = attachment.file_name;
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+        },
+
 
         uploadAttachment(id, file) {
             const formData = new FormData();

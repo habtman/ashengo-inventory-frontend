@@ -120,8 +120,15 @@ export default function PurchaseOrderAttachments({ poId }) {
                             rel="noreferrer"
                             className="text-blue-600"
                         >
-                            Download
                         </a>
+
+                        <button
+                            onClick={() =>
+                                purchaseOrderApi.downloadAttachment(attachments)
+                            }
+                        >
+                            Download
+                        </button>
 
                         <button
                             className="text-red-600"
