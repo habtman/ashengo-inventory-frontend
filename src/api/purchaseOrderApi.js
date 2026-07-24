@@ -44,33 +44,33 @@ const purchaseOrderApi = {
           apiFetch(`/api/v1/purchase-orders/${id}/history`),
 
 
-    uploadAttachment(id, file) {
-        const formData = new FormData();
-        formData.append("file", file);
+        uploadAttachment(id, file) {
+            const formData = new FormData();
+            formData.append("file", file);
 
-        return apiFetch(
-            `/api/v1/purchase-orders/${id}/attachments`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-    },
+            return apiFetch(
+                `/api/v1/purchase-orders/${id}/attachments`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+        },
 
-    getAttachments(id) {
-        return apiFetch(
-            `/api/v1/purchase-orders/${id}/attachments`
-        );
-    },
+        getAttachments(id) {
+            return apiFetch(
+                `/api/v1/purchase-orders/${id}/attachments`
+            );
+        },
 
-    deleteAttachment(attachmentId) {
-        return apiFetch(
-            `/api/v1/purchase-orders/attachments/${attachmentId}`,
-            {
-                method: "DELETE"
-            }
-        );
-    },
+        deleteAttachment(id) {
+            return apiFetch(
+                `/api/v1/purchase-orders/attachments/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+        },
 
 };
 
