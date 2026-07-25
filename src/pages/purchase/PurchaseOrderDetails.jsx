@@ -132,7 +132,7 @@ const loadMoreHistory = async () => {
       await purchaseOrderApi.getHistory(
         id,
         nextPage,
-        20
+        10
       );
 
     setHistory(prev => [
