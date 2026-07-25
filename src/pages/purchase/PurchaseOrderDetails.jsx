@@ -97,7 +97,7 @@ const loadHistory = useCallback(async () => {
   try {
     setHistoryLoading(true);
 
-    const result = await purchaseOrderApi.getHistory(id, 1, 20);
+    const result = await purchaseOrderApi.getHistory(id, 1, 10);
 
     setHistory(result.data);
     setHistoryPage(1);
