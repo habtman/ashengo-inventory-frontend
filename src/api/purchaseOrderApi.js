@@ -43,8 +43,14 @@ const purchaseOrderApi = {
           apiFetch(`/api/v1/purchase-orders/${id}/reject`, { method: "POST" }),
 
 
-        getHistory: (id) =>
-          apiFetch(`/api/v1/purchase-orders/${id}/history`),
+        getHistory: (
+          id,
+          page = 1,
+          limit = 20
+        ) =>
+          apiFetch(
+            `/api/v1/purchase-orders/${id}/history?page=${page}&limit=${limit}`
+          ),
 
 downloadAttachment: async (file) => {
     try {
