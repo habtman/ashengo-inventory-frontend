@@ -39,6 +39,9 @@ export default function PurchaseOrderDetails() {
 };
 
 const [history, setHistory] = useState([]);
+const [historyPage, setHistoryPage] = useState(1);
+const [historyHasMore, setHistoryHasMore] = useState(false);
+const [historyLoading, setHistoryLoading] = useState(false);
 
 
    const { user } = useAuth();
@@ -58,17 +61,15 @@ const [history, setHistory] = useState([]);
 
   
 
-  const load = useCallback(async () => {
-    try {
-      const data = await purchaseOrderApi.getById(id);
-        setPo(data);
-      const historyData = await purchaseOrderApi.getHistory(id);
-        setHistory(historyData);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to load purchase order");
-    }
-  }, [id]); 
+const load = useCallback(async () => {
+  try {
+    const data = await purchaseOrderApi.getById(id);
+    setPo(data);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to load purchase order");
+  }
+}, [id]);
 
   useEffect(() => {
 
@@ -92,9 +93,62 @@ useEffect(() => {
   loadLocations();
 }, []);
 
+const loadHistory = useCallback(async () => {
+  try {
+    setHistoryLoading(true);
+
+    const result = await purchaseOrderApi.getHistory(id, 1, 20);
+
+    setHistory(result.data);
+    setHistoryPage(1);
+    setHistoryHasMore(result.hasMore);
+
+  } catch (err) {
+    console.error("Failed to load PO history:", err);
+  } finally {
+    setHistoryLoading(false);
+  }
+}, [id]);
 
 
+  useEffect(() => {
 
+    if (!id || id === ":id") return;
+
+    loadHistory();
+
+}, [id, loadHistory]);
+
+
+const loadMoreHistory = async () => {
+  if (historyLoading || !historyHasMore) return;
+
+  try {
+    setHistoryLoading(true);
+
+    const nextPage = historyPage + 1;
+
+    const result =
+      await purchaseOrderApi.getHistory(
+        id,
+        nextPage,
+        20
+      );
+
+    setHistory(prev => [
+      ...prev,
+      ...result.data
+    ]);
+
+    setHistoryPage(nextPage);
+    setHistoryHasMore(result.hasMore);
+
+  } catch (err) {
+    console.error("Failed to load more history:", err);
+  } finally {
+    setHistoryLoading(false);
+  }
+};
 
 
   const { totalOrdered, totalReceived, progress } = useMemo(() => {
@@ -232,6 +286,8 @@ const handleReceive = useCallback(async () => {
       }
     }, [id, load]);
 
+    
+/*
     const handleEmail = async () => {
 
         try {
@@ -246,7 +302,7 @@ const handleReceive = useCallback(async () => {
 
         }
 
-    };
+    };  */
 
 
 
@@ -316,7 +372,10 @@ const handleReceive = useCallback(async () => {
     />
 
     <PurchaseOrderTimeline
-    history={history}
+      history={history}
+      hasMore={historyHasMore}
+      loading={historyLoading}
+      onLoadMore={loadMoreHistory}
     />
 
     <PurchaseOrderActions
@@ -332,10 +391,12 @@ const handleReceive = useCallback(async () => {
         handleAction={handleAction}
         onReceive={openReceiveModal}  
         onPrint ={handlePrint}
-        onEmail={handleEmail}
+        //onEmail={handleEmail}
         onDownloadPdf={handleDownloadPdf}
 
     />
+
+
 
 
     </div>
