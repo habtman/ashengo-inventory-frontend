@@ -113,6 +113,7 @@ downloadAttachment: async (file) => {
             );
         },
 
+/*
         email(id) {
             return apiFetch(
                 `/api/v1/purchase-orders/${id}/email`,
@@ -120,7 +121,7 @@ downloadAttachment: async (file) => {
                     method: "POST"
                 }
             );
-        },
+        }, */
 
 };
 
