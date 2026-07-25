@@ -10,7 +10,7 @@ const load = async () => {
     const result =
       await adminApi.getDashboard();
 
-    //console.log("Dashboard data:", result);
+    console.log("Dashboard data:", result);
 
     setData(result);
   } catch (err) {
