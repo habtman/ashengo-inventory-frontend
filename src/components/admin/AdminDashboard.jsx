@@ -21,44 +21,55 @@ const load = async () => {
   load();
 }, []);
 
+
+const formatCurrency = (value, currency = "ETB") => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value) || 0);
+};
+
+
   if (!data) {
     return <p>Loading...</p>;
   }
 
-  const cards = [
-    {
-      title: "Inventory Items",
-      value: data.totalInventory
-    },
-    {
-      title: "Stock Value",
-      value: `$${data.totalStockValue}`
-    },
-    {
-      title: "Today's Sales",
-      value: `$${data.todaySales}`
-    },
-    {
-      title: "Monthly Sales",
-      value: `$${data.monthSales}`
-    },
-    {
-      title: "Low Stock",
-      value: data.lowStock
-    },
-    {
-      title: "Out of Stock",
-      value: data.outOfStock
-    },
-    {
-      title: "Pending POs",
-      value: data.pendingPOs
-    },
-    {
-      title: "Locations",
-      value: data.locations
-    }
-  ];
+const cards = [
+  {
+    title: "Inventory Items",
+    value: data.totalInventory
+  },
+  {
+    title: "Stock Value",
+    value: formatCurrency(data.totalStockValue)
+  },
+  {
+    title: "Today's Sales",
+    value: formatCurrency(data.todaySales)
+  },
+  {
+    title: "Monthly Sales",
+    value: formatCurrency(data.monthSales)
+  },
+  {
+    title: "Low Stock",
+    value: data.lowStock
+  },
+  {
+    title: "Out of Stock",
+    value: data.outOfStock
+  },
+  {
+    title: "Pending POs",
+    value: data.pendingPOs
+  },
+  {
+    title: "Locations",
+    value: data.locations
+  }
+];
 
   return (
     <div>
