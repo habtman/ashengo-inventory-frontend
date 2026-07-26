@@ -32,6 +32,7 @@ const formatCurrency = (value, currency = "ETB") => {
 };
 
 
+
   if (!data) {
     return <p>Loading...</p>;
   }
@@ -43,15 +44,25 @@ const cards = [
   },
   {
     title: "Stock Value",
-    value: formatCurrency(data.totalStockValue)
+    value: formatCurrency(
+      data.totalStockValue,
+      data.currency
+    )
+
   },
   {
     title: "Today's Sales",
-    value: formatCurrency(data.todaySales)
+    value: formatCurrency(
+      data.todaySales,
+      data.currency
+    )
   },
   {
     title: "Monthly Sales",
-    value: formatCurrency(data.monthSales)
+    value: formatCurrency(
+      data.monthSales,
+      data.currency
+    )
   },
   {
     title: "Low Stock",
