@@ -105,11 +105,14 @@ const handleSubmit = async () => {
       return;
     }
 
+    // 1. Create Sales Order
     const createRes = await salesOrderApi.create({
       customerId,
       locationId,
       paymentMethod,
-      creditDays,
+      creditDays: paymentMethod === "CREDIT"
+        ? creditDays
+        : null,
       items
     });
 
@@ -117,19 +120,24 @@ const handleSubmit = async () => {
 
     const salesOrderId = createRes.soId;
 
-    const confirmRes = await salesOrderApi.confirm(salesOrderId, {
-      paymentMethod,
-      creditDays
-    });
+    // 2. Confirm Sales Order
+    // Payment terms are NOT sent here.
+    // They already belong to the Sales Order.
+    const confirmRes =
+      await salesOrderApi.confirm(salesOrderId);
 
     console.log("CONFIRM RESPONSE:", confirmRes);
 
+    // 3. Open the Sales Order details
     navigate(`/sales-orders/${salesOrderId}`);
 
   } catch (err) {
     console.error(err);
 
-    alert(err.message || "Failed to create sales order");
+    alert(
+      err.message ||
+      "Failed to create sales order"
+    );
   }
 };
 

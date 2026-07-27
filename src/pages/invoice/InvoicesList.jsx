@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link} from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
 
+
 export default function InvoicesList() {
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
@@ -38,6 +39,8 @@ export default function InvoicesList() {
 useEffect(() => {
   setInvoicePage(1);
 }, [search]);
+
+
 
 const totalInvoicePages =
   Math.ceil(invoices.length / invoicePageSize);
@@ -130,7 +133,7 @@ const paginatedInvoices =
             </td>
 
             <td className="border p-2">
-              {inv.payment_method}
+              {inv.payment_method || "-"}
             </td>
 
             <td className="border p-2">
