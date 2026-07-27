@@ -93,12 +93,7 @@ const handleConfirm = async () => {
         {so.due_date || "-"}
       </p>
 
-      <p>
-        <strong>Balance Due:</strong>
-        {so.balance_due}
-      </p>
-
-        <p>  
+      <p>  
         <strong>Created:</strong>{" "}
             {new Date(so.created_at).toLocaleString()
             }  
