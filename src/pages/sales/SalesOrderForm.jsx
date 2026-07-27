@@ -133,42 +133,6 @@ const handleSubmit = async () => {
   }
 };
 
-/*const handleSubmit = async () => {
-
-  if (!customerId) {
-    alert("Please select a customer");
-    return;
-  }
-
-  if (!locationId) {
-    alert("Please select a location");
-    return;
-  }
-
-  if (items.length === 0) {
-    alert("Please add at least one item");
-    return;
-  }
-
-  const res = await salesOrderApi.create({
-      customerId,
-      locationId,
-      paymentMethod,
-      creditDays,
-      items
-  });
-  
-  const salesOrderId = res.soId; // or createRes.id if that's what your API returns
-
-  await salesOrderApi.confirm(salesOrderId, {
-    paymentMethod,
-    creditDays
-  });
-
-
-  navigate(`/sales-orders/${res.soId}`);
-};*/
-
 
   return (
     <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
