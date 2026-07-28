@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 import { Link } from "react-router-dom";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function AgingReport() {
 
@@ -100,35 +101,39 @@ export default function AgingReport() {
   <div className="bg-white rounded shadow p-4">
     <p className="text-gray-500 text-sm">Current</p>
     <p className="text-2xl font-bold text-green-600">
-      ${totalCurrent.toFixed(2)}
+      {formatCurrency(totalCurrent.toFixed(2))}
+  
     </p>
   </div>
 
   <div className="bg-white rounded shadow p-4">
     <p className="text-gray-500 text-sm">31–60</p>
     <p className="text-2xl font-bold text-yellow-600">
-      ${total31.toFixed(2)}
+      {formatCurrency(total31.toFixed(2))}
+      
     </p>
   </div>
 
   <div className="bg-white rounded shadow p-4">
     <p className="text-gray-500 text-sm">61–90</p>
     <p className="text-2xl font-bold text-orange-600">
-      ${total61.toFixed(2)}
+      {formatCurrency(total61.toFixed(2))}
+     
     </p>
   </div>
 
       <div className="bg-white rounded shadow p-4">
         <p className="text-gray-500 text-sm">90+</p>
         <p className="text-2xl font-bold text-red-600">
-          ${total90.toFixed(2)}
+          {formatCurrency(total90.toFixed(2))}
+          
         </p>
       </div>
 
       <div className="bg-indigo-600 rounded shadow p-4 text-white">
         <p>Total Receivable</p>
         <p className="text-3xl font-bold">
-          ${(totalCurrent + total31 + total61 + total90).toFixed(2)}
+          {formatCurrency((totalCurrent + total31 + total61 + total90).toFixed(2))}
         </p>
       </div>
 
@@ -191,31 +196,31 @@ export default function AgingReport() {
               </td>
 
                 <td className="p-3 text-right text-green-600">
-                  {Number(
+                  {formatCurrency(Number(
                     row.current_bucket
-                  ).toFixed(2)}
+                  ).toFixed(2))}
                 </td>
 
                 <td>
-                  {outstanding(row).toFixed(2)}
+                  {formatCurrency(outstanding(row).toFixed(2))}
               </td>
 
                 <td className="p-3 text-right text-yellow-600">
-                  {Number(
+                  {formatCurrency(Number(
                     row.days_31_60
-                  ).toFixed(2)}
+                  ).toFixed(2))}
                 </td>
 
                 <td className="p-3 text-right text-orange-600">
-                  {Number(
+                  {formatCurrency(Number(
                     row.days_61_90
-                  ).toFixed(2)}
+                  ).toFixed(2))}
                 </td>
 
                 <td className="p-3 text-right text-red-600 font-bold">
-                  {Number(
+                  {formatCurrency(Number(
                     row.over_90
-                  ).toFixed(2)}
+                  ).toFixed(2))}
                 </td>
 
               </tr>
@@ -233,19 +238,19 @@ export default function AgingReport() {
               </td>
 
               <td className="p-3 text-right">
-                {totalCurrent.toFixed(2)}
+                {formatCurrency(totalCurrent.toFixed(2))}
               </td>
 
               <td className="p-3 text-right">
-                {total31.toFixed(2)}
+                {formatCurrency(total31.toFixed(2))}
               </td>
 
               <td className="p-3 text-right">
-                {total61.toFixed(2)}
+                {formatCurrency(total61.toFixed(2))}
               </td>
 
               <td className="p-3 text-right">
-                {total90.toFixed(2)}
+                 {formatCurrency(total90.toFixed(2))}
               </td>
 
               <td className="p-3 text-right">

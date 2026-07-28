@@ -1,3 +1,5 @@
+import { formatCurrency } from "../../utils/currency";  
+
 export default function InvoiceTable({
   items,
   setItems
@@ -65,7 +67,7 @@ export default function InvoiceTable({
             <td>
               <input
                 type="number"
-                value={item.sellingPrice}
+                value={formatCurrency(item.sellingPrice)}
                 onChange={(e) =>
                   updateItemPrice(item.itemId, Number(e.target.value))
                 }
@@ -74,8 +76,8 @@ export default function InvoiceTable({
             </td>
 
             <td>
-              {item.quantity *
-               item.sellingPrice}
+              {formatCurrency(item.quantity *
+               item.sellingPrice)}
             </td>
 
             <td>

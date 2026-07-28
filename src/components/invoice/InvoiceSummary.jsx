@@ -1,3 +1,5 @@
+import { formatCurrency } from "../../utils/currency";
+
 export default function InvoiceSummary({
   items,
   loading,
@@ -15,7 +17,7 @@ export default function InvoiceSummary({
     <div className="text-right space-y-3">
 
       <div className="text-xl font-bold">
-        Total: {total.toFixed(2)}
+        Total: {formatCurrency(total.toFixed(2))}
       </div>
 
       <button

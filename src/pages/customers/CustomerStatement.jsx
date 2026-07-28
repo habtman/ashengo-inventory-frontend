@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function CustomerStatement({
   customerId
@@ -77,15 +78,15 @@ export default function CustomerStatement({
                 <td>{row.reference}</td>
 
                 <td>
-                  ${Number(row.debit).toFixed(2)}
+                  {formatCurrency(Number(row.debit).toFixed(2))}
                 </td>
 
                 <td>
-                  ${Number(row.credit).toFixed(2)}
+                  {formatCurrency(Number(row.credit).toFixed(2))}
                 </td>
 
                 <td className="font-semibold">
-                  ${Number(row.balance).toFixed(2)}
+                  {formatCurrency(Number(row.balance).toFixed(2))}
                 </td>
 
               </tr>

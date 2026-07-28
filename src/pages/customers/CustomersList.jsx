@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function CustomersList() {
 
@@ -88,9 +89,9 @@ export default function CustomersList() {
                 {customer.phone}
               </td>
 
-              <td className="border p-2">
-                {customer.credit_limit}
-              </td>
+             <td className="border p-2 text-right">
+              {formatCurrency(customer.credit_limit)}
+             </td>
 
               <td className="border p-2">
 

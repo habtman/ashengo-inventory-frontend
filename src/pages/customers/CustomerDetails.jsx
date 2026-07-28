@@ -4,6 +4,7 @@ import customerApi from "../../api/customerApi";
 import CustomerLedger from "./CustomerLedger";
 import CustomerStatement from "./CustomerStatement";
 import RecordPaymentModal from "./RecordPaymentModal";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function CustomerDetails() {
   const [activeTab, setActiveTab] = useState("invoices");
@@ -70,7 +71,7 @@ const totalPaid =
           Outstanding
         </div>
         <div className="text-2xl font-bold">
-          ${outstanding.toFixed(2)}
+          {formatCurrency(outstanding.toFixed(2))}
         </div>
       </div>
 
@@ -79,7 +80,7 @@ const totalPaid =
           Available Credit
         </div>
         <div className="text-2xl font-bold">
-          ${availableCredit.toFixed(2)}
+          {formatCurrency(availableCredit.toFixed(2))}
         </div>
       </div>
 
@@ -88,7 +89,7 @@ const totalPaid =
           Total Paid
         </div>
         <div className="text-2xl font-bold">
-          ${totalPaid.toFixed(2)}
+          {formatCurrency(totalPaid.toFixed(2))}
         </div>
       </div>
 

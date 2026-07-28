@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function CustomerLedger({ customerId, mode }) {
   const [ledger, setLedger] = useState(null);
@@ -57,11 +58,11 @@ export default function CustomerLedger({ customerId, mode }) {
           </td>
 
           <td>
-              ${Number(invoice.total_amount).toFixed(2)}
+              {formatCurrency(Number(invoice.total_amount).toFixed(2))}
           </td>
 
           <td>
-              ${Number(invoice.amount_paid).toFixed(2)}
+              {formatCurrency(Number(invoice.amount_paid).toFixed(2))}
           </td>
 
           <td>
@@ -72,7 +73,7 @@ export default function CustomerLedger({ customerId, mode }) {
               :"text-red-600 font-semibold"
               }
               >
-              ${Number(invoice.balance_due).toFixed(2)}
+              {formatCurrency(Number(invoice.balance_due).toFixed(2))}
               </p>
           </td>
 
@@ -128,7 +129,7 @@ export default function CustomerLedger({ customerId, mode }) {
               </td>
 
               <td>
-                ${Number(payment.amount).toFixed(2)}
+                {formatCurrency(Number(payment.amount).toFixed(2))}
               </td>
 
               <td>
