@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function SalesOrders() {
   const [orders, setOrders] = useState([]);
@@ -83,7 +84,7 @@ export default function SalesOrders() {
               </td>
 
               <td className="border p-2 text-right">
-                {Number(order.total_amount).toFixed(2)}
+                {formatCurrency(Number(order.total_amount).toFixed(2))}
               </td>
 
               <td className="border p-2">
