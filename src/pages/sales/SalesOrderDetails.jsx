@@ -85,12 +85,12 @@ const handleConfirm = async () => {
         <strong>Credit Terms:</strong>
         {so.credit_days || "-"} Days
       </p>
-      <p>
+
       <p>
         <strong>Balance Due:</strong>{" "}
         {formatCurrency(so.balance_due)}
       </p> 
-      </p>
+  
 
       <p>
         <strong>Due Date:</strong>{" "}
