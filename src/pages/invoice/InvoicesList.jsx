@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link} from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
+import { formatCurrency } from "../../utils/currency";
 
 
 export default function InvoicesList() {
@@ -129,7 +130,7 @@ const paginatedInvoices =
             </td>
 
             <td className="border p-2">
-              ${Number(inv.total_amount).toFixed(2)}
+              {formatCurrency(inv.total_amount)}
             </td>
 
             <td className="border p-2">
@@ -151,11 +152,11 @@ const paginatedInvoices =
             </td>
 
             <td className="border p-2">
-              ${Number(inv.amount_paid || 0).toFixed(2)}
+              {formatCurrency(inv.amount_paid)}
             </td>
 
             <td className="border p-2">
-              ${Number(inv.balance_due || 0).toFixed(2)}
+              {formatCurrency(inv.balance_due)}
             </td>
 
             <td

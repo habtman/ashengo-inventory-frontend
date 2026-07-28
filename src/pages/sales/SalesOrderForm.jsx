@@ -4,6 +4,7 @@ import salesOrderApi from "../../api/salesOrderApi";
 import { inventoryApi } from "../../api/inventoryApi";
 import customerApi from "../../api/customerApi";
 import locationsApi from "../../api/locationsApi";  
+import { formatCurrency } from "../../utils/currency";
    
 
 export default function SalesOrderForm() {
@@ -319,10 +320,9 @@ const handleSubmit = async () => {
         </td>
 
               <td>
-                {(
-                  Number(item.quantity) *
-                  Number(item.unitPrice)
-                ).toFixed(2)}
+                {formatCurrency(
+                  Number(item.quantity) * Number(item.unitPrice)
+                )}
               </td>
 
               <td>
@@ -341,7 +341,7 @@ const handleSubmit = async () => {
       <button onClick={addItem}>+ Add Item</button>
 
       <div className="text-right font-bold mt-4">
-        Total: ${total}
+        Total: {formatCurrency(total)}
       </div>
 
       <button

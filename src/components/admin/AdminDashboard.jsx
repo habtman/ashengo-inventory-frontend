@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import adminApi from "../../api/adminApi";
+import { formatCurrency } from "../../utils/currency";
 
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
@@ -19,18 +20,6 @@ const load = async () => {
   load();
 }, []);
 
-
-const formatCurrency = (value, currency = "ETB") => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value) || 0);
-};
-
-
-
   if (!data) {
     return <p>Loading...</p>;
   }
@@ -42,25 +31,16 @@ const cards = [
   },
   {
     title: "Stock Value",
-    value: formatCurrency(
-      data.totalStockValue,
-      data.currency
-    )
+    value: formatCurrency(data.totalStockValue)
 
   },
   {
     title: "Today's Sales",
-    value: formatCurrency(
-      data.todaySales,
-      data.currency
-    )
+    value: formatCurrency(data.todaySales)
   },
   {
     title: "Monthly Sales",
-    value: formatCurrency(
-      data.monthSales,
-      data.currency
-    )
+    value: formatCurrency(data.monthSales)
   },
   {
     title: "Low Stock",
