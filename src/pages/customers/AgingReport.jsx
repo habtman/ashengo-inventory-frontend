@@ -25,18 +25,6 @@ export default function AgingReport() {
     load();
   }, []);
 
-  useEffect(() => {
-  const load = async () => {
-    const data = await customerApi.getAgingReport();
-    console.log(data);
-    setRows(data);
-  };
-
-  load();
-}, []);
-
-
-
   const totalCurrent =
     rows.reduce(
       (sum, r) =>
@@ -204,7 +192,7 @@ export default function AgingReport() {
 
               <tr
                 key={row.id}
-                className={`border-t ${rowClass}`}
+                className={`border-t ${rowClass(row)}`}
               >
 
               <td className="p-3">
@@ -222,8 +210,8 @@ export default function AgingReport() {
                   ).toFixed(2))}
                 </td>
 
-                <td>
-                  {formatCurrency(outstanding(row).toFixed(2))}
+              <td className="p-3 text-right">
+                {formatCurrency(outstanding(row))}
               </td>
 
               <td className="p-3 text-right text-yellow-600">
@@ -256,41 +244,39 @@ export default function AgingReport() {
 
           </tbody>
 
-          <tfoot className="bg-gray-50 font-bold">
+        <tfoot className="bg-gray-50 font-bold">
+          <tr>
+            <td className="p-3">
+              Totals
+            </td>
 
-            <tr>
+            <td className="p-3 text-right text-green-600">
+              {formatCurrency(totalCurrent)}
+            </td>
 
-              <td className="p-3">
-                Totals
-              </td>
+            <td className="p-3 text-right">
+              {formatCurrency(totalOutstanding)}
+            </td>
 
-              <td className="p-3 text-right">
-                {formatCurrency(totalCurrent.toFixed(2))}
-              </td>
+            <td className="p-3 text-right text-yellow-600">
+              {formatCurrency(total1)}
+            </td>
 
-              <td className="p-3 text-right">
-                {formatCurrency(total1.toFixed(2))}
-              </td>
+            <td className="p-3 text-right text-yellow-600">
+              {formatCurrency(total31)}
+            </td>
 
-              <td className="p-3 text-right">
-                {formatCurrency(total31.toFixed(2))}
-              </td>
+            <td className="p-3 text-right text-orange-600">
+              {formatCurrency(total61)}
+            </td>
 
-              <td className="p-3 text-right">
-                {formatCurrency(total61.toFixed(2))}
-              </td>
+            <td className="p-3 text-right text-red-600">
+              {formatCurrency(total90)}
+            </td>
 
-              <td className="p-3 text-right">
-                 {formatCurrency(total90.toFixed(2))}
-              </td>
-
-              <td className="p-3 text-right">
-                {totalOutstanding.toFixed(2)}
-              </td>
-
-            </tr>
-
-          </tfoot>
+            <td></td>
+          </tr>
+        </tfoot>
 
         </table>
 
