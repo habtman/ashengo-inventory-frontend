@@ -138,7 +138,7 @@ export default function AgingReport() {
       <div className="bg-indigo-600 rounded shadow p-4 text-white">
         <p>Total Receivable</p>
         <p className="text-3xl font-bold">
-          {formatCurrency((totalCurrent + total1 + total31 + total61 + total90).toFixed(2))}
+          {formatCurrency(totalOutstanding.toFixed(2))}
         </p>
       </div>
 
