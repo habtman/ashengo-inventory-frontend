@@ -1,162 +1,299 @@
 import { useState } from "react";
 import customerPaymentApi from "../../api/customerPaymentApi";
+import { formatCurrency } from "../../utils/currency";
 
 export default function RecordPaymentModal({
   customerId,
-  invoices,
+  invoices = [],
   onClose,
   onSuccess
 }) {
+  const [invoiceId, setInvoiceId] = useState("");
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
-  const [invoiceId,
-    setInvoiceId] = useState("");
+  const selectedInvoice = invoices.find(
+    (invoice) =>
+      Number(invoice.id) === Number(invoiceId)
+  );
 
-  const [amount,
-    setAmount] = useState("");
+  const handleSubmit = async () => {
+    setError("");
 
-  const [paymentMethod,
-    setPaymentMethod] =
-      useState("CASH");
+    if (!invoiceId) {
+      setError("Please select an invoice.");
+      return;
+    }
 
-  const handleSubmit =
-    async () => {
+    const paymentAmount = Number(amount);
+
+    if (!Number.isFinite(paymentAmount) || paymentAmount <= 0) {
+      setError("Enter a valid payment amount.");
+      return;
+    }
+
+    const balanceDue = Number(
+      selectedInvoice?.balance_due || 0
+    );
+
+    if (paymentAmount > balanceDue) {
+      setError(
+        `Payment cannot exceed the outstanding balance of ${formatCurrency(
+          balanceDue
+        )}.`
+      );
+      return;
+    }
+
+    try {
+      setSaving(true);
 
       await customerPaymentApi.create({
-        customerId,
-        invoiceId,
-        amount,
+        customerId: Number(customerId),
+        invoiceId: Number(invoiceId),
+        amount: paymentAmount,
         paymentMethod
       });
 
       onSuccess();
       onClose();
-    };
 
-    
+    } catch (err) {
+      console.error("Failed to record payment:", err);
+
+      setError(
+        err?.message ||
+        "Failed to record payment."
+      );
+
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div
       className="
         fixed inset-0
-        bg-black/50
+        z-50
         flex items-center
         justify-center
+        bg-black/50
       "
     >
-
       <div
         className="
+          w-96
+          rounded-lg
           bg-white
           p-6
-          rounded
-          w-96
+          shadow-xl
         "
       >
 
-        <h2 className="font-bold mb-4">
+        <h2 className="mb-4 text-xl font-bold">
           Record Payment
         </h2>
 
+        {/* Error */}
+
+        {error && (
+          <div
+            className="
+              mb-4
+              rounded
+              border
+              border-red-200
+              bg-red-50
+              p-3
+              text-sm
+              text-red-700
+            "
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Invoice */}
+
+        <label className="mb-1 block text-sm font-medium">
+          Invoice
+        </label>
+
         <select
-          className="border p-2 w-full mb-3"
+          className="
+            mb-4
+            w-full
+            rounded
+            border
+            p-2
+          "
           value={invoiceId}
           onChange={(e) =>
-            setInvoiceId(
-              e.target.value
-            )
+            setInvoiceId(e.target.value)
           }
         >
-
           <option value="">
-            Select Invoice  
+            Select Invoice
           </option>
 
           {invoices
             .filter(
-              io =>
-                Number(
-                  io.balance_due
-                ) > 0
+              (invoice) =>
+                Number(invoice.balance_due || 0) > 0
             )
-            .map(io => (
+            .map((invoice) => (
               <option
-                key={io.id}
-                value={io.id}
+                key={invoice.id}
+                value={invoice.id}
               >
-                {io.so_number}
-                {" - "}
-                {io.balance_due}
+                {invoice.invoice_number}
+                {" — "}
+                {formatCurrency(
+                  Number(invoice.balance_due || 0)
+                )}
               </option>
             ))}
-
         </select>
+
+        {/* Selected invoice balance */}
+
+        {selectedInvoice && (
+          <div
+            className="
+              mb-4
+              rounded
+              bg-gray-50
+              p-3
+              text-sm
+            "
+          >
+            <div className="flex justify-between">
+              <span className="text-gray-500">
+                Invoice
+              </span>
+
+              <span className="font-medium">
+                {selectedInvoice.invoice_number}
+              </span>
+            </div>
+
+            <div className="mt-1 flex justify-between">
+              <span className="text-gray-500">
+                Outstanding
+              </span>
+
+              <span className="font-semibold text-red-600">
+                {formatCurrency(
+                  Number(
+                    selectedInvoice.balance_due || 0
+                  )
+                )}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Amount */}
+
+        <label className="mb-1 block text-sm font-medium">
+          Payment Amount
+        </label>
 
         <input
           type="number"
+          min="0.01"
+          step="0.01"
           placeholder="Amount"
           className="
+            mb-4
+            w-full
+            rounded
             border
             p-2
-            w-full
-            mb-3
           "
           value={amount}
           onChange={(e) =>
-            setAmount(
-              e.target.value
-            )
+            setAmount(e.target.value)
           }
         />
 
+        {/* Payment method */}
+
+        <label className="mb-1 block text-sm font-medium">
+          Payment Method
+        </label>
+
         <select
           className="
+            mb-5
+            w-full
+            rounded
             border
             p-2
-            w-full
-            mb-4
           "
           value={paymentMethod}
           onChange={(e) =>
-            setPaymentMethod(
-              e.target.value
-            )
+            setPaymentMethod(e.target.value)
           }
         >
-          <option>CASH</option>
-          <option>BANK</option>
-          <option>TRANSFER</option>
+          <option value="CASH">
+            CASH
+          </option>
+
+          <option value="BANK">
+            BANK
+          </option>
+
+          <option value="TRANSFER">
+            TRANSFER
+          </option>
         </select>
 
-        <div className="flex gap-2">
+        {/* Actions */}
+
+        <div className="flex justify-end gap-2">
 
           <button
-            onClick={handleSubmit}
-            className="
-              bg-green-600
-              text-white
-              px-4 py-2
-              rounded
-            "
-          >
-            Save
-          </button>
-
-          <button
+            type="button"
             onClick={onClose}
+            disabled={saving}
             className="
-              bg-gray-500
-              text-white
-              px-4 py-2
               rounded
+              bg-gray-500
+              px-4
+              py-2
+              text-white
+              hover:bg-gray-600
+              disabled:opacity-50
             "
           >
             Cancel
           </button>
 
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={saving}
+            className="
+              rounded
+              bg-green-600
+              px-4
+              py-2
+              font-medium
+              text-white
+              hover:bg-green-700
+              disabled:opacity-50
+            "
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+
         </div>
 
       </div>
-
     </div>
   );
 }
