@@ -44,6 +44,13 @@ export default function AgingReport() {
       0
     );
 
+  const total1 =
+    rows.reduce(
+      (sum, r) =>
+        sum + Number(r.days_1_30 || 0),
+      0
+    );
+
   const total31 =
     rows.reduce(
       (sum, r) =>
@@ -77,6 +84,7 @@ export default function AgingReport() {
 
   const totalOutstanding =
   totalCurrent +
+  total1 +
   total31 +
   total61 +
   total90;
@@ -84,6 +92,7 @@ export default function AgingReport() {
 
  const outstanding = (row) =>
     Number(row.current_bucket || 0) +
+    Number(row.days_1_30 || 0) +
     Number(row.days_31_60 || 0) +
     Number(row.days_61_90 || 0) +
     Number(row.over_90 || 0);
@@ -103,6 +112,14 @@ export default function AgingReport() {
     <p className="text-2xl font-bold text-green-600">
       {formatCurrency(totalCurrent.toFixed(2))}
   
+    </p>
+  </div>
+
+    <div className="bg-white rounded shadow p-4">
+    <p className="text-gray-500 text-sm">1–30</p>
+    <p className="text-2xl font-bold text-yellow-600">
+      {formatCurrency(total1.toFixed(2))}
+      
     </p>
   </div>
 
@@ -133,7 +150,7 @@ export default function AgingReport() {
       <div className="bg-indigo-600 rounded shadow p-4 text-white">
         <p>Total Receivable</p>
         <p className="text-3xl font-bold">
-          {formatCurrency((totalCurrent + total31 + total61 + total90).toFixed(2))}
+          {formatCurrency((totalCurrent + total1 + total31 + total61 + total90).toFixed(2))}
         </p>
       </div>
 
@@ -156,6 +173,10 @@ export default function AgingReport() {
 
               <th className="p-3 text-right">
                 Outstanding
+              </th>
+
+              <th className="p-3 text-right">
+                1-30 Days
               </th>
 
               <th className="p-3 text-right">
@@ -205,6 +226,12 @@ export default function AgingReport() {
                   {formatCurrency(outstanding(row).toFixed(2))}
               </td>
 
+              <td className="p-3 text-right text-yellow-600">
+                  {formatCurrency(Number(
+                    row.days_1_30
+                  ).toFixed(2))}
+                </td>
+
                 <td className="p-3 text-right text-yellow-600">
                   {formatCurrency(Number(
                     row.days_31_60
@@ -239,6 +266,10 @@ export default function AgingReport() {
 
               <td className="p-3 text-right">
                 {formatCurrency(totalCurrent.toFixed(2))}
+              </td>
+
+              <td className="p-3 text-right">
+                {formatCurrency(total1.toFixed(2))}
               </td>
 
               <td className="p-3 text-right">
