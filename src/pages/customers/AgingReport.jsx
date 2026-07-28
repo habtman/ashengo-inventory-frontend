@@ -205,9 +205,9 @@ export default function AgingReport() {
               </td>
 
                 <td className="p-3 text-right text-green-600">
-                  {formatCurrency(Number(
-                    row.current_bucket
-                  ).toFixed(2))}
+                  {formatCurrency(
+                    Number(row.current_bucket || 0).toFixed(2)
+                  )}
                 </td>
 
               <td className="p-3 text-right">
@@ -215,28 +215,44 @@ export default function AgingReport() {
               </td>
 
               <td className="p-3 text-right text-yellow-600">
-                  {formatCurrency(Number(
-                    row.days_1_30
-                  ).toFixed(2))}
+                  {formatCurrency(
+                    Number(row.days_1_30 || 0 ).toFixed(2))}
                 </td>
 
                 <td className="p-3 text-right text-yellow-600">
-                  {formatCurrency(Number(
-                    row.days_31_60
-                  ).toFixed(2))}
+                  {formatCurrency(
+                    Number(row.days_31_60 || 0).toFixed(2))}
                 </td>
 
                 <td className="p-3 text-right text-orange-600">
-                  {formatCurrency(Number(
-                    row.days_61_90
-                  ).toFixed(2))}
+                  {formatCurrency(
+                    Number(row.days_61_90 || 0).toFixed(2))}
                 </td>
 
                 <td className="p-3 text-right text-red-600 font-bold">
-                  {formatCurrency(Number(
-                    row.over_90
-                  ).toFixed(2))}
+                  {formatCurrency(
+                    Number(row.over_90 || 0).toFixed(2))}
                 </td>
+
+                <td className="p-3">
+                <Link
+                  to={`/customers/${row.id}`}
+                  className="
+                    inline-flex
+                    items-center
+                    rounded-md
+                    bg-blue-600
+                    px-3
+                    py-1.5
+                    text-sm
+                    font-medium
+                    text-white
+                    hover:bg-blue-700
+                  "
+                >
+                  View
+                </Link>
+              </td>
 
               </tr>
 
