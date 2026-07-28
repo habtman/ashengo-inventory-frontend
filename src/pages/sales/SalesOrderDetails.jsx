@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"; 
 import { useParams, useNavigate } from "react-router-dom"; 
 import salesOrderApi from "../../api/salesOrderApi";
+import { formatCurrency } from "../../utils/currency";
+
 
 export default function SalesOrderDetails() { 
   const { id } = useParams(); 
@@ -84,13 +86,17 @@ const handleConfirm = async () => {
         {so.credit_days || "-"} Days
       </p>
       <p>
-        <strong>Balance Due:</strong>
-        {so.balance_due}  
+      <p>
+        <strong>Balance Due:</strong>{" "}
+        {formatCurrency(so.balance_due)}
+      </p> 
       </p>
 
       <p>
-        <strong>Due Date:</strong>
-        {so.due_date || "-"}
+        <strong>Due Date:</strong>{" "}
+        {so.due_date
+          ? new Date(so.due_date).toLocaleDateString("en-GB")
+          : "-"}
       </p>
 
       <p>  
@@ -147,10 +153,10 @@ const handleConfirm = async () => {
                       {item.quantity} 
                  </td>    
                  <td className="border p-2 text-right"> 
-                    ${Number(item.unit_price).toFixed(2)} 
+                    {formatCurrency(item.unit_price)} 
                  </td>   
                  <td className="border p-2 text-right">      
-                     ${Number(item.total_amount).toFixed(2)} 
+                     {formatCurrency(item.total_amount)}
                  </td>   
              </tr>  
          ))}   
@@ -159,7 +165,7 @@ const handleConfirm = async () => {
 
     <div className="text-right mt-6"> 
        <h3 className="text-xl font-bold"> 
-         Total: ${Number(so.total_amount).toFixed(2)}
+         Total: {formatCurrency(so.total_amount)}
         </h3> 
     </div>
 
