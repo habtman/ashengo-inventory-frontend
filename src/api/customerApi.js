@@ -34,6 +34,17 @@ const customerApi = {
 
   getAgingReport: () =>
     apiFetch("/api/v1/customer-ledger/aging"),
+
+  updateCreditLimit(id, data) {
+  return apiFetch(
+    `/api/v1/customers/${id}/credit-limit`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(data)
+    }
+  );
+}
+
 };
 
 

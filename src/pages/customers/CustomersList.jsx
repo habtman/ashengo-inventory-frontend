@@ -2,11 +2,20 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";  
+import EditCreditLimitModal from "./EditCreditLimitModal";
+
+
 
 export default function CustomersList() {
 
   const [customers, setCustomers] =
     useState([]);
+
+  const [selectedCustomer, setSelectedCustomer] =
+    useState(null);
+
+  const [showLimitModal, setShowLimitModal] =
+    useState(false);
 
   const loadCustomers = async () => {
     const data =
@@ -89,9 +98,23 @@ export default function CustomersList() {
                 {customer.phone}
               </td>
 
-             <td className="border p-2 text-right">
-              {formatCurrency(customer.credit_limit)}
-             </td>
+          <td className="border p-2">
+            <div className="flex items-center justify-between">
+              <span>
+                {formatCurrency(customer.credit_limit)}
+              </span>
+
+              <button
+                onClick={() => {
+                  setSelectedCustomer(customer);
+                  setShowLimitModal(true);
+                }}
+                className="text-blue-600 hover:text-blue-800"
+              >
+                ✏️
+              </button>
+            </div>
+          </td>
 
               <td className="border p-2">
 
@@ -111,6 +134,17 @@ export default function CustomersList() {
         </tbody>
 
       </table>
+
+      {showLimitModal && selectedCustomer && (
+      <EditCreditLimitModal
+        customer={selectedCustomer}
+        onClose={() => {
+          setShowLimitModal(false);
+          setSelectedCustomer(null);
+        }}
+        onSuccess={loadCustomers}
+      />
+    )}
 
     </div>
   );
