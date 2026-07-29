@@ -39,7 +39,7 @@ const customerApi = {
   return apiFetch(
     `/api/v1/customers/${id}/credit-limit`,
     {
-      method: "PATCH",
+      method: "PUT",
       body: JSON.stringify(data)
     }
   );
