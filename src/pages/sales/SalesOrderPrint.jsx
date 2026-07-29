@@ -99,7 +99,7 @@ useEffect(() => {
 
         <p>
           <strong>Payment Type:</strong>
-          {so.payment_type}
+          {so.payment_method || "-"}  
         </p>
 
         <p>

@@ -51,10 +51,9 @@ export default function RecordPaymentModal({
       setSaving(true);
 
       await customerPaymentApi.create({
-        customerId: Number(customerId),
-        invoiceId: Number(invoiceId),
-        amount: paymentAmount,
-        paymentMethod
+          invoiceId: Number(invoiceId),
+          amount: Number(amount),
+          paymentMethod
       });
 
       onSuccess();
