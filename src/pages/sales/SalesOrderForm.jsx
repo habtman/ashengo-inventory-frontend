@@ -19,7 +19,7 @@ export default function SalesOrderForm() {
   const [creditDays, setCreditDays] = useState(30);
   const [dueDate, setDueDate] = useState(null);
   const [creditSummary, setCreditSummary] = useState(null);
-  const [creditError, setCreditError] = useState(null);
+
   
   const [items, setItems] = useState([
     {
@@ -169,7 +169,7 @@ const handleSubmit = async () => {
 
     if (err.details) {
 
-        setCreditError(err.details);
+        (err.details);
 
         return;
     }
@@ -257,23 +257,27 @@ const handleSubmit = async () => {
         )}
 
         {paymentMethod === "CREDIT" && creditSummary && (
-          <div className="mt-3">
+  <div
+  className={`mt-3 rounded p-3 border ${
+    remainingCredit >= 0
+      ? "bg-green-50 border-green-300"
+      : "bg-red-50 border-red-300"
+  }`}
+>
+  <p className="text-sm text-gray-600">
+    Remaining after this order
+  </p>
 
-            <p className="text-sm text-gray-600">
-              Remaining after this order
-            </p>
-
-            <p
-              className={
-                remainingCredit < 0
-                  ? "font-bold text-red-600"
-                  : "font-bold text-green-600"
-              }
-            >
-              {formatCurrency(remainingCredit)}
-            </p>
-
-          </div>
+  <p
+    className={`text-xl font-bold ${
+      remainingCredit >= 0
+        ? "text-green-600"
+        : "text-red-600"
+    }`}
+  >
+    {formatCurrency(remainingCredit)}
+  </p>
+</div>
         )}
 
 {/* Location Dropddown */}
@@ -462,64 +466,19 @@ const handleSubmit = async () => {
       </button>
 
 {paymentMethod === "CREDIT" && exceedsLimit && (
-  <div className="mt-3 rounded border border-red-300 bg-red-50 p-3">
-    <p className="text-red-700 font-semibold">
+  <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
+    <p className="font-semibold text-red-700">
+      Credit limit exceeded
+    </p>
+
+    <p className="text-sm text-red-600 mt-1">
       This order exceeds the customer's available credit by{" "}
       {formatCurrency(Math.abs(remainingCredit))}
     </p>
   </div>
 )}
 
-{creditError && (
 
-<div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-
-    <div className="bg-white rounded-lg p-6 w-[420px]">
-
-        <h2 className="text-xl font-bold text-red-600 mb-4">
-            Credit Limit Exceeded
-        </h2>
-
-        <div className="space-y-3">
-
-            <div className="flex justify-between">
-                <span>Credit Limit</span>
-                <span>{formatCurrency(creditError.creditLimit)}</span>
-            </div>
-
-            <div className="flex justify-between">
-                <span>Outstanding</span>
-                <span>{formatCurrency(creditError.outstanding)}</span>
-            </div>
-
-            <div className="flex justify-between">
-                <span>Available Credit</span>
-                <span className="text-green-600 font-semibold">
-                    {formatCurrency(creditError.availableCredit)}
-                </span>
-            </div>
-
-            <div className="flex justify-between">
-                <span>This Order</span>
-                <span className="text-red-600 font-semibold">
-                    {formatCurrency(creditError.orderTotal)}
-                </span>
-            </div>
-
-        </div>
-
-        <button
-            onClick={() => setCreditError(null)}
-            className="mt-6 w-full bg-blue-600 text-white rounded py-2"
-        >
-            OK
-        </button>
-
-    </div>
-
-</div>
-
-)}
 
     </div>
   );
