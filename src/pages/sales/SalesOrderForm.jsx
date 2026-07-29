@@ -5,6 +5,7 @@ import { inventoryApi } from "../../api/inventoryApi";
 import customerApi from "../../api/customerApi";
 import locationsApi from "../../api/locationsApi";  
 import { formatCurrency } from "../../utils/currency";
+
    
 
 export default function SalesOrderForm() {
@@ -20,12 +21,14 @@ export default function SalesOrderForm() {
   const [dueDate, setDueDate] = useState(null);
   const [creditSummary, setCreditSummary] = useState(null);
 
+
   
   const [items, setItems] = useState([
     {
       inventoryId: "",
       quantity: 1,
-      unitPrice: 0
+      unitPrice: 0,
+      stockByLocation: []
     }
   ]);
 
@@ -374,20 +377,30 @@ const handleSubmit = async () => {
           <select
             className="border rounded px-2 py-1 w-full"
             value={item.inventoryId}
-            onChange={(e) => {
-              const inventoryId = Number(e.target.value);
+          onChange={async (e) => {
 
-              const inv = inventoryList.find(
+            const inventoryId =
+              Number(e.target.value);
+
+            const inv =
+              inventoryList.find(
                 x => x.id === inventoryId
               );
 
-              const updated = [...items];
+            const stock =
+              await inventoryApi.getStockByLocation(
+                inventoryId
+              );
 
-              updated[i].inventoryId = inventoryId;
-              updated[i].unitPrice = Number(inv?.price || 0);
+            const updated = [...items];
 
-              setItems(updated);
-            }}
+            updated[i].inventoryId = inventoryId;
+            updated[i].unitPrice = Number(inv?.price || 0);
+            updated[i].stockByLocation = stock;
+
+            setItems(updated);
+
+          }}
           >
             <option value="">Select Product</option>
 
