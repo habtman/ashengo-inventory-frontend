@@ -43,7 +43,10 @@ const customerApi = {
       body: JSON.stringify(data)
     }
   );
-}
+},
+
+getCreditSummary: (id) =>
+  apiFetch(`/api/v1/customers/${id}/credit-summary`),
 
 };
 

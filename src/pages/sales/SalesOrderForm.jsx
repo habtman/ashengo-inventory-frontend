@@ -18,6 +18,7 @@ export default function SalesOrderForm() {
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [creditDays, setCreditDays] = useState(30);
   const [dueDate, setDueDate] = useState(null);
+  const [creditSummary, setCreditSummary] = useState(null);
   
   const [items, setItems] = useState([
     {
@@ -54,6 +55,23 @@ useEffect(() => {
   load();
 }, []);
 
+
+
+useEffect(() => {
+
+  if (!customerId) {
+    setCreditSummary(null);
+    return;
+  }
+
+  customerApi
+    .getCreditSummary(customerId)
+    .then(setCreditSummary);
+
+}, [customerId]);
+
+
+
   const updateItem = (i, field, value) => {
     const updated = [...items];
     updated[i][field] = value;
@@ -68,6 +86,8 @@ useEffect(() => {
     setItems(items.filter((_, idx) => idx !== i));
   };
 
+
+
 const total = items.reduce(
   (sum, item) =>
     sum +
@@ -75,6 +95,17 @@ const total = items.reduce(
     Number(item.unitPrice),
   0
 );
+
+const exceedsLimit =
+  paymentMethod === "CREDIT" &&
+  creditSummary &&
+  total > creditSummary.availableCredit;
+
+
+ const remainingCredit =
+  creditSummary
+    ? Number(creditSummary.availableCredit) - total
+    : 0; 
 
 useEffect(() => {
   if (paymentMethod === "CREDIT") {
@@ -144,7 +175,7 @@ const handleSubmit = async () => {
 
 
   return (
-    <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
+    <div className="border rounded p-4 mb-5 bg-gray-50">
 
       <h2 className="text-xl font-bold mb-4">Create Sales Order</h2>
 
@@ -171,6 +202,74 @@ const handleSubmit = async () => {
             </option>
           ))}
         </select>
+
+        {creditSummary && paymentMethod === "CREDIT" && (
+
+        <div className="rounded border p-4 bg-gray-50 mb-4">
+
+          <div className="grid grid-cols-3 gap-4">
+
+            <div>
+              <p className="text-xs text-gray-500">
+                Credit Limit
+              </p>
+
+              <p className="font-semibold">
+                {formatCurrency(creditSummary.creditLimit)}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">
+                Outstanding
+              </p>
+
+              <p className="font-semibold text-orange-600">
+                {formatCurrency(creditSummary.outstanding)}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">
+                Available
+              </p>
+
+              <p
+                className={
+                  creditSummary.availableCredit <= 0
+                    ? "font-semibold text-red-600"
+                    : "font-semibold text-green-600"
+                }
+              >
+                {formatCurrency(creditSummary.availableCredit)}
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        )}
+
+        {paymentMethod === "CREDIT" && creditSummary && (
+          <div className="mt-3">
+
+            <p className="text-sm text-gray-600">
+              Remaining after this order
+            </p>
+
+            <p
+              className={
+                remainingCredit < 0
+                  ? "font-bold text-red-600"
+                  : "font-bold text-green-600"
+              }
+            >
+              {formatCurrency(remainingCredit)}
+            </p>
+
+          </div>
+        )}
 
 {/* Location Dropddown */}
           <select
@@ -226,10 +325,16 @@ const handleSubmit = async () => {
                 <option value={90}>90 Days</option>
               </select>
 
-              <p>
-              Due Date:
-              {dueDate?.toLocaleDateString()}
-            </p>
+                <p className="mt-2 text-sm text-gray-600">
+
+                Due Date:
+                <span className="font-semibold ml-2">
+
+                {dueDate?.toLocaleDateString()}
+
+                </span>
+
+                </p>
 
 
             </div>
@@ -237,9 +342,9 @@ const handleSubmit = async () => {
 
 
 
-      <div className="mb-4">
-        Products Loaded: {inventoryList.length}
-      </div>
+      <h3 className="font-semibold mb-2">
+       Products
+      </h3>
 
       <table className="w-full border mb-4">
         <thead>
@@ -305,18 +410,12 @@ const handleSubmit = async () => {
         </td>
 
         <td className="border p-2">
-          <input
-            className="border rounded px-2 py-1 w-full"
+        <input
             type="number"
             value={item.unitPrice}
-            onChange={(e) =>
-              updateItem(
-                i,
-                "unitPrice",
-                Number(e.target.value)
-              )
-            }
-          />
+            readOnly
+            className="bg-gray-100 border rounded px-2 py-1 w-full"
+        />
         </td>
 
               <td>
@@ -346,10 +445,25 @@ const handleSubmit = async () => {
 
       <button
         onClick={handleSubmit}
-        className="bg-blue-600 text-white px-4 py-2 mt-4 rounded"
+        disabled={paymentMethod === "CREDIT" && exceedsLimit}
+        className={`mt-4 px-4 py-2 rounded text-white
+          ${
+            paymentMethod === "CREDIT" && exceedsLimit
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
       >
         Create Sales Order
       </button>
+
+{paymentMethod === "CREDIT" && exceedsLimit && (
+  <div className="mt-3 rounded border border-red-300 bg-red-50 p-3">
+    <p className="text-red-700 font-semibold">
+      This order exceeds the customer's available credit by{" "}
+      {formatCurrency(Math.abs(remainingCredit))}
+    </p>
+  </div>
+)}
 
     </div>
   );
