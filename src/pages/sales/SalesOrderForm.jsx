@@ -259,14 +259,14 @@ const handleSubmit = async () => {
 
         )}
 
-        {paymentMethod === "CREDIT" && creditSummary && (
-  <div
-  className={`mt-3 rounded p-3 border ${
-    remainingCredit >= 0
-      ? "bg-green-50 border-green-300"
-      : "bg-red-50 border-red-300"
-  }`}
->
+  {paymentMethod === "CREDIT" && creditSummary && (
+    <div
+    className={`mt-3 rounded p-3 border ${
+      remainingCredit >= 0
+        ? "bg-green-50 border-green-300"
+        : "bg-red-50 border-red-300"
+    }`}
+  >
   <p className="text-sm text-gray-600">
     Remaining after this order
   </p>
@@ -373,6 +373,88 @@ const handleSubmit = async () => {
           {items.map((item, i) => (
             <tr key={i}>
 
+        {item.stockByLocation?.length > 0 && (
+
+          <tr>
+
+          <td colSpan={5} className="bg-gray-50 p-3">
+
+          <h4 className="font-semibold mb-2">
+          Warehouse Stock
+          </h4>
+
+          <table className="w-full text-sm">
+
+          <thead>
+
+          <tr>
+
+          <th className="text-left">
+          Warehouse
+          </th>
+
+          <th className="text-right">
+          Available
+          </th>
+
+          </tr>
+
+          </thead>
+
+          <tbody>
+
+          {item.stockByLocation.map(stock => (
+
+          <tr
+          key={stock.location_id}
+          >
+
+          <td>
+
+          {stock.location_name}
+
+          {stock.location_id === locationId && (
+
+          <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 rounded">
+
+          Selected
+
+          </span>
+
+          )}
+
+          </td>
+
+          <td className="text-right">
+
+          <span
+          className={
+          stock.quantity > 0
+          ? "text-green-600 font-semibold"
+          : "text-red-600 font-semibold"
+          }
+          >
+
+          {stock.quantity}
+
+          </span>
+
+          </td>
+
+          </tr>
+
+          ))}
+
+          </tbody>
+
+          </table>
+
+          </td>
+
+          </tr>
+
+          )}
+
         <td className="border p-2">
           <select
             className="border rounded px-2 py-1 w-full"
@@ -456,6 +538,8 @@ const handleSubmit = async () => {
 
             </tr>
           ))}
+
+          
         </tbody>
       </table>
 
@@ -490,6 +574,8 @@ const handleSubmit = async () => {
     </p>
   </div>
 )}
+
+
 
 
 
