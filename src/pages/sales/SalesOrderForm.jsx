@@ -373,106 +373,21 @@ const handleSubmit = async () => {
           {items.map((item, i) => (
             <tr key={i}>
 
-        {item.stockByLocation?.length > 0 && (
+        
 
-          <tr>
+      <td className="border p-2 align-top">
 
-          <td colSpan={5} className="bg-gray-50 p-3">
-
-          <h4 className="font-semibold mb-2">
-          Warehouse Stock
-          </h4>
-
-          <table className="w-full text-sm">
-
-          <thead>
-
-          <tr>
-
-          <th className="text-left">
-          Warehouse
-          </th>
-
-          <th className="text-right">
-          Available
-          </th>
-
-          </tr>
-
-          </thead>
-
-          <tbody>
-
-          {item.stockByLocation.map(stock => (
-
-          <tr
-          key={stock.location_id}
-          >
-
-          <td>
-
-          {stock.location_name}
-
-          {stock.location_id === locationId && (
-
-          <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 rounded">
-
-          Selected
-
-          </span>
-
-          )}
-
-          </td>
-
-          <td className="text-right">
-
-          <span
-          className={
-          stock.quantity > 0
-          ? "text-green-600 font-semibold"
-          : "text-red-600 font-semibold"
-          }
-          >
-
-          {stock.quantity}
-
-          </span>
-
-          </td>
-
-          </tr>
-
-          ))}
-
-          </tbody>
-
-          </table>
-
-          </td>
-
-          </tr>
-
-          )}
-
-        <td className="border p-2">
-          <select
-            className="border rounded px-2 py-1 w-full"
-            value={item.inventoryId}
+        <select
+          className="border rounded px-2 py-1 w-full"
+          value={item.inventoryId}
           onChange={async (e) => {
-
-            const inventoryId =
-              Number(e.target.value);
+            const inventoryId = Number(e.target.value);
 
             const inv =
-              inventoryList.find(
-                x => x.id === inventoryId
-              );
+              inventoryList.find(x => x.id === inventoryId);
 
             const stock =
-              await inventoryApi.getStockByLocation(
-                inventoryId
-              );
+              await inventoryApi.getStockByLocation(inventoryId);
 
             const updated = [...items];
 
@@ -481,21 +396,68 @@ const handleSubmit = async () => {
             updated[i].stockByLocation = stock;
 
             setItems(updated);
-
           }}
-          >
-            <option value="">Select Product</option>
+        >
+          <option value="">Select Product</option>
 
-            {inventoryList.map(inv => (
-              <option
-                key={inv.id}
-                value={inv.id}
+          {inventoryList.map(inv => (
+            <option key={inv.id} value={inv.id}>
+              {inv.name}
+            </option>
+          ))}
+
+        </select>
+
+        {item.stockByLocation?.length > 0 && (
+
+          <div className="mt-2 rounded bg-gray-50 border p-2">
+
+            <p className="font-semibold text-xs mb-2">
+              Warehouse Stock
+            </p>
+
+            {item.stockByLocation.map(stock => (
+
+              <div
+                key={stock.location_id}
+                className="flex justify-between text-xs py-1"
               >
-                {inv.name}
-              </option>
+
+                <span>
+
+                  {stock.location_name}
+
+                  {Number(stock.location_id) === Number(locationId) && (
+
+                    <span className="ml-2 text-blue-600 font-semibold">
+
+                      (Selected)
+
+                    </span>
+
+                  )}
+
+                </span>
+
+                <span
+                  className={
+                    stock.quantity > 0
+                      ? "text-green-600 font-semibold"
+                      : "text-red-600 font-semibold"
+                  }
+                >
+                  {stock.quantity}
+                </span>
+
+              </div>
+
             ))}
-          </select>
-        </td>
+
+          </div>
+
+        )}
+
+      </td>
 
         <td className="border p-2">
           <input
@@ -537,7 +499,12 @@ const handleSubmit = async () => {
               </td>
 
             </tr>
+            
+            
+            
           ))}
+
+          
 
           
         </tbody>
