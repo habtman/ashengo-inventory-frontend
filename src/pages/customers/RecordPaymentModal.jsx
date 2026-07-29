@@ -3,7 +3,6 @@ import customerPaymentApi from "../../api/customerPaymentApi";
 import { formatCurrency } from "../../utils/currency";
 
 export default function RecordPaymentModal({
-  customerId,
   invoices = [],
   onClose,
   onSuccess
