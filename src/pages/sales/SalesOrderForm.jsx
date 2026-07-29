@@ -19,6 +19,7 @@ export default function SalesOrderForm() {
   const [creditDays, setCreditDays] = useState(30);
   const [dueDate, setDueDate] = useState(null);
   const [creditSummary, setCreditSummary] = useState(null);
+  const [creditError, setCreditError] = useState(null);
   
   const [items, setItems] = useState([
     {
@@ -166,12 +167,16 @@ const handleSubmit = async () => {
   } catch (err) {
     console.error(err);
 
-    alert(
-      err.message ||
-      "Failed to create sales order"
-    );
-  }
-};
+    if (err.details) {
+
+        setCreditError(err.details);
+
+        return;
+    }
+
+    alert(err.message);
+}
+}
 
 
   return (
@@ -463,6 +468,57 @@ const handleSubmit = async () => {
       {formatCurrency(Math.abs(remainingCredit))}
     </p>
   </div>
+)}
+
+{creditError && (
+
+<div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+
+    <div className="bg-white rounded-lg p-6 w-[420px]">
+
+        <h2 className="text-xl font-bold text-red-600 mb-4">
+            Credit Limit Exceeded
+        </h2>
+
+        <div className="space-y-3">
+
+            <div className="flex justify-between">
+                <span>Credit Limit</span>
+                <span>{formatCurrency(creditError.creditLimit)}</span>
+            </div>
+
+            <div className="flex justify-between">
+                <span>Outstanding</span>
+                <span>{formatCurrency(creditError.outstanding)}</span>
+            </div>
+
+            <div className="flex justify-between">
+                <span>Available Credit</span>
+                <span className="text-green-600 font-semibold">
+                    {formatCurrency(creditError.availableCredit)}
+                </span>
+            </div>
+
+            <div className="flex justify-between">
+                <span>This Order</span>
+                <span className="text-red-600 font-semibold">
+                    {formatCurrency(creditError.orderTotal)}
+                </span>
+            </div>
+
+        </div>
+
+        <button
+            onClick={() => setCreditError(null)}
+            className="mt-6 w-full bg-blue-600 text-white rounded py-2"
+        >
+            OK
+        </button>
+
+    </div>
+
+</div>
+
 )}
 
     </div>
