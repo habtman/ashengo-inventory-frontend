@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Pagination from "../Pagination";
 import { formatCurrency } from "../../../utils/currency";
 
+
 const PAGE_SIZE = 10;
 
 export default function StatementLedgerTable({ statement = [] }) {
@@ -21,7 +22,7 @@ const statementRows = useMemo(() => {
       ...row,
       debit,
       credit,
-      balance: previous + debit - credit,
+      runningBalance: previous + debit - credit,
     });
 
     return acc;
@@ -90,9 +91,9 @@ const statementRows = useMemo(() => {
                     : "-"}
                 </td>
 
-                <td className="p-3 text-right font-semibold">
-                  {formatCurrency(row.runningBalance)}
-                </td>
+              <td className="p-3 text-right font-semibold">
+                {formatCurrency(row.balance)}
+              </td>
               </tr>
             ))}
 

@@ -39,8 +39,8 @@ import SalesOrderPrint from "./pages/sales/SalesOrderPrint";
 import CustomersList from "./pages/customers/CustomersList";
 import CustomerCreate from "./pages/customers/CustomerCreate";
 import CustomerDetails from "./pages/customers/CustomerDetails";
-import AgingReport from "./pages/customers/AgingReport";
 import InventoryDetails from "./pages/inventory/InventoryDetails"; 
+import AgingReport from "./pages/customers/reports/AgingReport";
 
 
 

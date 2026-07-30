@@ -1,8 +1,8 @@
 // src/components/customers/PaymentLedgerTable.jsx
 
 import { useState } from "react";
-import { formatCurrency } from "../../../utils/currency";
-import Pagination from "../Pagination";
+import { formatCurrency } from "../../utils/currency";
+import Pagination from "./Pagination";
 
 const PAGE_SIZE = 10;
 
