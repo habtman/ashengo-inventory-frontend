@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 
-import InvoiceLedgerTable from "./InvoiceLedgerTable";
-import PaymentLedgerTable from "./PaymentLedgerTable";
-import StatementLedgerTable from "./StatementLedgerTable";
+import InvoiceLedgerTable from "./ledger/InvoiceLedgerTable";
+import PaymentLedgerTable from "./ledger/PaymentLedgerTable";
+import StatementLedgerTable from "./ledger/StatementLedgerTable";
 
 export default function CustomerLedger({ customerId, mode }) {
   const [ledger, setLedger] = useState(null);

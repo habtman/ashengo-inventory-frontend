@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";  
-import EditCreditLimitModal from "./EditCreditLimitModal";
+import EditCreditLimitModal from "./modals/EditCreditLimitModal";
 
 
 

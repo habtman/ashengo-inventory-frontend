@@ -2,9 +2,10 @@ import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 import CustomerLedger from "./CustomerLedger";
-import CustomerStatement from "./CustomerStatement";
-import RecordPaymentModal from "./RecordPaymentModal";
+//import CustomerStatement from "./CustomerStatement";
 import { formatCurrency } from "../../utils/currency";  
+import StatementLedgerTable from "./ledger/StatementLedgerTable"; 
+import RecordPaymentModal from "./modals/RecordPaymentModal";
 
 export default function CustomerDetails() {
   const [activeTab, setActiveTab] = useState("invoices");

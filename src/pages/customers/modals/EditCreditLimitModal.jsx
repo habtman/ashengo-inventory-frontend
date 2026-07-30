@@ -1,6 +1,6 @@
 import { useState } from "react";
-import customerApi from "../../api/customerApi";
-import { formatCurrency } from "../../utils/currency";
+import customerApi from "../../../api/customerApi";
+import { formatCurrency } from "../../../utils/currency";
 
 export default function EditCreditLimitModal({
   customer,

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import customerPaymentApi from "../../api/customerPaymentApi";
-import { formatCurrency } from "../../utils/currency";
+import customerPaymentApi from "../../../api/customerPaymentApi";
+import { formatCurrency } from "../../../utils/currency";
 
 export default function RecordPaymentModal({
   invoices = [],

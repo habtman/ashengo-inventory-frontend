@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import customerApi from "../../api/customerApi";
+import customerApi from "../../../api/customerApi";
 import { Link } from "react-router-dom";
-import { formatCurrency } from "../../utils/currency";  
+import { formatCurrency } from "../../../utils/currency";  
 
 export default function AgingReport() {
 
