@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { formatCurrency } from "../../utils/currency";
-import Pagination from "../common/Pagination";
+import Pagination from "../../components/common-pagination/Pagination";
 
 const PAGE_SIZE = 10;
 
