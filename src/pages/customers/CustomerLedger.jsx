@@ -4,6 +4,13 @@ import { formatCurrency } from "../../utils/currency";
 
 export default function CustomerLedger({ customerId, mode }) {
   const [ledger, setLedger] = useState(null);
+  const PAGE_SIZE = 10;
+
+  const [invoicePage, setInvoicePage] = useState(1);
+
+  const [paymentPage, setPaymentPage] = useState(1);
+
+ 
 
   useEffect(() => {
     const load = async () => {
@@ -23,6 +30,25 @@ export default function CustomerLedger({ customerId, mode }) {
   if (!ledger) {
     return null;
   }
+  const invoiceTotalPages =
+  Math.ceil((ledger?.invoices?.length || 0) / PAGE_SIZE);
+
+const paymentTotalPages =
+  Math.ceil((ledger?.payments?.length || 0) / PAGE_SIZE);
+
+
+  const paginatedInvoices =
+  (ledger?.invoices || []).slice(
+    (invoicePage - 1) * PAGE_SIZE,
+    invoicePage * PAGE_SIZE
+  );
+
+const paginatedPayments =
+  (ledger?.payments || []).slice(
+    (paymentPage - 1) * PAGE_SIZE,
+    paymentPage * PAGE_SIZE
+  );
+
 
   return (
     <div className="mt-8">
@@ -49,7 +75,7 @@ export default function CustomerLedger({ customerId, mode }) {
             </thead>
 
             <tbody>
-              {(ledger.invoices || []).map((invoice) => {
+              {paginatedInvoices.map((invoice) => {
 
                 const totalAmount =
                   Number(invoice.total_amount || 0);
@@ -147,6 +173,11 @@ export default function CustomerLedger({ customerId, mode }) {
             </tbody>
 
           </table>
+          <Pagination
+              page={invoicePage}
+              totalPages={invoiceTotalPages}
+              onPageChange={setInvoicePage}
+          />
         </div>
       )}
 
@@ -168,7 +199,7 @@ export default function CustomerLedger({ customerId, mode }) {
             </thead>
 
             <tbody>
-              {(ledger.payments || []).map((payment) => {
+              {paginatedPayments.map((payment) => {
 
                 const amount =
                   Number(payment.amount || 0);
@@ -217,6 +248,12 @@ export default function CustomerLedger({ customerId, mode }) {
             </tbody>
 
           </table>
+          <Pagination
+              page={paymentPage}
+              totalPages={paymentTotalPages}
+              onPageChange={setPaymentPage}
+          />
+
         </div>
       )}
 
