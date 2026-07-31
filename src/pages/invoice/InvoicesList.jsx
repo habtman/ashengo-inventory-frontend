@@ -13,6 +13,8 @@ export default function InvoicesList() {
   const [endDate, setEndDate] = useState("");
   const [invoicePage, setInvoicePage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [sortField, setSortField] = useState("created_at");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   const invoicePageSize = 10;
 
@@ -49,6 +51,29 @@ const filteredInvoices =
         (invoice) => invoice.status === statusFilter
       );
 
+  const sortedInvoices = [...filteredInvoices].sort((a, b) => {
+  let aValue = a[sortField];
+  let bValue = b[sortField];
+
+  if (sortField === "created_at" || sortField === "due_date") {
+    aValue = new Date(aValue || 0);
+    bValue = new Date(bValue || 0);
+  }
+
+  if (typeof aValue === "string") {
+    aValue = aValue.toLowerCase();
+    bValue = bValue.toLowerCase();
+  }
+
+  if (aValue < bValue)
+    return sortDirection === "asc" ? -1 : 1;
+
+  if (aValue > bValue)
+    return sortDirection === "asc" ? 1 : -1;
+
+  return 0;
+});
+
   const invoiceCounts = {
       ALL: invoices.length,
       PAID: invoices.filter(i => i.status === "PAID").length,
@@ -67,7 +92,7 @@ const totalInvoicePages = Math.max(
 );
 
 const paginatedInvoices =
-  filteredInvoices.slice(
+  sortedInvoices.slice(
     (invoicePage - 1) * invoicePageSize,
     invoicePage * invoicePageSize
   );
@@ -253,7 +278,25 @@ const paginatedInvoices =
         <thead className="bg-gray-100">
           <tr>
             <th className="border p-2">Invoice #</th>
-            <th className="border p-2">Customer</th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200"
+              onClick={() => {
+                if (sortField === "customer_name") {
+                  setSortDirection(
+                    sortDirection === "asc"
+                      ? "desc"
+                      : "asc"
+                  );
+                } else {
+                  setSortField("customer_name");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Customer{" "}
+              {sortField === "customer_name" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
             <th className="border p-2">Total</th>
 
             <th className="border p-2">Payment</th>
