@@ -152,11 +152,6 @@ const paginatedInvoices =
             Invoices
           </h1>
         </div>
-      <div className="bg-red-500 text-white p-6 text-3xl">
-  Tailwind Test
-</div>
-
-
       <div className="mb-4 flex gap-2">
         <input
           type="text"
