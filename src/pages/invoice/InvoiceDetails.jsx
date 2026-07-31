@@ -363,9 +363,7 @@ const handlePrint = async () => {
               </td>
 
               <td className="border p-2">
-
-                $
-                {Number(payment.amount).toFixed(2)}
+                {formatCurrency(payment.amount)}
 
               </td>
 
