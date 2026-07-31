@@ -44,6 +44,8 @@ useEffect(() => {
   setInvoicePage(1);
 }, [search, startDate, endDate, statusFilter]);
 
+//const searchedInvoices = invoices.filter(/* search logic */);
+
 const filteredInvoices =
   statusFilter === "ALL"
     ? invoices
@@ -88,7 +90,7 @@ const filteredInvoices =
 
 const totalInvoicePages = Math.max(
   1,
-  Math.ceil(filteredInvoices.length / invoicePageSize)
+  Math.ceil(sortedInvoices.length / invoicePageSize)
 );
 
 const paginatedInvoices =
@@ -339,7 +341,21 @@ const paginatedInvoices =
             <th className="border p-2">Payment</th>
             <th className="border p-2">Status</th>
             <th className="border p-2">Paid</th>
-            <th className="border p-2">Balance</th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-100 select-none"
+              onClick={() => {
+                if (sortField === "balance_due") {
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+                } else {
+                  setSortField("balance_due");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Balance
+              {sortField === "balance_due" &&
+                (sortDirection === "asc" ? " ▲" : " ▼")}
+            </th>
             <th
               className="border p-2 cursor-pointer hover:bg-gray-200"
               onClick={() => {
@@ -461,15 +477,15 @@ const paginatedInvoices =
 
   <div className="text-sm text-slate-600">
     Showing{" "}
-    {filteredInvoices.length === 0
+    {sortedInvoices.length === 0
       ? 0
       : (invoicePage - 1) * invoicePageSize + 1}
     -
     {Math.min(
       invoicePage * invoicePageSize,
-      filteredInvoices.length
+      sortedInvoices.length
     )}{" "}
-    of {filteredInvoices.length}
+    of {sortedInvoices.length}
   </div>
 
   <div className="flex items-center gap-2">
