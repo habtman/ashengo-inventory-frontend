@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link} from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
 import { formatCurrency } from "../../utils/currency";
+import {
+  exportInvoicesExcel,
+  exportInvoicesPDF,
+} from "../../utils/exportInvoices";
 
 
 export default function InvoicesList() {
@@ -288,6 +292,28 @@ const paginatedInvoices =
   ))}
 
 </div>
+
+      <div className="flex gap-2 mb-4">
+
+        <button
+          onClick={() =>
+            exportInvoicesExcel(sortedInvoices)
+          }
+          className="px-4 py-2 rounded bg-green-600 text-white"
+        >
+          Export Excel
+        </button>
+
+        <button
+          onClick={() =>
+            exportInvoicesPDF(sortedInvoices)
+          }
+          className="px-4 py-2 rounded bg-red-600 text-white"
+        >
+          Export PDF
+        </button>
+
+      </div>
 
 
       <table className="w-full border">
