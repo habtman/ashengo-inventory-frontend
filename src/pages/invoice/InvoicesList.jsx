@@ -340,7 +340,26 @@ const paginatedInvoices =
             <th className="border p-2">Status</th>
             <th className="border p-2">Paid</th>
             <th className="border p-2">Balance</th>
-            <th className="border p-2">Due Date</th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200"
+              onClick={() => {
+                if (sortField === "due_date") {
+                  setSortDirection(
+                    sortDirection === "asc"
+                      ? "desc"
+                      : "asc"
+                  );
+                } else {
+                  setSortField("due_date");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Due Date {" "}
+              {sortField === "due_date" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
+
             <th className="border p-2">Date</th>
             <th className="border p-2">Action</th>
           </tr>
