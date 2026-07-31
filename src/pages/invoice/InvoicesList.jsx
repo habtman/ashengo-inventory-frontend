@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link} from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
 import { formatCurrency } from "../../utils/currency";
@@ -21,6 +21,7 @@ export default function InvoicesList() {
   const [sortField, setSortField] = useState("created_at");
   const [sortDirection, setSortDirection] = useState("desc");
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const exportMenuRef = useRef(null);
 
   const invoicePageSize = 10;
 
@@ -51,18 +52,24 @@ useEffect(() => {
 }, [sortField, sortDirection]);
 
 useEffect(() => {
-
-  const closeMenu = () =>
-    setShowExportMenu(false);
-
-  if (showExportMenu) {
-    window.addEventListener("click", closeMenu);
+  function handleClickOutside(event) {
+    if (
+      exportMenuRef.current &&
+      !exportMenuRef.current.contains(event.target)
+    ) {
+      setShowExportMenu(false);
+    }
   }
 
-  return () =>
-    window.removeEventListener("click", closeMenu);
+  document.addEventListener("mousedown", handleClickOutside);
 
-}, [showExportMenu]);
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  };
+}, []);
 
 
     const filteredInvoices =
@@ -313,10 +320,9 @@ const paginatedInvoices =
 
   <div />
 
-  <div className="relative">
-    onClick={(e) => e.stopPropagation()}
-
-    <button
+  <div ref={exportMenuRef}
+    className="relative">
+     <button
       onClick={() =>
         setShowExportMenu(!showExportMenu)
       }
