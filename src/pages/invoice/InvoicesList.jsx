@@ -151,32 +151,10 @@ const paginatedInvoices =
           <h1 className="text-2xl font-bold">
             Invoices
           </h1>
-                <div className="flex gap-2">
-
-        <button
-          className="
-            px-4 py-2
-            bg-green-600
-            text-white
-            rounded
-          "
-        >
-          Export Excel
-        </button>
-
-        <button
-          className="
-            px-4 py-2
-            bg-red-600
-            text-white
-            rounded
-          "
-        >
-          Export PDF
-        </button>
-
-      </div>
         </div>
+      <div className="bg-red-500 text-white p-6 text-3xl">
+  Tailwind Test
+</div>
 
 
       <div className="mb-4 flex gap-2">
