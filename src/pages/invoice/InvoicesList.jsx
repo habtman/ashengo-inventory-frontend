@@ -48,6 +48,19 @@ const filteredInvoices =
     : invoices.filter(
         (invoice) => invoice.status === statusFilter
       );
+
+  const invoiceCounts = {
+      ALL: invoices.length,
+      PAID: invoices.filter(i => i.status === "PAID").length,
+      PARTIALLY_PAID: invoices.filter(
+        i => i.status === "PARTIALLY_PAID"
+      ).length,
+      UNPAID: invoices.filter(
+        i => i.status === "UNPAID"
+      ).length,
+    };
+
+
 const totalInvoicePages = Math.max(
   1,
   Math.ceil(filteredInvoices.length / invoicePageSize)
@@ -95,37 +108,72 @@ const paginatedInvoices =
         />
       </div>
 
-      <div className="flex gap-2 mb-4">
+<div className="flex gap-3 mb-5">
 
-        {[
-          "ALL",
-          "PAID",
-          "PARTIALLY_PAID",
-          "UNPAID",
-        ].map((status) => (
+  {[
+    {
+      key: "ALL",
+      label: "All"
+    },
+    {
+      key: "PAID",
+      label: "Paid"
+    },
+    {
+      key: "PARTIALLY_PAID",
+      label: "Partially Paid"
+    },
+    {
+      key: "UNPAID",
+      label: "Unpaid"
+    }
+  ].map(tab => (
 
-          <button
-            key={status}
-            onClick={() => setStatusFilter(status)}
-            className={`px-4 py-2 rounded border transition
-              ${
-                statusFilter === status
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white hover:bg-gray-100"
-              }`}
-          >
-            {status === "ALL"
-              ? "All"
-              : status === "PAID"
-              ? "Paid"
-              : status === "PARTIALLY_PAID"
-              ? "Partially Paid"
-              : "Unpaid"}
-          </button>
+    <button
+      key={tab.key}
+      onClick={() => setStatusFilter(tab.key)}
+      className={`
+        flex items-center
+        gap-2
+        px-4 py-2
+        rounded-lg
+        border
+        transition
 
-        ))}
+        ${
+          statusFilter === tab.key
+            ? "bg-blue-600 text-white border-blue-600"
+            : "bg-white hover:bg-gray-50"
+        }
+      `}
+    >
 
-      </div>
+      <span>
+        {tab.label}
+      </span>
+
+      <span
+        className={`
+          px-2 py-0.5
+          rounded-full
+          text-xs
+          font-semibold
+
+          ${
+            statusFilter === tab.key
+              ? "bg-white text-blue-600"
+              : "bg-gray-200 text-gray-700"
+          }
+        `}
+      >
+        {invoiceCounts[tab.key]}
+      </span>
+
+    </button>
+
+  ))}
+
+</div>
 
 
       <table className="w-full border">
