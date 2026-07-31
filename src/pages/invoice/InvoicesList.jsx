@@ -84,6 +84,32 @@ const paginatedInvoices =
             Invoices
           </h1>
         </div>
+
+      <div className="flex gap-2">
+
+        <button
+          className="
+            px-4 py-2
+            bg-green-600
+            text-white
+            rounded
+          "
+        >
+          Export Excel
+        </button>
+
+        <button
+          className="
+            px-4 py-2
+            bg-red-600
+            text-white
+            rounded
+          "
+        >
+          Export PDF
+        </button>
+
+      </div>
       <div className="mb-4 flex gap-2">
         <input
           type="text"
@@ -107,6 +133,50 @@ const paginatedInvoices =
           className="border p-2 rounded"
         />
       </div>
+
+<div className="grid grid-cols-4 gap-4 mb-6">
+
+  <div className="rounded-lg border bg-white p-4 shadow-sm">
+    <p className="text-sm text-gray-500">
+      Total Invoices
+    </p>
+
+    <p className="text-2xl font-bold">
+      {invoiceCounts.ALL}
+    </p>
+  </div>
+
+  <div className="rounded-lg border bg-green-50 p-4 shadow-sm">
+    <p className="text-sm text-green-700">
+      Paid
+    </p>
+
+    <p className="text-2xl font-bold text-green-700">
+      {invoiceCounts.PAID}
+    </p>
+  </div>
+
+  <div className="rounded-lg border bg-yellow-50 p-4 shadow-sm">
+    <p className="text-sm text-yellow-700">
+      Partially Paid
+    </p>
+
+    <p className="text-2xl font-bold text-yellow-700">
+      {invoiceCounts.PARTIALLY_PAID}
+    </p>
+  </div>
+
+  <div className="rounded-lg border bg-red-50 p-4 shadow-sm">
+    <p className="text-sm text-red-700">
+      Unpaid
+    </p>
+
+    <p className="text-2xl font-bold text-red-700">
+      {invoiceCounts.UNPAID}
+    </p>
+  </div>
+
+</div>
 
 <div className="flex gap-3 mb-5">
 
@@ -234,7 +304,13 @@ const paginatedInvoices =
                     : "text-red-600 font-semibold"
                 }
               >
-                {inv.status}
+                {
+                  inv.status === "PAID"
+                    ? "Paid"
+                    : inv.status === "PARTIALLY_PAID"
+                    ? "Partially Paid"
+                    : "Unpaid"
+                }
               </span>
             </td>
 
@@ -279,49 +355,81 @@ const paginatedInvoices =
         </tbody>
       </table>
 
-      <div className="flex items-center justify-between mt-4">
+<div className="flex justify-between items-center mt-6">
+
+  <div className="text-sm text-slate-600">
+    Showing{" "}
+    {filteredInvoices.length === 0
+      ? 0
+      : (invoicePage - 1) * invoicePageSize + 1}
+    -
+    {Math.min(
+      invoicePage * invoicePageSize,
+      filteredInvoices.length
+    )}{" "}
+    of {filteredInvoices.length}
+  </div>
+
+  <div className="flex items-center gap-2">
+
+    <button
+      disabled={invoicePage === 1}
+      onClick={() =>
+        setInvoicePage(invoicePage - 1)
+      }
+      className="
+        px-3 py-2
+        border
+        rounded
+        disabled:opacity-40
+      "
+    >
+      Previous
+    </button>
+
+    {Array.from(
+      { length: totalInvoicePages },
+      (_, i) => i + 1
+    ).map((page) => (
 
       <button
-        onClick={() =>
-          setInvoicePage((prev) =>
-            Math.max(prev - 1, 1)
-          )
-        }
-        disabled={invoicePage === 1}
-        className="px-3 py-2 border rounded disabled:opacity-50"
+        key={page}
+        onClick={() => setInvoicePage(page)}
+        className={`
+          w-10 h-10
+          rounded
+          border
+
+          ${
+            invoicePage === page
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white hover:bg-gray-100"
+          }
+        `}
       >
-        Previous
+        {page}
       </button>
 
-      <span className="text-sm text-slate-600">
-        Page {invoicePage} of {totalInvoicePages || 1}
-        <br />
+    ))}
 
-        Showing{" "}
-        {filteredInvoices.length === 0
-          ? 0
-          : (invoicePage - 1) * invoicePageSize + 1}
-        -
-        {Math.min(
-          invoicePage * invoicePageSize,
-          filteredInvoices.length
-        )}{" "}
-        of {filteredInvoices.length}
-      </span>
+    <button
+      disabled={invoicePage === totalInvoicePages}
+      onClick={() =>
+        setInvoicePage(invoicePage + 1)
+      }
+      className="
+        px-3 py-2
+        border
+        rounded
+        disabled:opacity-40
+      "
+    >
+      Next
+    </button>
 
-      <button
-        onClick={() =>
-          setInvoicePage((prev) =>
-            Math.min(prev + 1, totalInvoicePages)
-          )
-        }
-        disabled={invoicePage >= totalInvoicePages}
-        className="px-3 py-2 border rounded disabled:opacity-50"
-      >
-        Next
-      </button>
+  </div>
 
-    </div>
+</div>
     </div>
   );
 }
