@@ -18,16 +18,29 @@ export default function CustomerStatement({
       load();
     }, [customerId]);
 
-
+  
 
   const statementWithBalances = statement.reduce((acc, row) => {
     const debit = Number(row.debit || 0);
     const credit = Number(row.credit || 0);
-    const previousBalance = acc.length > 0 ? acc[acc.length - 1].balance : 0;
+    const previous =
+      acc.length > 0 ? acc[acc.length - 1].balance : 0;
+
+    let balance = previous + debit - credit;
+
+    // Remove floating-point artifacts like -0.0000001
+    if (Math.abs(balance) < 0.005) {
+      balance = 0;
+    }
+
+    // Round to 2 decimal places
+    balance = Number(balance.toFixed(2));
 
     acc.push({
       ...row,
-      balance: previousBalance + debit - credit,
+      debit,
+      credit,
+      balance,
     });
 
     return acc;

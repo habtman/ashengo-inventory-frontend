@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";
-import Pagination from "../../components/common-pagination/Pagination"; 
+import Pagination from "./Pagination"; 
 
 export default function CustomerLedger({ customerId, mode }) {
   const [ledger, setLedger] = useState(null);
