@@ -83,9 +83,7 @@ const paginatedInvoices =
           <h1 className="text-2xl font-bold">
             Invoices
           </h1>
-        </div>
-
-      <div className="flex gap-2">
+                <div className="flex gap-2">
 
         <button
           className="
@@ -110,6 +108,9 @@ const paginatedInvoices =
         </button>
 
       </div>
+        </div>
+
+
       <div className="mb-4 flex gap-2">
         <input
           type="text"
@@ -133,6 +134,8 @@ const paginatedInvoices =
           className="border p-2 rounded"
         />
       </div>
+
+      
 
 <div className="grid grid-cols-4 gap-4 mb-6">
 
