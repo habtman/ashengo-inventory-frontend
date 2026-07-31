@@ -42,7 +42,7 @@ export default function InvoicesList() {
 
 useEffect(() => {
   setInvoicePage(1);
-}, [search, startDate, endDate, statusFilter]);
+}, [sortField, sortDirection]);
 
 
     const filteredInvoices =
