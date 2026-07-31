@@ -62,10 +62,19 @@ const filteredInvoices =
     bValue = new Date(bValue || 0);
   }
 
-  if (typeof aValue === "string") {
-    aValue = aValue.toLowerCase();
-    bValue = bValue.toLowerCase();
-  }
+      const numericFields = [
+        "total_amount",
+        "amount_paid",
+        "balance_due",
+      ];
+
+      if (numericFields.includes(sortField)) {
+        aValue = Number(aValue);
+        bValue = Number(bValue);
+      } else if (typeof aValue === "string") {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
 
   if (aValue < bValue)
     return sortDirection === "asc" ? -1 : 1;
@@ -376,7 +385,23 @@ const paginatedInvoices =
                 (sortDirection === "asc" ? "▲" : "▼")}
             </th>
 
-            <th className="border p-2">Date</th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200"
+              onClick={() => {
+                if (sortField === "created_at") {
+                  setSortDirection(
+                    sortDirection === "asc" ? "desc" : "asc"
+                  );
+                } else {
+                  setSortField("created_at");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Date{" "}
+              {sortField === "created_at" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
             <th className="border p-2">Action</th>
           </tr>
         </thead>
