@@ -12,6 +12,7 @@ export default function InvoicesList() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [invoicePage, setInvoicePage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   const invoicePageSize = 10;
 
@@ -39,15 +40,21 @@ export default function InvoicesList() {
 
 useEffect(() => {
   setInvoicePage(1);
-}, [search]);
+}, [search, startDate, endDate, statusFilter]);
 
-
-
-const totalInvoicePages =
-  Math.ceil(invoices.length / invoicePageSize);
+const filteredInvoices =
+  statusFilter === "ALL"
+    ? invoices
+    : invoices.filter(
+        (invoice) => invoice.status === statusFilter
+      );
+const totalInvoicePages = Math.max(
+  1,
+  Math.ceil(filteredInvoices.length / invoicePageSize)
+);
 
 const paginatedInvoices =
-  invoices.slice(
+  filteredInvoices.slice(
     (invoicePage - 1) * invoicePageSize,
     invoicePage * invoicePageSize
   );
@@ -86,6 +93,38 @@ const paginatedInvoices =
           onChange={(e) => setEndDate(e.target.value)}
           className="border p-2 rounded"
         />
+      </div>
+
+      <div className="flex gap-2 mb-4">
+
+        {[
+          "ALL",
+          "PAID",
+          "PARTIALLY_PAID",
+          "UNPAID",
+        ].map((status) => (
+
+          <button
+            key={status}
+            onClick={() => setStatusFilter(status)}
+            className={`px-4 py-2 rounded border transition
+              ${
+                statusFilter === status
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white hover:bg-gray-100"
+              }`}
+          >
+            {status === "ALL"
+              ? "All"
+              : status === "PAID"
+              ? "Paid"
+              : status === "PARTIALLY_PAID"
+              ? "Partially Paid"
+              : "Unpaid"}
+          </button>
+
+        ))}
+
       </div>
 
 
@@ -211,15 +250,15 @@ const paginatedInvoices =
         <br />
 
         Showing{" "}
-        {invoices.length === 0
+        {filteredInvoices.length === 0
           ? 0
           : (invoicePage - 1) * invoicePageSize + 1}
         -
         {Math.min(
           invoicePage * invoicePageSize,
-          invoices.length
+          filteredInvoices.length
         )}{" "}
-        of {invoices.length}
+        of {filteredInvoices.length}
       </span>
 
       <button
