@@ -277,7 +277,25 @@ const paginatedInvoices =
       <table className="w-full border">
         <thead className="bg-gray-100">
           <tr>
-            <th className="border p-2">Invoice #</th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200"
+              onClick={() => {
+                if (sortField === "invoice_number") {
+                  setSortDirection(
+                    sortDirection === "asc"
+                      ? "desc"
+                      : "asc"
+                  );
+                } else {
+                  setSortField("invoice_number");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Invoice # {" "}
+              {sortField === "invoice_number" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
             <th
               className="border p-2 cursor-pointer hover:bg-gray-200"
               onClick={() => {
@@ -297,7 +315,26 @@ const paginatedInvoices =
               {sortField === "customer_name" &&
                 (sortDirection === "asc" ? "▲" : "▼")}
             </th>
-            <th className="border p-2">Total</th>
+
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200"
+              onClick={() => {
+                if (sortField === "total_amount") {
+                  setSortDirection(
+                    sortDirection === "asc"
+                      ? "desc"
+                      : "asc"
+                  );
+                } else {
+                  setSortField("total_amount");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Total {" "}
+              {sortField === "total_amount" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
 
             <th className="border p-2">Payment</th>
             <th className="border p-2">Status</th>
