@@ -44,47 +44,52 @@ useEffect(() => {
   setInvoicePage(1);
 }, [search, startDate, endDate, statusFilter]);
 
-//const searchedInvoices = invoices.filter(/* search logic */);
 
-const filteredInvoices =
-  statusFilter === "ALL"
-    ? invoices
-    : invoices.filter(
-        (invoice) => invoice.status === statusFilter
-      );
-
-  const sortedInvoices = [...filteredInvoices].sort((a, b) => {
-  let aValue = a[sortField];
-  let bValue = b[sortField];
-
-  if (sortField === "created_at" || sortField === "due_date") {
-    aValue = new Date(aValue || 0);
-    bValue = new Date(bValue || 0);
-  }
+    const filteredInvoices =
+      statusFilter === "ALL"
+        ? invoices
+        : invoices.filter(
+            (invoice) => invoice.status === statusFilter
+          );
 
       const numericFields = [
-        "total_amount",
-        "amount_paid",
-        "balance_due",
-      ];
+      "total_amount",
+      "amount_paid",
+      "balance_due",
+    ];
+
+    const dateFields = [
+      "created_at",
+      "due_date",
+    ];
+
+    const sortedInvoices = [...filteredInvoices].sort((a, b) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
 
       if (numericFields.includes(sortField)) {
-        aValue = Number(aValue);
-        bValue = Number(bValue);
-      } else if (typeof aValue === "string") {
-        aValue = aValue.toLowerCase();
-        bValue = bValue.toLowerCase();
+        aValue = Number(aValue || 0);
+        bValue = Number(bValue || 0);
       }
 
-  if (aValue < bValue)
-    return sortDirection === "asc" ? -1 : 1;
+      else if (dateFields.includes(sortField)) {
+        aValue = new Date(aValue || 0).getTime();
+        bValue = new Date(bValue || 0).getTime();
+      }
 
-  if (aValue > bValue)
-    return sortDirection === "asc" ? 1 : -1;
+      else {
+        aValue = String(aValue || "").toLowerCase();
+        bValue = String(bValue || "").toLowerCase();
+      }
 
-  return 0;
-});
+      if (aValue < bValue)
+        return sortDirection === "asc" ? -1 : 1;
 
+      if (aValue > bValue)
+        return sortDirection === "asc" ? 1 : -1;
+
+      return 0;
+    });
   const invoiceCounts = {
       ALL: invoices.length,
       PAID: invoices.filter(i => i.status === "PAID").length,
@@ -347,9 +352,57 @@ const paginatedInvoices =
                 (sortDirection === "asc" ? "▲" : "▼")}
             </th>
 
-            <th className="border p-2">Payment</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Paid</th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200 select-none"
+              onClick={() => {
+                if (sortField === "payment_method") {
+                  setSortDirection(
+                    sortDirection === "asc" ? "desc" : "asc"
+                  );
+                } else {
+                  setSortField("payment_method");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Payment{" "}
+              {sortField === "payment_method" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200 select-none"
+              onClick={() => {
+                if (sortField === "status") {
+                  setSortDirection(
+                    sortDirection === "asc" ? "desc" : "asc"
+                  );
+                } else {
+                  setSortField("status");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Status{" "}
+              {sortField === "status" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
+            <th
+              className="border p-2 cursor-pointer hover:bg-gray-200 select-none"
+              onClick={() => {
+                if (sortField === "amount_paid") {
+                  setSortDirection(
+                    sortDirection === "asc" ? "desc" : "asc"
+                  );
+                } else {
+                  setSortField("amount_paid");
+                  setSortDirection("asc");
+                }
+              }}
+            >
+              Paid{" "}
+              {sortField === "amount_paid" &&
+                (sortDirection === "asc" ? "▲" : "▼")}
+            </th>
             <th
               className="border p-2 cursor-pointer hover:bg-gray-100 select-none"
               onClick={() => {
