@@ -1,6 +1,7 @@
 import { useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function SalesOrderPrint() {
   const { id } = useParams();
@@ -188,15 +189,11 @@ useEffect(() => {
               </td>
 
               <td className="border p-2 text-right">
-                {Number(
-                  item.unit_price
-                ).toFixed(2)}
+                {formatCurrency(item.unit_price)}
               </td>
 
               <td className="border p-2 text-right">
-                {Number(
-                  item.total_amount
-                ).toFixed(2)}
+                {formatCurrency(item.total_amount)}
               </td>
 
             </tr>
@@ -211,10 +208,8 @@ useEffect(() => {
       <div className="mt-6 text-right">
 
         <h2 className="text-xl font-bold">
-          Total: $
-          {Number(
-            so.total_amount
-          ).toFixed(2)}
+          Total: 
+          {formatCurrency(so.total_amount)}
         </h2>
 
       </div>

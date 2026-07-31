@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function InvoiceDetails() {
   const { id } = useParams();
@@ -198,7 +199,7 @@ const handlePrint = async () => {
         </p>
 
         <p className="font-semibold">
-          ${Number(invoice.amount_paid || 0).toFixed(2)}
+          {formatCurrency(invoice.amount_paid)}
         </p>
       </div>
 
@@ -208,7 +209,7 @@ const handlePrint = async () => {
         </p>
 
         <p className="font-semibold">
-          ${Number(invoice.balance_due || 0).toFixed(2)}
+          {formatCurrency(invoice.balance_due)}
         </p>
       </div>
 
@@ -292,11 +293,11 @@ const handlePrint = async () => {
               <td className="border p-2">{item.sku}</td>
               <td className="border p-2">{item.quantity}</td>
               <td>
-                ${Number(item.unit_price).toFixed(2)}
+                {formatCurrency(item.unit_price)}
               </td>
 
               <td>
-                ${Number(item.total_amount).toFixed(2)}
+                {formatCurrency(item.total_amount)}
               </td>
             </tr>
           ))}
@@ -304,7 +305,7 @@ const handlePrint = async () => {
       </table>
 
       <div className="mt-6 text-right font-bold text-lg">
-        Total: ${Number(invoice.total_amount).toFixed(2)}
+        Total: {formatCurrency(invoice.total_amount)}
       </div>
 
       {invoice.payments?.length > 0 && (
