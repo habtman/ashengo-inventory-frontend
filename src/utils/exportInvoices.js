@@ -68,3 +68,41 @@ export function exportInvoicesPDF(invoices) {
 
   doc.save("Invoices.pdf");
 }
+
+export function exportInvoicesCSV(invoices) {
+
+  const rows = invoices.map(inv => ({
+    Invoice: inv.invoice_number,
+    Customer: inv.customer_name,
+    Payment: inv.payment_method,
+    Status: inv.status,
+    Total: inv.total_amount,
+    Paid: inv.amount_paid,
+    Balance: inv.balance_due,
+    DueDate: inv.due_date
+      ? new Date(inv.due_date).toLocaleDateString()
+      : "",
+    Created:
+      new Date(inv.created_at).toLocaleDateString(),
+  }));
+
+  const worksheet =
+    XLSX.utils.json_to_sheet(rows);
+
+  const workbook =
+    XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Invoices"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    "Invoices.csv",
+    {
+      bookType: "csv",
+    }
+  );
+}

@@ -5,6 +5,7 @@ import { formatCurrency } from "../../utils/currency";
 import {
   exportInvoicesExcel,
   exportInvoicesPDF,
+  exportInvoicesCSV,
 } from "../../utils/exportInvoices";
 
 
@@ -19,6 +20,7 @@ export default function InvoicesList() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sortField, setSortField] = useState("created_at");
   const [sortDirection, setSortDirection] = useState("desc");
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const invoicePageSize = 10;
 
@@ -47,6 +49,20 @@ export default function InvoicesList() {
 useEffect(() => {
   setInvoicePage(1);
 }, [sortField, sortDirection]);
+
+useEffect(() => {
+
+  const closeMenu = () =>
+    setShowExportMenu(false);
+
+  if (showExportMenu) {
+    window.addEventListener("click", closeMenu);
+  }
+
+  return () =>
+    window.removeEventListener("click", closeMenu);
+
+}, [showExportMenu]);
 
 
     const filteredInvoices =
@@ -293,27 +309,93 @@ const paginatedInvoices =
 
 </div>
 
-      <div className="flex gap-2 mb-4">
+<div className="flex justify-between items-center mb-4">
+
+  <div />
+
+  <div className="relative">
+    onClick={(e) => e.stopPropagation()}
+
+    <button
+      onClick={() =>
+        setShowExportMenu(!showExportMenu)
+      }
+      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Export ▼
+    </button>
+
+    {showExportMenu && (
+
+      <div
+        className="
+          absolute
+          right-0
+          mt-2
+          w-48
+          bg-white
+          border
+          rounded-lg
+          shadow-lg
+          z-50
+        "
+      >
 
         <button
-          onClick={() =>
-            exportInvoicesExcel(sortedInvoices)
-          }
-          className="px-4 py-2 rounded bg-green-600 text-white"
+          onClick={() => {
+            exportInvoicesExcel(sortedInvoices);
+            setShowExportMenu(false);
+          }}
+          className="
+            w-full
+            text-left
+            px-4
+            py-2
+            hover:bg-gray-100
+          "
         >
-          Export Excel
+          📗 Export Excel
         </button>
 
         <button
-          onClick={() =>
-            exportInvoicesPDF(sortedInvoices)
-          }
-          className="px-4 py-2 rounded bg-red-600 text-white"
+          onClick={() => {
+            exportInvoicesPDF(sortedInvoices);
+            setShowExportMenu(false);
+          }}
+          className="
+            w-full
+            text-left
+            px-4
+            py-2
+            hover:bg-gray-100
+          "
         >
-          Export PDF
+          📕 Export PDF
+        </button>
+
+        <button
+          onClick={() => {
+            exportInvoicesCSV(sortedInvoices);
+            setShowExportMenu(false);
+          }}
+          className="
+            w-full
+            text-left
+            px-4
+            py-2
+            hover:bg-gray-100
+          "
+        >
+          📄 Export CSV
         </button>
 
       </div>
+
+    )}
+
+  </div>
+
+</div>
 
 
       <table className="w-full border">
