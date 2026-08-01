@@ -1,4 +1,4 @@
-import { formatCurrency } from "../../../utils/currency";
+import { formatCurrency } from "../../utils/currency";
 
 export default function CreditDashboardSummary({ customers = [] }) {
   const totalLimit = customers.reduce(
