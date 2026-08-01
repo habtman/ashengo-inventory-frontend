@@ -48,6 +48,14 @@ const customerApi = {
 getCreditSummary: (id) =>
   apiFetch(`/api/v1/customers/${id}/credit-summary`),
 
+getCreditDashboardSummary() {
+  return apiFetch("/api/v1/customers/credit-dashboard");
+},
+
+getCreditDashboardCustomers() {
+  return apiFetch("/api/v1/customers/credit-dashboard/customers");
+},
+
 };
 
 
