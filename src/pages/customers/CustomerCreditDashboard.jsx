@@ -3,6 +3,7 @@ import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";
 import CustomerCreditTable from "../../components/customers/CustomerCreditTable";
 import CreditDashboardSummary from "../../components/customers/CreditDashboardSummary";
+import CreditDashboardCharts from "../components/customers/CreditDashboardCharts";
 
 export default function CustomerCreditDashboard() {
 
@@ -105,9 +106,11 @@ export default function CustomerCreditDashboard() {
             </div>
             )}
 
-      <CreditDashboardSummary customers={customers} />    
+        <CreditDashboardSummary customers={customers} />
 
-      <CustomerCreditTable customers={customers} />
+        <CreditDashboardCharts customers={customers} />
+
+        <CustomerCreditTable customers={customers} />
 
 
     </div>
