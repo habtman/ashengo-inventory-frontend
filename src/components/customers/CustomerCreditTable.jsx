@@ -106,7 +106,6 @@ export default function CustomerCreditTable({ customers = [] }) {
 
               <th className="p-3 text-center">% Used</th>
 
-              <th className="p-3 text-center">Status</th>
 
             </tr>
 
@@ -141,37 +140,56 @@ export default function CustomerCreditTable({ customers = [] }) {
                   {formatCurrency(customer.available_credit)}
                 </td>
 
-                <td className="p-3 w-64">
+                <td className="p-3 w-72">
 
-                <div className="flex justify-between mb-1">
+                <div className="flex justify-between items-center mb-2">
 
-                    <span className="text-xs font-medium">
+                    <span className="font-semibold">
                     {customer.utilization_percent}%
                     </span>
 
-                    <span className="text-xs text-gray-500">
-                    Used
+                    <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold
+
+                    ${
+                        customer.status === "OVER_LIMIT"
+
+                        ? "bg-red-100 text-red-700"
+
+                        : customer.status === "WARNING"
+
+                        ? "bg-yellow-100 text-yellow-700"
+
+                        : customer.status === "ACTIVE"
+
+                        ? "bg-blue-100 text-blue-700"
+
+                        : "bg-green-100 text-green-700"
+
+                    }`}
+                    >
+                    {customer.status.replace("_", " ")}
                     </span>
 
                 </div>
 
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
 
                     <div
-                    className={`h-3 rounded-full transition-all duration-300
+                    className={`h-3 transition-all duration-500
 
-                        ${
+                    ${
                         customer.status === "OVER_LIMIT"
 
-                            ? "bg-red-600"
+                        ? "bg-red-600"
 
-                            : customer.status === "WARNING"
+                        : customer.status === "WARNING"
 
-                            ? "bg-yellow-500"
+                        ? "bg-yellow-500"
 
-                            : "bg-green-600"
+                        : "bg-green-600"
 
-                        }`}
+                    }`}
                     style={{
                         width: `${Math.min(
                         Number(customer.utilization_percent),
@@ -181,32 +199,6 @@ export default function CustomerCreditTable({ customers = [] }) {
                     />
 
                 </div>
-
-                </td>
-
-                <td className="p-3 text-center">
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold
-
-                      ${
-                        customer.status === "OVER_LIMIT"
-                          ? "bg-red-100 text-red-700"
-
-                        : customer.status === "WARNING"
-                        ? "bg-yellow-100 text-yellow-700"
-
-                        : customer.status === "ACTIVE"
-                        ? "bg-blue-100 text-blue-700"
-
-                        : "bg-green-100 text-green-700"
-
-                      }`}
-                  >
-
-                    {customer.status}
-
-                  </span>
 
                 </td>
 
