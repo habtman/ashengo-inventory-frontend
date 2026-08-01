@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";
 import CustomerCreditTable from "../../components/customers/CustomerCreditTable";
+import CreditDashboardSummary from "../../components/customers/CreditDashboardSummary";
 
 export default function CustomerCreditDashboard() {
 
@@ -103,6 +104,8 @@ export default function CustomerCreditDashboard() {
 
             </div>
             )}
+
+      <CreditDashboardSummary customers={customers} />    
 
       <CustomerCreditTable customers={customers} />
 
