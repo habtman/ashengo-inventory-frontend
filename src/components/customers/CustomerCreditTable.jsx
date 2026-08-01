@@ -141,8 +141,47 @@ export default function CustomerCreditTable({ customers = [] }) {
                   {formatCurrency(customer.available_credit)}
                 </td>
 
-                <td className="p-3 text-center">
-                  {customer.utilization_percent}%
+                <td className="p-3 w-64">
+
+                <div className="flex justify-between mb-1">
+
+                    <span className="text-xs font-medium">
+                    {customer.utilization_percent}%
+                    </span>
+
+                    <span className="text-xs text-gray-500">
+                    Used
+                    </span>
+
+                </div>
+
+                <div className="w-full bg-gray-200 rounded-full h-3">
+
+                    <div
+                    className={`h-3 rounded-full transition-all duration-300
+
+                        ${
+                        customer.status === "OVER_LIMIT"
+
+                            ? "bg-red-600"
+
+                            : customer.status === "WARNING"
+
+                            ? "bg-yellow-500"
+
+                            : "bg-green-600"
+
+                        }`}
+                    style={{
+                        width: `${Math.min(
+                        Number(customer.utilization_percent),
+                        100
+                        )}%`
+                    }}
+                    />
+
+                </div>
+
                 </td>
 
                 <td className="p-3 text-center">
