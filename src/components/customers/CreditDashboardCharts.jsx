@@ -7,20 +7,31 @@ const COLORS = [
 ];
 
 export default function CreditDashboardCharts({ customers = [] }) {
-  const chartData = [
-    {
-      name: "Healthy",
-      value: customers.filter(c => c.status === "HEALTHY").length,
-    },
-    {
-      name: "Warning",
-      value: customers.filter(c => c.status === "WARNING").length,
-    },
-    {
-      name: "Over Limit",
-      value: customers.filter(c => c.status === "OVER_LIMIT").length,
-    },
-  ].filter(x => x.value > 0);
+const chartData = [
+  {
+    name: "Low Utilization",
+    value: customers.filter(
+      c => Number(c.utilization_percent) < 70
+    ).length,
+  },
+
+  {
+    name: "High Utilization",
+    value: customers.filter(
+      c =>
+        Number(c.utilization_percent) >= 70 &&
+        Number(c.utilization_percent) <= 100
+    ).length,
+  },
+
+  {
+    name: "Over Credit Limit",
+    value: customers.filter(
+      c => Number(c.utilization_percent) > 100
+    ).length,
+  },
+];
+  console.log(customers[0]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
