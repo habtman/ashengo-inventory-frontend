@@ -31,7 +31,13 @@ export default function CreditDashboardCharts({ customers = [] }) {
           Credit Exposure
         </h3>
 
-        <div className="h-72">
+        <div style={{
+            width: "100%",
+            height: 350,
+            background: "#f8fafc",
+        }}
+        >
+
 
           <ResponsiveContainer width="100%" height="100%">
 
