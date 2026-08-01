@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { formatCurrency } from "../../utils/currency";
 import Pagination from "../../pages/customers/Pagination";
 
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 const PAGE_SIZE = 10;
 
 export default function CustomerCreditTable({ customers = [] }) {
@@ -48,6 +52,98 @@ export default function CustomerCreditTable({ customers = [] }) {
       page * PAGE_SIZE
     );
 
+
+const exportExcel = () => {
+
+  const data = filteredCustomers.map(customer => ({
+
+    Customer: customer.name,
+
+    Code: customer.customer_code,
+
+    "Credit Limit": customer.credit_limit,
+
+    Outstanding: customer.outstanding,
+
+    "Available Credit": customer.available_credit,
+
+    "Used %": customer.utilization_percent,
+
+    Status: customer.status,
+
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Customer Credit"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    "customer-credit-dashboard.xlsx"
+  );
+
+};
+
+
+const exportPDF = () => {
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+
+  doc.text(
+    "Customer Credit Dashboard",
+    14,
+    18
+  );
+
+  autoTable(doc, {
+
+    startY: 28,
+
+    head: [[
+      "Customer",
+      "Code",
+      "Limit",
+      "Outstanding",
+      "Available",
+      "Used %",
+      "Status"
+    ]],
+
+    body: filteredCustomers.map(customer => [
+
+      customer.name,
+
+      customer.customer_code,
+
+      formatCurrency(customer.credit_limit),
+
+      formatCurrency(customer.outstanding),
+
+      formatCurrency(customer.available_credit),
+
+      `${customer.utilization_percent}%`,
+
+      customer.status,
+
+    ]),
+
+  });
+
+  doc.save(
+    "customer-credit-dashboard.pdf"
+  );
+
+};
+
+
   return (
 
     <>
@@ -86,6 +182,24 @@ export default function CustomerCreditTable({ customers = [] }) {
         </select>
 
       </div>
+
+      <div className="flex justify-end gap-3 mb-4">
+
+        <button
+            onClick={exportExcel}
+            className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+        >
+            Export Excel
+        </button>
+
+        <button
+            onClick={exportPDF}
+            className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+        >
+            Export PDF
+        </button>
+
+        </div>
 
       <div className="overflow-x-auto rounded-lg border bg-white shadow">
 
