@@ -41,6 +41,7 @@ import CustomerCreate from "./pages/customers/CustomerCreate";
 import CustomerDetails from "./pages/customers/CustomerDetails";
 import InventoryDetails from "./pages/inventory/InventoryDetails"; 
 import AgingReport from "./pages/customers/reports/AgingReport";
+import CustomerCreditDashboard from "./pages/customers/CustomerCreditDashboard";  
 
 
 
@@ -91,6 +92,7 @@ export default function App() {
           <Route path="/customers/new" element={<CustomerCreate />} />
           <Route path="/customers/:id" element={<CustomerDetails />} />
           <Route path="/customers/aging" element={<AgingReport />} />
+          <Route path="/customers/credit-dashboard" element={<CustomerCreditDashboard />} />  
           <Route path="/inventory/:id" element={<InventoryDetails />} />
 
 
