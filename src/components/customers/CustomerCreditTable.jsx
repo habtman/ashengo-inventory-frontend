@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { formatCurrency } from "../../utils/currency";
 import Pagination from "../../pages/customers/Pagination";
 
@@ -120,8 +121,20 @@ export default function CustomerCreditTable({ customers = [] }) {
                 className="border-t hover:bg-gray-50"
               >
 
-                <td className="p-3 font-medium">
-                  {customer.name}
+                <td className="p-3">
+
+                    <Link
+                        to={`/customers/${customer.id}`}
+                        className="
+                        font-semibold
+                        text-blue-600
+                        hover:text-blue-800
+                        hover:underline
+                        "
+                    >
+                        {customer.name}
+                    </Link>
+
                 </td>
 
                 <td className="p-3">
