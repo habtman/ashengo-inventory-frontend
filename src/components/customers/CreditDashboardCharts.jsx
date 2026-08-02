@@ -1,4 +1,17 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+import { formatCurrency } from "../../utils/currency";  
 
 const COLORS = [
   "#22c55e", // Healthy
@@ -27,6 +40,14 @@ const chartData = [
     value: totalAvailable,
   },
 ];
+
+const topCustomers = [...customers]
+  .sort(
+    (a, b) =>
+      Number(b.outstanding || 0) -
+      Number(a.outstanding || 0)
+  )
+  .slice(0, 10);
 
   console.log(customers[0]);
 
@@ -78,13 +99,40 @@ const chartData = [
 
       </div>
 
-      <div className="bg-white rounded-xl shadow border p-5 flex items-center justify-center">
+<div className="rounded-xl bg-white border shadow p-6">
+  <h2 className="text-lg font-semibold mb-4">
+    Top Credit Customers
+  </h2>
 
-        <span className="text-slate-400">
-          Top Credit Customers chart coming next…
-        </span>
+  <div className="h-[420px]">
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={topCustomers}>
+        <CartesianGrid strokeDasharray="3 3" />
 
-      </div>
+        <XAxis
+          dataKey="name"
+          angle={-25}
+          textAnchor="end"
+          height={80}
+        />
+
+        <YAxis />
+
+        <Tooltip
+          formatter={(value) =>
+            formatCurrency(value)
+          }
+        />
+
+        <Bar
+          dataKey="outstanding"
+          fill="#2563eb"
+          radius={[4, 4, 0, 0]}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
 
     </div>
   );
