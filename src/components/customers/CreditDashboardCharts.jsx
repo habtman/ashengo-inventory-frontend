@@ -7,30 +7,27 @@ const COLORS = [
 ];
 
 export default function CreditDashboardCharts({ customers = [] }) {
+    const totalOutstanding = customers.reduce(
+  (sum, c) => sum + Number(c.outstanding || 0),
+  0
+);
+
+const totalAvailable = customers.reduce(
+  (sum, c) => sum + Number(c.available_credit || 0),
+  0
+);
+
 const chartData = [
   {
-    name: "Low Utilization",
-    value: customers.filter(
-      c => Number(c.utilization_percent) < 70
-    ).length,
+    name: "Outstanding",
+    value: totalOutstanding,
   },
-
   {
-    name: "High Utilization",
-    value: customers.filter(
-      c =>
-        Number(c.utilization_percent) >= 70 &&
-        Number(c.utilization_percent) <= 100
-    ).length,
-  },
-
-  {
-    name: "Over Credit Limit",
-    value: customers.filter(
-      c => Number(c.utilization_percent) > 100
-    ).length,
+    name: "Available",
+    value: totalAvailable,
   },
 ];
+
   console.log(customers[0]);
 
   return (
