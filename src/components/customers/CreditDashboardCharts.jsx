@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   ResponsiveContainer,
   PieChart,
@@ -20,34 +21,36 @@ const COLORS = [
 ];
 
 export default function CreditDashboardCharts({ customers = [] }) {
+    const navigate = useNavigate();
+
     const totalOutstanding = customers.reduce(
-  (sum, c) => sum + Number(c.outstanding || 0),
-  0
-);
+    (sum, c) => sum + Number(c.outstanding || 0),
+    0
+    );
 
-const totalAvailable = customers.reduce(
-  (sum, c) => sum + Number(c.available_credit || 0),
-  0
-);
+    const totalAvailable = customers.reduce(
+    (sum, c) => sum + Number(c.available_credit || 0),
+    0
+    );
 
-const chartData = [
-  {
-    name: "Outstanding",
-    value: totalOutstanding,
-  },
-  {
-    name: "Available",
-    value: totalAvailable,
-  },
-];
+    const chartData = [
+    {
+        name: "Outstanding",
+        value: totalOutstanding,
+    },
+    {
+        name: "Available",
+        value: totalAvailable,
+    },
+    ];
 
-const topCustomers = [...customers]
-  .sort(
-    (a, b) =>
-      Number(b.outstanding || 0) -
-      Number(a.outstanding || 0)
-  )
-  .slice(0, 10);
+    const topCustomers = [...customers]
+    .sort(
+        (a, b) =>
+        Number(b.outstanding || 0) -
+        Number(a.outstanding || 0)
+    )
+    .slice(0, 10);
 
   console.log(customers[0]);
 
@@ -59,6 +62,9 @@ const topCustomers = [...customers]
         <h3 className="text-lg font-semibold mb-4">
           Credit Exposure
         </h3>
+        <p className="text-sm text-slate-500 mb-4">
+        Top 10 customers ranked by outstanding credit.
+        </p>
 
         <div style={{
             width: "100%",
@@ -116,19 +122,49 @@ const topCustomers = [...customers]
           height={80}
         />
 
-        <YAxis />
+        <YAxis
+        tickFormatter={(value) =>
+            formatCurrency(value)
+        }
+        />
 
         <Tooltip
-          formatter={(value) =>
-            formatCurrency(value)
-          }
+        formatter={(value) => formatCurrency(value)}
+        labelFormatter={(label) => `Customer: ${label}`}
         />
 
         <Bar
-          dataKey="outstanding"
-          fill="#2563eb"
-          radius={[4, 4, 0, 0]}
-        />
+        dataKey="outstanding"
+        radius={[4, 4, 0, 0]}
+        >
+        {topCustomers.map((customer) => {
+
+            const utilization =
+            Number(customer.utilization_percent);
+
+            let color = "#22c55e";
+
+            if (utilization >= 80 && utilization <= 100) {
+            color = "#f59e0b";
+            }
+
+            if (utilization > 100) {
+            color = "#ef4444";
+            }
+
+            return (
+            <Cell
+                key={customer.id}
+                fill={color}
+                cursor="pointer"
+                onClick={() =>
+                navigate(`/customers/${customer.id}`)
+                }
+            />
+            );
+
+        })}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   </div>
