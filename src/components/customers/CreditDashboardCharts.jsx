@@ -156,13 +156,17 @@ export default function CreditDashboardCharts({ customers = [] }) {
 
             let color = "#22c55e";
 
-            if (utilization >= 80 && utilization <= 100) {
-            color = "#f59e0b";
-            }
+            if (utilization >= 50)
+            color = "#84cc16";
 
-            if (utilization > 100) {
-            color = "#ef4444";
-            }
+            if (utilization >= 70)
+            color = "#facc15";
+
+            if (utilization >= 85)
+            color = "#f97316";
+
+            if (utilization >= 100)
+            color = "#dc2626";
 
             return (
             <Cell
