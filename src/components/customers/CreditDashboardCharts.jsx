@@ -123,10 +123,15 @@ export default function CreditDashboardCharts({ customers = [] }) {
         <CartesianGrid strokeDasharray="3 3" />
 
         <XAxis
-          dataKey="name"
-          angle={-25}
-          textAnchor="end"
-          height={80}
+            dataKey="name"
+            tickFormatter={(name) =>
+            name.length > 12
+                ? name.substring(0,12) + "..."
+                : name
+            }
+            angle={-25}
+            textAnchor="end"
+            height={80}
         />
 
         <YAxis
