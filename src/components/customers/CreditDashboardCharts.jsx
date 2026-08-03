@@ -12,7 +12,7 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { formatCurrency } from "../../utils/currency";  
+
 
 const COLORS = [
   "#22c55e", // Healthy
@@ -23,24 +23,32 @@ const COLORS = [
 export default function CreditDashboardCharts({ customers = [] }) {
     const navigate = useNavigate();
 
-    const totalOutstanding = customers.reduce(
-    (sum, c) => sum + Number(c.outstanding || 0),
-    0
-    );
+    const healthy = customers.filter(
+    c => Number(c.utilization_percent) < 70
+    ).length;
 
-    const totalAvailable = customers.reduce(
-    (sum, c) => sum + Number(c.available_credit || 0),
-    0
-    );
+    const warning = customers.filter(
+    c =>
+        Number(c.utilization_percent) >= 70 &&
+        Number(c.utilization_percent) <= 100
+    ).length;
+
+    const overLimit = customers.filter(
+    c => Number(c.utilization_percent) > 100
+    ).length;
 
     const chartData = [
     {
-        name: "Outstanding",
-        value: totalOutstanding,
+        name: "Healthy",
+        value: healthy,
     },
     {
-        name: "Available",
-        value: totalAvailable,
+        name: "Near Limit",
+        value: warning,
+    },
+    {
+        name: "Over Limit",
+        value: overLimit,
     },
     ];
 
@@ -79,30 +87,38 @@ export default function CreditDashboardCharts({ customers = [] }) {
 
             <PieChart>
 
-              <Pie
+            <Pie
                 data={chartData}
                 dataKey="value"
                 nameKey="name"
-                outerRadius={100}
-                label
-              >
+                innerRadius={60}
+                outerRadius={110}
+                paddingAngle={4}
+                label={({ percent }) =>
+                `${(percent * 100).toFixed(0)}%`
+                }
+            >
 
-                {chartData.map((entry) => (
-                <Cell
-                    key={entry.name}
-                    fill={
-                    entry.name === "Outstanding"
-                        ? "#f59e0b"
-                        : "#22c55e"
-                    }
-                />
-                ))}
+               
+            {chartData.map((entry, index) => (
+
+            <Cell
+                key={entry.name}
+                fill={COLORS[index]}
+            />
+
+            ))}
+                
 
               </Pie>
 
-              <Tooltip
-                formatter={(value) => formatCurrency(Number(value))}
-              />
+                <Tooltip
+                formatter={(value) => [
+                    `${value} customers`,
+                    "Count",
+                ]}
+                />
+            <Legend />
 
             </PieChart>
 
@@ -140,10 +156,13 @@ export default function CreditDashboardCharts({ customers = [] }) {
             }
         />
 
-        <Tooltip
-        formatter={(value) => formatCurrency(value)}
-        labelFormatter={(label) => `Customer: ${label}`}
-        />
+            <Tooltip
+            formatter={(value) => [
+                `${value} customers`,
+                "Count",
+            ]}
+            />
+        <Legend />
 
         <Bar
         dataKey="outstanding"
