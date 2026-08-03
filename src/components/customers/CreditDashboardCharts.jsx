@@ -86,22 +86,22 @@ export default function CreditDashboardCharts({ customers = [] }) {
                 label
               >
 
-                {chartData.map((entry, index, customer) => (
-                  <Cell
+                {chartData.map((entry) => (
+                <Cell
                     key={entry.name}
                     fill={
-                        customer.utilization_percent >= 90
-                            ? "#dc2626"
-                            : customer.utilization_percent >= 70
-                            ? "#f59e0b"
-                            : "#22c55e"
-                        }
-                  />
+                    entry.name === "Outstanding"
+                        ? "#f59e0b"
+                        : "#22c55e"
+                    }
+                />
                 ))}
 
               </Pie>
 
-              <Tooltip />
+              <Tooltip
+                formatter={(value) => formatCurrency(Number(value))}
+              />
 
             </PieChart>
 
