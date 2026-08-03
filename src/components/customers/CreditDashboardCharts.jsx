@@ -45,11 +45,12 @@ export default function CreditDashboardCharts({ customers = [] }) {
     ];
 
     const topCustomers = [...customers]
-    .sort(
-        (a, b) =>
-        Number(b.outstanding || 0) -
-        Number(a.outstanding || 0)
-    )
+    .map(c => ({
+        ...c,
+        outstanding: Number(c.outstanding),
+        utilization_percent: Number(c.utilization_percent),
+    }))
+    .sort((a, b) => b.outstanding - a.outstanding)
     .slice(0, 10);
 
   console.log(customers[0]);
@@ -163,9 +164,9 @@ export default function CreditDashboardCharts({ customers = [] }) {
                 key={customer.id}
                 fill={color}
                 cursor="pointer"
-                onClick={() =>
-                navigate(`/customers/${customer.id}`)
-                }
+                stroke="#fff"
+                strokeWidth={1}
+                onClick={() => navigate(`/customers/${customer.id}`)}
             />
             );
 
