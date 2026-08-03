@@ -86,10 +86,16 @@ export default function CreditDashboardCharts({ customers = [] }) {
                 label
               >
 
-                {chartData.map((entry, index) => (
+                {chartData.map((entry, index, customer) => (
                   <Cell
                     key={entry.name}
-                    fill={COLORS[index]}
+                    fill={
+                        customer.utilization_percent >= 90
+                            ? "#dc2626"
+                            : customer.utilization_percent >= 70
+                            ? "#f59e0b"
+                            : "#22c55e"
+                        }
                   />
                 ))}
 
@@ -123,9 +129,9 @@ export default function CreditDashboardCharts({ customers = [] }) {
         />
 
         <YAxis
-        tickFormatter={(value) =>
-            formatCurrency(value)
-        }
+            tickFormatter={(value) =>
+            `ETB ${(value / 1000).toFixed(0)}k`
+            }
         />
 
         <Tooltip
