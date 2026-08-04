@@ -29,6 +29,20 @@ create(data) {
   });
 },
 
+update(id, data) {
+  return apiFetch(`/api/v1/sales-orders/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      customerId: data.customerId,
+      locationId: data.locationId,
+      paymentMethod: data.paymentMethod,
+      creditDays: data.creditDays,
+      dueDate: data.dueDate,
+      items: data.items,
+    }),
+  });
+},
+
   confirm: (id) =>
     apiFetch(
       `/api/v1/sales-orders/${id}/confirm`,
