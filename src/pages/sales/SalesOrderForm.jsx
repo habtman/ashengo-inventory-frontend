@@ -370,8 +370,23 @@ const handleSubmit = async () => {
         </thead>
 
         <tbody>
-          {items.map((item, i) => (
-            <tr key={i}>
+          {items.map((item, i) => {
+            const selectedWarehouseStock =
+              item.stockByLocation?.find(
+                s => Number(s.location_id) === Number(locationId)
+              );
+
+            const availableStock = Number(
+              selectedWarehouseStock?.quantity || 0
+            );
+
+            const shortage =
+              Math.max(0, Number(item.quantity) - availableStock);
+
+            const hasEnoughStock =
+              shortage === 0;
+            return (
+              <tr key={i}>
 
         
 
@@ -460,6 +475,7 @@ const handleSubmit = async () => {
       </td>
 
         <td className="border p-2">
+
           <input
             className="border rounded px-2 py-1 w-full"
             type="number"
@@ -473,6 +489,29 @@ const handleSubmit = async () => {
               )
             }
           />
+
+          <div className="mt-2 text-xs">
+
+            <div
+              className={
+                hasEnoughStock
+                  ? "text-green-600 font-semibold"
+                  : "text-red-600 font-semibold"
+              }
+            >
+              Available: {availableStock}
+            </div>
+
+            {!hasEnoughStock && (
+              <div className="mt-1">
+                Requested: {item.quantity}
+                <br />
+                Missing: {shortage}
+              </div>
+            )}
+
+          </div>
+
         </td>
 
         <td className="border p-2">
@@ -502,11 +541,8 @@ const handleSubmit = async () => {
             
             
             
-          ))}
-
-          
-
-          
+          );
+        })}   
         </tbody>
       </table>
 
