@@ -20,6 +20,7 @@ export default function CustomerCreditTable({ customers = [] }) {
   const filteredCustomers = useMemo(() => {
 
     return customers.filter(customer => {
+        
 
       const matchesSearch =
         customer.name
@@ -51,6 +52,8 @@ export default function CustomerCreditTable({ customers = [] }) {
       (page - 1) * PAGE_SIZE,
       page * PAGE_SIZE
     );
+
+    
 
 
 const exportExcel = () => {
@@ -118,6 +121,7 @@ const exportPDF = () => {
     ]],
 
     body: filteredCustomers.map(customer => [
+    
 
       customer.name,
 
@@ -134,6 +138,8 @@ const exportPDF = () => {
       customer.status,
 
     ]),
+
+    
 
   });
 
@@ -218,8 +224,8 @@ const exportPDF = () => {
               <th className="p-3 text-right">Outstanding</th>
 
               <th className="p-3 text-right">Available</th>
-
-              <th className="p-3 text-center">% Used</th>
+              
+              <th className="px-4 py-3 text-left">Utilization in %</th>
 
 
             </tr>
@@ -267,66 +273,42 @@ const exportPDF = () => {
                   {formatCurrency(customer.available_credit)}
                 </td>
 
-                <td className="p-3 w-72">
+                <td className="px-4 py-3">
+                <div className="w-48">
 
-                <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between text-xs mb-1">
+                    <span>{Number(customer.utilization_percent).toFixed(1)}%</span>
 
-                    <span className="font-semibold">
-                    {customer.utilization_percent}%
+                    <span>
+                        {formatCurrency(customer.outstanding)}
                     </span>
+                    </div>
 
-                    <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold
-
-                    ${
-                        customer.status === "OVER_LIMIT"
-
-                        ? "bg-red-100 text-red-700"
-
-                        : customer.status === "WARNING"
-
-                        ? "bg-yellow-100 text-yellow-700"
-
-                        : customer.status === "ACTIVE"
-
-                        ? "bg-blue-100 text-blue-700"
-
-                        : "bg-green-100 text-green-700"
-
-                    }`}
-                    >
-                    {customer.status.replace("_", " ")}
-                    </span>
-
-                </div>
-
-                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded-full h-3">
 
                     <div
-                    className={`h-3 transition-all duration-500
-
-                    ${
-                        customer.status === "OVER_LIMIT"
-
-                        ? "bg-red-600"
-
-                        : customer.status === "WARNING"
-
-                        ? "bg-yellow-500"
-
-                        : "bg-green-600"
-
-                    }`}
-                    style={{
+                        className={`h-3 rounded-full transition-all duration-300
+                        ${
+                            Number(customer.utilization_percent) >= 100
+                            ? "bg-red-600"
+                            : Number(customer.utilization_percent) >= 80
+                            ? "bg-orange-500"
+                            : Number(customer.utilization_percent) >= 60
+                            ? "bg-yellow-400"
+                            : "bg-green-500"
+                        }
+                        `}
+                        style={{
                         width: `${Math.min(
-                        Number(customer.utilization_percent),
-                        100
-                        )}%`
-                    }}
+                            Number(customer.utilization_percent),
+                            100
+                        )}%`,
+                        }}
                     />
 
-                </div>
+                    </div>
 
+                </div>
                 </td>
 
               </tr>
