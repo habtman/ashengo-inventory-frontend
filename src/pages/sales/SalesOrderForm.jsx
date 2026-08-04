@@ -125,17 +125,31 @@ useEffect(() => {
 }, [paymentMethod, creditDays]);
 
 const hasStockIssues = items.some((item) => {
+
+  if (!item.inventoryId || !locationId) {
+    return false;
+  }
+
   const selectedWarehouseStock =
     item.stockByLocation?.find(
       s => Number(s.location_id) === Number(locationId)
     );
 
-  const available = Number(
-    selectedWarehouseStock?.quantity || 0
-  );
+  const availableStock =
+    Number(selectedWarehouseStock?.quantity || 0);
 
-  return Number(item.quantity) > available;
+  return Number(item.quantity) > availableStock;
+
 });
+
+const readyToValidate =
+  locationId &&
+  items.every(item => item.inventoryId);
+
+const showStockWarning =
+  readyToValidate && hasStockIssues;
+
+
 
 const handleSubmit = async () => {
   try {
@@ -184,10 +198,8 @@ const handleSubmit = async () => {
     console.error(err);
 
     if (err.details) {
-
-        (err.details);
-
-        return;
+      alert(err.details);
+      return;
     }
 
     alert(err.message);
@@ -584,36 +596,35 @@ const handleSubmit = async () => {
       >
         Create Sales Order
       </button>
-{hasStockIssues && (
-  <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-4">
-
-    <p className="font-semibold text-red-700">
-      Cannot create Sales Order
-    </p>
-
-    <p className="text-sm text-red-600 mt-1">
-      One or more products exceed the available warehouse stock.
-      Reduce the requested quantity or replenish inventory.
-    </p>
-
-  </div>
-)}
-
-{paymentMethod === "CREDIT" && exceedsLimit && (
-  <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
-    <p className="font-semibold text-red-700">
-      Credit limit exceeded
-    </p>
-
-    <p className="text-sm text-red-600 mt-1">
-      This order exceeds the customer's available credit by{" "}
-      {formatCurrency(Math.abs(remainingCredit))}
-    </p>
-  </div>
-)}
 
 
+    {paymentMethod === "CREDIT" && exceedsLimit && (
+      <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
+        <p className="font-semibold text-red-700">
+          Credit limit exceeded
+        </p>
 
+        <p className="text-sm text-red-600 mt-1">
+          This order exceeds the customer's available credit by{" "}
+          {formatCurrency(Math.abs(remainingCredit))}
+        </p>
+      </div>
+    )}
+
+    {showStockWarning && (
+      <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
+        <p className="font-semibold text-red-700">
+          Stock Warning
+        </p>
+
+        <p className="text-sm text-red-600 mt-1">
+          One or more products exceed the available warehouse stock.
+          Reduce the requested quantity or replenish inventory.
+
+        </p>
+      </div>
+      
+    )}  
 
 
     </div>
