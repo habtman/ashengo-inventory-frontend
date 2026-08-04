@@ -124,6 +124,19 @@ useEffect(() => {
   }
 }, [paymentMethod, creditDays]);
 
+const hasStockIssues = items.some((item) => {
+  const selectedWarehouseStock =
+    item.stockByLocation?.find(
+      s => Number(s.location_id) === Number(locationId)
+    );
+
+  const available = Number(
+    selectedWarehouseStock?.quantity || 0
+  );
+
+  return Number(item.quantity) > available;
+});
+
 const handleSubmit = async () => {
   try {
     if (!customerId) {
@@ -554,16 +567,37 @@ const handleSubmit = async () => {
 
       <button
         onClick={handleSubmit}
-        disabled={paymentMethod === "CREDIT" && exceedsLimit}
-        className={`mt-4 px-4 py-2 rounded text-white
+        disabled={
+          (paymentMethod === "CREDIT" && exceedsLimit) ||
+          hasStockIssues
+        }
+        className={`
+          mt-4 px-4 py-2 rounded text-white
+
           ${
-            paymentMethod === "CREDIT" && exceedsLimit
+            (paymentMethod === "CREDIT" && exceedsLimit) ||
+            hasStockIssues
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          }
+        `}
       >
         Create Sales Order
       </button>
+{hasStockIssues && (
+  <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-4">
+
+    <p className="font-semibold text-red-700">
+      Cannot create Sales Order
+    </p>
+
+    <p className="text-sm text-red-600 mt-1">
+      One or more products exceed the available warehouse stock.
+      Reduce the requested quantity or replenish inventory.
+    </p>
+
+  </div>
+)}
 
 {paymentMethod === "CREDIT" && exceedsLimit && (
   <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
