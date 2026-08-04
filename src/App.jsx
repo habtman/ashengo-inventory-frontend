@@ -87,6 +87,7 @@ export default function App() {
           <Route path="/sales-orders" element={<SalesOrders />} /> 
           <Route path="/sales-orders/new" element={<SalesOrderForm />} />
           <Route path="/sales-orders/:id" element={<SalesOrderDetails />} />
+          <Route path="/sales-orders/edit/:id" element={<SalesOrderForm />} />
           <Route path="/sales-orders/:id/print" element={<SalesOrderPrint />} />
           <Route path="/customers" element={<CustomersList />} />
           <Route path="/customers/new" element={<CustomerCreate />} />

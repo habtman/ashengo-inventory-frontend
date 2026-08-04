@@ -139,7 +139,7 @@ const handleConfirm = async () => {
                   Unit Price      
                 </th>       
                 <th className="border p-2">  
-                     Line Total
+                  Line Total
                 </th>      
                 </tr> 
                </thead> 

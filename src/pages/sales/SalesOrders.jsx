@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState} from "react";
+import { Link, useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { formatCurrency } from "../../utils/currency";  
 
 export default function SalesOrders() {
+  const navigate = useNavigate();
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -93,16 +95,27 @@ export default function SalesOrders() {
                 ).toLocaleDateString()}
               </td>
 
-              <td className="border p-2">
+            <td className="space-x-2">
 
-                <Link
-                  to={`/sales-orders/${order.id}`}
-                  className="text-blue-600"
-                >
-                  View
-                </Link>
+            <button
+              onClick={() => navigate(`/sales-orders/${order.id}`)}
+              className="px-3 py-1 rounded bg-blue-600 text-white"
+            >
+              View
+            </button>
 
-              </td>
+            {order.status === "DRAFT" && (
+              <button
+                onClick={() =>
+                  navigate(`/sales-orders/edit/${order.id}`)
+                }
+                className="px-3 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
+              >
+                Edit
+              </button>
+            )}
+
+          </td>
 
             </tr>
           ))}

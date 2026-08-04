@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { inventoryApi } from "../../api/inventoryApi";
 import customerApi from "../../api/customerApi";
@@ -20,6 +20,8 @@ export default function SalesOrderForm() {
   const [creditDays, setCreditDays] = useState(30);
   const [dueDate, setDueDate] = useState(null);
   const [creditSummary, setCreditSummary] = useState(null);
+  const { id } = useParams();
+  const isEditing = !!id;
 
 
   
@@ -60,7 +62,6 @@ useEffect(() => {
 }, []);
 
 
-
 useEffect(() => {
 
   if (!customerId) {
@@ -73,6 +74,47 @@ useEffect(() => {
     .then(setCreditSummary);
 
 }, [customerId]);
+
+const loadDraft = useCallback(async () => {
+  try {
+    const order = await salesOrderApi.getById(id);
+
+    setCustomerId(order.customer_id);
+    setLocationId(order.location_id);
+    setPaymentMethod(order.payment_method);
+    setCreditDays(order.credit_days || 30);
+    setDueDate(
+      order.due_date ? new Date(order.due_date) : null
+    );
+
+    const loadedItems = [];
+
+    for (const item of order.items) {
+      const stock = await inventoryApi.getStockByLocation(
+        item.inventory_id
+      );
+
+      loadedItems.push({
+        inventoryId: item.inventory_id,
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unit_price),
+        stockByLocation: stock,
+      });
+    }
+
+    setItems(loadedItems);
+  } catch (err) {
+    console.error(err);
+  }
+}, [id]);
+
+useEffect(() => {
+  if (!isEditing) return;
+
+  loadDraft();
+}, [isEditing, loadDraft]);
+
+
 
 
 
@@ -153,6 +195,7 @@ const showStockWarning =
 
 const handleSubmit = async () => {
   try {
+
     if (!customerId) {
       alert("Please select a customer");
       return;
@@ -167,6 +210,30 @@ const handleSubmit = async () => {
       alert("Please add at least one item");
       return;
     }
+
+        if (isEditing) {
+
+      await salesOrderApi.update(id, {
+
+        customerId,
+
+        locationId,
+
+        paymentMethod,
+
+        creditDays,
+
+        items,
+
+      });
+
+      navigate(`/sales-orders/${id}`);
+
+      return;
+
+    }
+
+
 
     // 1. Create Sales Order
     const createRes = await salesOrderApi.create({
@@ -584,17 +651,19 @@ const handleSubmit = async () => {
           hasStockIssues
         }
         className={`
-          mt-4 px-4 py-2 rounded text-white
+          mt-4 px-4 py-2 rounded text-white transition-colors
 
           ${
             (paymentMethod === "CREDIT" && exceedsLimit) ||
             hasStockIssues
               ? "bg-gray-400 cursor-not-allowed"
+              : isEditing
+              ? "bg-amber-600 hover:bg-amber-700"
               : "bg-blue-600 hover:bg-blue-700"
           }
         `}
       >
-        Create Sales Order
+        {isEditing ? "Save Draft" : "Create Sales Order"}
       </button>
 
 
