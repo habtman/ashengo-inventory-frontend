@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import grnApi from "../../api/grnApi";
+import { formatCurrency } from "../../utils/currency";   
 
 export default function GRNDetails() {
 
@@ -226,14 +227,11 @@ const localTotal = Number(grn.total_amount || 0);
     <hr className="col-span-2 my-2"/>
 
     <span className="font-bold">
-      Total (ETB)
+      Grand Total (ETB)
     </span>
 
     <span className="text-right font-bold text-lg">
-      ETB {localTotal.toLocaleString(undefined,{
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      })}
+      {formatCurrency(localTotal)}  
     </span>
 
   </div>
