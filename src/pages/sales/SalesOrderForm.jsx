@@ -213,19 +213,16 @@ const handleSubmit = async () => {
 
         if (isEditing) {
 
-      await salesOrderApi.update(id, {
-
-        customerId,
-
-        locationId,
-
-        paymentMethod,
-
-        creditDays,
-
-        items,
-
-      });
+await salesOrderApi.update(id, {
+  customerId,
+  locationId,
+  paymentMethod,
+  creditDays,
+  dueDate: dueDate
+    ? dueDate.toISOString().split("T")[0]
+    : null,
+  items,
+});
 
       navigate(`/sales-orders/${id}`);
 
