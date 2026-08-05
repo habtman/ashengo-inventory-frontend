@@ -117,7 +117,6 @@ useEffect(() => {
 
 
 
-
   const updateItem = (i, field, value) => {
     const updated = [...items];
     updated[i][field] = value;
@@ -166,6 +165,7 @@ useEffect(() => {
   }
 }, [paymentMethod, creditDays]);
 
+
 const hasStockIssues = items.some((item) => {
 
   if (!item.inventoryId || !locationId) {
@@ -213,16 +213,23 @@ const handleSubmit = async () => {
 
         if (isEditing) {
 
-await salesOrderApi.update(id, {
-  customerId,
-  locationId,
-  paymentMethod,
-  creditDays,
-  dueDate: dueDate
-    ? dueDate.toISOString().split("T")[0]
-    : null,
-  items,
-});
+        const calculatedDueDate =
+          paymentMethod === "CREDIT"
+            ? new Date(
+                Date.now() + creditDays * 24 * 60 * 60 * 1000
+              )
+                .toISOString()
+                .split("T")[0]
+            : null;
+
+        await salesOrderApi.update(id, {
+          customerId,
+          locationId,
+          paymentMethod,
+          creditDays,
+          dueDate: calculatedDueDate,
+          items,
+        });
 
       navigate(`/sales-orders/${id}`);
 
@@ -243,17 +250,16 @@ await salesOrderApi.update(id, {
       items
     });
 
-    console.log("CREATE RESPONSE:", createRes);
 
     const salesOrderId = createRes.soId;
 
     // 2. Confirm Sales Order
     // Payment terms are NOT sent here.
     // They already belong to the Sales Order.
-    const confirmRes =
-      await salesOrderApi.confirm(salesOrderId);
+    await salesOrderApi.confirm(salesOrderId);
+    
 
-    console.log("CONFIRM RESPONSE:", confirmRes);
+    
 
     // 3. Open the Sales Order details
     navigate(`/sales-orders/${salesOrderId}`);

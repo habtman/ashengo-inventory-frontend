@@ -19,10 +19,8 @@ export default function CustomerCreditDashboard() {
         const dashboardSummary =
           await customerApi.getCreditDashboardSummary();
 
-          console.log("Dashboard Summary:", dashboardSummary);  
         const dashboardCustomers =
           await customerApi.getCreditDashboardCustomers();
-         console.log("Dashboard Customers:", dashboardCustomers);   
 
         setSummary(dashboardSummary);
         setCustomers(dashboardCustomers);
