@@ -29,8 +29,8 @@ create(data) {
   });
 },
 
-update: (id, data) =>
-  apiFetch(`/api/v1/sales-orders/${id}`, {
+update(id, data) {
+  return apiFetch(`/api/v1/sales-orders/${id}`, {
     method: "PUT",
     body: JSON.stringify({
       customerId: data.customerId,
@@ -40,7 +40,8 @@ update: (id, data) =>
       dueDate: data.dueDate,
       items: data.items,
     }),
-  }),
+  });
+},
 
   confirm: (id) =>
     apiFetch(
