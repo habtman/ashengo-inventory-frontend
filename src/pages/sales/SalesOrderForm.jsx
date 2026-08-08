@@ -294,15 +294,9 @@ const handleSubmit = async () => {
         customerId,
         locationId,
         paymentMethod,
-        creditDays:
-          paymentMethod === "CREDIT"
-            ? creditDays
-            : null,
-        dueDate:
-          paymentMethod === "CREDIT"
-            ? dueDate
-            : null,
-        items: refreshedItems,
+        creditDays,
+        dueDate,
+        items,
       });
 
       navigate(`/sales-orders/${id}`);
