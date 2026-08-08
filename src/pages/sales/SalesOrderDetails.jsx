@@ -27,22 +27,29 @@ useEffect(() => {
   fetchData();
 }, [id]);
 
-const handleConfirm = async () => { 
-        try { 
-
+const handleConfirm = async () => {
+      try {
         setConfirming(true);
-        
 
-    await salesOrderApi.confirm(id);
-    alert("Sales Order confirmed"); 
-    const data = await salesOrderApi.getById(id);
-    setSo(data);
+        console.log("CONFIRMING SALES ORDER:", id);
+        console.log("ITEMS BEFORE CONFIRM:", so.items);
 
-        } catch (err) {  
+        await salesOrderApi.confirm(id);
+
+        alert("Sales Order confirmed");
+
+        const data = await salesOrderApi.getById(id);
+        setSo(data);
+
+      } catch (err) {
+        console.error("CONFIRM ERROR:", err);
+
         alert(err.message || "Failed to confirm Sales Order");
-        } finally {  
-            setConfirming(false);}
-        };
+
+      } finally {
+        setConfirming(false);
+      }
+    };
 
     const statusColor = {
       DRAFT: "bg-gray-500",
@@ -145,7 +152,7 @@ const handleConfirm = async () => {
                </thead> 
         <tbody> 
              {so.items.map((item) => (
-               <tr key={item.inventory_id}>      
+                <tr key={item.id}>      
                 <td className="border p-2"> 
                       {item.item_name}        
                  </td>     

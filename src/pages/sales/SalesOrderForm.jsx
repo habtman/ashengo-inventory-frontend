@@ -195,7 +195,6 @@ const showStockWarning =
 
 const handleSubmit = async () => {
   try {
-
     if (!customerId) {
       alert("Please select a customer");
       return;
@@ -211,60 +210,154 @@ const handleSubmit = async () => {
       return;
     }
 
-        if (isEditing) {
+    // =========================================================
+    // 1. REFRESH STOCK FROM DATABASE BEFORE SUBMIT
+    // =========================================================
 
-        const calculatedDueDate =
+    const refreshedItems = await Promise.all(
+      items.map(async (item) => {
+        if (!item.inventoryId) {
+          return item;
+        }
+
+        const stock =
+          await inventoryApi.getStockByLocation(
+            item.inventoryId
+          );
+
+        return {
+          ...item,
+          stockByLocation: stock,
+        };
+      })
+    );
+
+    // Keep the UI in sync with the latest database stock
+    setItems(refreshedItems);
+
+    // =========================================================
+    // 2. CHECK THE FRESH STOCK
+    // =========================================================
+
+    const latestStockIssue = refreshedItems.find((item) => {
+
+      if (!item.inventoryId) {
+        return null;
+      }
+
+      const selectedWarehouseStock =
+        item.stockByLocation?.find(
+          (stock) =>
+            Number(stock.location_id) === Number(locationId)
+        );
+
+      const availableStock =
+        Number(selectedWarehouseStock?.quantity || 0);
+
+      const requestedQuantity =
+        Number(item.quantity);
+
+      if (requestedQuantity > availableStock) {
+        return {
+          item,
+          availableStock,
+          requestedQuantity,
+        };
+      }
+
+      return null;
+    });
+
+    // =========================================================
+    // 3. STOP BEFORE CREATE/UPDATE IF STOCK IS INSUFFICIENT
+    // =========================================================
+
+    if (latestStockIssue) {
+
+      alert(
+        `Insufficient stock for inventory ${latestStockIssue.item.inventoryId}.\n\n` +
+        `Available: ${latestStockIssue.availableStock}\n` +
+        `Requested: ${latestStockIssue.requestedQuantity}\n\n` +
+        `Please reduce the quantity and try again.`
+      );
+
+      return;
+    }
+
+    // =========================================================
+    // 4. UPDATE EXISTING DRAFT
+    // =========================================================
+
+    if (isEditing) {
+
+      await salesOrderApi.update(id, {
+        customerId,
+        locationId,
+        paymentMethod,
+        creditDays:
           paymentMethod === "CREDIT"
-            ? new Date(
-                Date.now() + creditDays * 24 * 60 * 60 * 1000
-              )
-                .toISOString()
-                .split("T")[0]
-            : null;
-
-        await salesOrderApi.update(id, {
-          customerId,
-          locationId,
-          paymentMethod,
-          creditDays,
-          dueDate: calculatedDueDate,
-          items,
-        });
+            ? creditDays
+            : null,
+        dueDate:
+          paymentMethod === "CREDIT"
+            ? dueDate
+            : null,
+        items: refreshedItems,
+      });
 
       navigate(`/sales-orders/${id}`);
 
       return;
-
     }
 
+    // =========================================================
+    // 5. CREATE NEW SALES ORDER
+    // =========================================================
 
+    const createRes =
+      await salesOrderApi.create({
+        customerId,
+        locationId,
+        paymentMethod,
+        creditDays:
+          paymentMethod === "CREDIT"
+            ? creditDays
+            : null,
+        dueDate:
+          paymentMethod === "CREDIT"
+            ? dueDate
+            : null,
+        items: refreshedItems,
+      });
 
-    // 1. Create Sales Order
-    const createRes = await salesOrderApi.create({
-      customerId,
-      locationId,
-      paymentMethod,
-      creditDays: paymentMethod === "CREDIT"
-        ? creditDays
-        : null,
-      items
-    });
+    console.log(
+      "CREATE RESPONSE:",
+      createRes
+    );
 
+    const salesOrderId =
+      createRes.soId;
 
-    const salesOrderId = createRes.soId;
+    // =========================================================
+    // 6. CONFIRM SALES ORDER
+    // =========================================================
 
-    // 2. Confirm Sales Order
-    // Payment terms are NOT sent here.
-    // They already belong to the Sales Order.
-    await salesOrderApi.confirm(salesOrderId);
-    
+    const confirmRes =
+      await salesOrderApi.confirm(
+        salesOrderId
+      );
 
-    
+    console.log(
+      "CONFIRM RESPONSE:",
+      confirmRes
+    );
 
-    // 3. Open the Sales Order details
-    navigate(`/sales-orders/${salesOrderId}`);
+    navigate(
+      `/sales-orders/${salesOrderId}`
+    );
 
   } catch (err) {
+
     console.error(err);
 
     if (err.details) {
@@ -272,9 +365,12 @@ const handleSubmit = async () => {
       return;
     }
 
-    alert(err.message);
-}
-}
+    alert(
+      err.message ||
+      "Failed to process sales order"
+    );
+  }
+};
 
 
   return (
