@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { inventoryApi } from "../../api/inventoryApi";
 import StockByLocation from "./StockByLocation";
+import { formatCurrency } from "../../utils/currency";  
 
 export default function InventoryRow({
   item,
@@ -9,7 +10,7 @@ export default function InventoryRow({
   onEdit,
   onSelect,
   onDelete,
-  onSell,
+  //onSell,
   permissions,
 }) {
   // Expanded state
@@ -41,7 +42,7 @@ export default function InventoryRow({
   };
 
   // 🔥 Optimistic updater (used by Sell / Add / Transfer)
- const updateLocationStock = (locationId, quantityChange) => {
+ /*const updateLocationStock = (locationId, quantityChange) => {
   const change = Number(quantityChange);
 
   setStock(prev =>
@@ -54,7 +55,7 @@ export default function InventoryRow({
         : loc
     )
   );
-};
+};*/
 
 
   // Derived stock + status
@@ -72,6 +73,10 @@ export default function InventoryRow({
     statusLabel = "Low Stock";
     statusColor = "bg-yellow-100 text-yellow-700";
   }
+  else {
+    statusLabel = "In Stock";
+    statusColor = "bg-green-100 text-green-700";
+  } 
 
   return (
     <>
@@ -98,12 +103,12 @@ export default function InventoryRow({
 
         {/* Price */}
         <td className="px-6 py-4 text-right tabular-nums text-slate-700">
-          ${Number(item.price).toFixed(2)}
+          {formatCurrency(Number(item.price))}
         </td>
 
         {/* Cost */}
         <td className="px-6 py-4 text-right tabular-nums text-slate-500">
-          ${Number(item.cost_price).toFixed(2)}
+          {formatCurrency(Number(item.cost_price))} 
         </td>
 
         {/* Total Stock */}
@@ -160,7 +165,7 @@ export default function InventoryRow({
               </button>
             )}
 
-            {permissions?.canSell && (
+            {/*{permissions?.canSell && (
               <button
                 onClick={() =>
                   onSell(item, updateLocationStock)
@@ -169,7 +174,7 @@ export default function InventoryRow({
               >
                 Sell
               </button>
-            )}
+            )}*/}
           </div>
         </td>
       </tr>

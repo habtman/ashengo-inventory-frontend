@@ -13,7 +13,7 @@ export default function InventoryTable({
   onEdit,
   onDelete,
   onAddStock,
-  onSell,
+  //onSell,
 }) {
   if (loading) return <InventorySkeleton />;
 
@@ -85,7 +85,7 @@ export default function InventoryTable({
               onDelete={() => onDelete(item)}
               status={item.status}
               onAddStock={onAddStock}
-              onSell={onSell}
+              //onSell={onSell} 
             />
           ))}
         </tbody>

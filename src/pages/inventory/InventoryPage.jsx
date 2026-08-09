@@ -228,7 +228,7 @@ return (
               onClick={() => setShowCreate(true)}
               className="bg-indigo-600 text-white px-4 py-2 rounded"
             >
-              Add Item
+              New Item
             </button>
           )}
 

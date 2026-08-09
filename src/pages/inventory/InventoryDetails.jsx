@@ -6,6 +6,7 @@ import stockApi from "../../api/stockApi";
 import StockTransferModal from "../../components/stock/StockTransferModal";
 import StockTransferForm from "../../components/stock/StockTransferForm";
 import StockAdjustmentForm from "../../components/stock/StockAdjustmentForm";
+import {formatCurrency} from "../../utils/currency";  
 
 function SummaryCard({ title, value }) {
   return (
@@ -54,34 +55,33 @@ export default function InventoryDetails() {
 
 
 
-    const load = async () => {
-      try {
+      const load = async () => {
+        try {
+          const [
+            productData,
+            stockData,
+            movementData,
+            salesData,
+            purchaseData
+          ] = await Promise.all([
+            inventoryApi.getById(id),
+            inventoryApi.getStockByLocation(id),
+            inventoryApi.getMovements(id),
+            stockApi.getSalesHistory(id),
+            stockApi.getPurchaseHistory(id)
+          ]);
+          setProduct(productData);
+          setStock(stockData);
+          setMovements(movementData);
+          setSales(salesData);
+          setPurchases(purchaseData);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-      const [
-        productData,
-        stockData,
-        movementData,
-        salesData,
-        purchaseData
-      ] = await Promise.all([
-        inventoryApi.getById(id),
-        inventoryApi.getStockByLocation(id),
-        inventoryApi.getMovements(id),
-        stockApi.getSalesHistory(id),
-        stockApi.getPurchaseHistory(id)
-      ]);
-              setProduct(productData);
-              setStock(stockData);
-              setMovements(movementData);
-              setSales(salesData);
-              setPurchases(purchaseData);
-            } catch (err) {
-              console.error(err);
-            } finally {
-              setLoading(false);
-            }
-          };
-          
       useEffect(() => {
         load();
       }, [id]);
@@ -239,19 +239,6 @@ const totalStock =
     0
   );
 
-/*const threshold =
-  Number(product?.low_stock_threshold ?? 0);
-
-let status = "In Stock";
-let statusColor = "text-green-600";
-
-if (totalStock === 0) {
-  status = "Out of Stock";
-  statusColor = "text-red-600";
-} else if (totalStock <= threshold) {
-  status = "Low Stock";
-  statusColor = "text-yellow-600";
-}*/
 const totalSold = sales.reduce(
   (sum, sale) => sum + Number(sale.quantity),
   0
@@ -426,7 +413,7 @@ const totalPurchaseCost = purchases.reduce(
           </div>
 
           <div className="text-2xl font-bold">
-            ${Number(product.price).toLocaleString()}
+            {formatCurrency(Number(product.price))}
           </div>
         </div>
 
@@ -436,7 +423,7 @@ const totalPurchaseCost = purchases.reduce(
           </div>
 
           <div className="text-2xl font-bold">
-            ${Number(product.cost_price).toFixed(2)}
+            {formatCurrency(Number(product.cost_price))}  
           </div>
         </div>
 
@@ -446,11 +433,10 @@ const totalPurchaseCost = purchases.reduce(
           </div>
 
         <div className="text-2xl font-bold">
-            $
-            {(
+            {formatCurrency(
               totalStock *
               Number(product.cost_price || 0)
-            ).toFixed(2)}
+            )}
           </div>
         </div>
 
@@ -471,12 +457,12 @@ const totalPurchaseCost = purchases.reduce(
 
         <SummaryCard
           title="Sales Revenue"
-          value={`$${totalSalesRevenue.toFixed(2)}`}
+          value={formatCurrency(totalSalesRevenue)}
         />
 
         <SummaryCard
           title="Purchase Cost"
-          value={`$${totalPurchaseCost.toFixed(2)}`}
+          value={formatCurrency(totalPurchaseCost)} 
         />
       </div>
         </>
@@ -502,15 +488,14 @@ const totalPurchaseCost = purchases.reduce(
 
   <SummaryCard
     title="Total Value"
-    value={`$${stock
+    value={formatCurrency(stock
       .reduce(
         (sum, row) =>
           sum +
           row.quantity *
             (product?.cost_price || 0),
         0
-      )
-      .toFixed(2)}`}
+      ))} 
   />
 
 </div>
@@ -559,7 +544,7 @@ const totalPurchaseCost = purchases.reduce(
             </td>
 
             <td className="px-4 py-3 text-right">
-              ${value.toFixed(2)}
+              {formatCurrency(value)} 
             </td>
 
             <td className="px-4 py-3 text-center">
@@ -781,15 +766,11 @@ const totalPurchaseCost = purchases.reduce(
                 <td>{purchase.quantity}</td>
 
                 <td>
-                  ${Number(
-                    purchase.cost_price
-                  ).toFixed(2)}
+                  {formatCurrency(Number(purchase.cost_price))}
                 </td>
 
                 <td>
-                  ${Number(
-                    purchase.total_cost
-                  ).toFixed(2)}
+                  {formatCurrency(Number(purchase.total_cost))}
                 </td>
 
                 <td>{purchase.location_name}</td>
@@ -904,15 +885,11 @@ const totalPurchaseCost = purchases.reduce(
                 <td>{sale.quantity}</td>
 
                 <td>
-                  ${Number(
-                    sale.unit_price
-                  ).toFixed(2)}
+                  {formatCurrency(Number(sale.unit_price))}
                 </td>
 
                 <td>
-                  ${Number(
-                    sale.total_amount
-                  ).toFixed(2)}
+                  {formatCurrency(Number(sale.total_amount))} 
                 </td>
 
                 <td>{sale.status}</td>
