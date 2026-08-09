@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { formatCurrency } from "../../utils/currency";
@@ -11,51 +11,78 @@ export default function SalesOrders() {
 
   // Pagination
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const limit = 10;
   const [totalPages, setTotalPages] = useState(1);
 
-  // Search and filter
+  // Search
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+
+  // Filter
   const [status, setStatus] = useState("");
 
-  const loadOrders = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const data = await salesOrderApi.getAll({
-        page,
-        limit,
-        search,
-        status,
-      });
-
-      setOrders(data.items || []);
-
-      setTotalPages(
-        Number(data.totalPages || 1)
-      );
-    } catch (err) {
-      console.error("Failed to load sales orders:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, limit, search, status]);
-
+  /*
+   * Debounce search.
+   *
+   * The user can type:
+   * 1
+   * 12
+   * 126
+   *
+   * without triggering a request after every keystroke.
+   */
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  /*
+   * Reset pagination when status changes.
+   */
+  useEffect(() => {
+    setPage(1);
+  }, [status]);
+
+  /*
+   * Load orders whenever the actual search,
+   * status, or page changes.
+   */
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        setLoading(true);
+
+        const data = await salesOrderApi.getAll({
+          page,
+          limit,
+          search,
+          status,
+        });
+
+        setOrders(data.items || []);
+
+        setTotalPages(
+          Number(data.totalPages || 1)
+        );
+      } catch (err) {
+        console.error(
+          "Failed to load sales orders:",
+          err
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadOrders();
-  }, [loadOrders]);
-
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setPage(1);
-  };
-
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-    setPage(1);
-  };
+  }, [page, search, status]);
 
   const clearFilters = () => {
+    setSearchInput("");
     setSearch("");
     setStatus("");
     setPage(1);
@@ -72,7 +99,7 @@ export default function SalesOrders() {
   return (
     <div className="p-6">
 
-      {/* Header */}
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
 
         <h1 className="text-2xl font-bold">
@@ -89,22 +116,28 @@ export default function SalesOrders() {
       </div>
 
 
-      {/* Search + Filter */}
+      {/* SEARCH + FILTER */}
       <div className="flex flex-wrap gap-3 mb-4">
 
         <input
           type="text"
           placeholder="Search sales orders..."
-          value={search}
-          onChange={handleSearch}
+          value={searchInput}
+          onChange={(e) =>
+            setSearchInput(e.target.value)
+          }
           className="border rounded px-3 py-2 w-64"
         />
 
+
         <select
           value={status}
-          onChange={handleStatusChange}
+          onChange={(e) =>
+            setStatus(e.target.value)
+          }
           className="border rounded px-3 py-2"
         >
+
           <option value="">
             All Statuses
           </option>
@@ -116,9 +149,11 @@ export default function SalesOrders() {
           <option value="CONFIRMED">
             Confirmed
           </option>
+
         </select>
 
-        {(search || status) && (
+
+        {(searchInput || status) && (
           <button
             onClick={clearFilters}
             className="border px-3 py-2 rounded hover:bg-gray-100"
@@ -130,7 +165,7 @@ export default function SalesOrders() {
       </div>
 
 
-      {/* Sales Orders Table */}
+      {/* TABLE */}
       <div className="overflow-x-auto">
 
         <table className="w-full border border-collapse">
@@ -171,7 +206,6 @@ export default function SalesOrders() {
           <tbody>
 
             {orders.length === 0 && (
-
               <tr>
 
                 <td
@@ -182,7 +216,6 @@ export default function SalesOrders() {
                 </td>
 
               </tr>
-
             )}
 
 
@@ -239,7 +272,6 @@ export default function SalesOrders() {
 
                   <div className="flex gap-2">
 
-                    {/* View */}
                     <button
                       onClick={() =>
                         navigate(
@@ -252,7 +284,6 @@ export default function SalesOrders() {
                     </button>
 
 
-                    {/* Edit Draft */}
                     {order.status === "DRAFT" && (
 
                       <button
@@ -283,7 +314,7 @@ export default function SalesOrders() {
       </div>
 
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-between items-center mt-4">
 
         <button
