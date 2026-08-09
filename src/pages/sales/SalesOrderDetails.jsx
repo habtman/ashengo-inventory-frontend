@@ -10,6 +10,7 @@ export default function SalesOrderDetails() {
   const [so, setSo] = useState(null); 
   const [loading, setLoading] = useState(true); 
   const [confirming, setConfirming] = useState(false);
+  
 
 useEffect(() => {
   const fetchData = async () => {

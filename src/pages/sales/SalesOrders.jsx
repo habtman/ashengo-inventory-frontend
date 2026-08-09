@@ -1,7 +1,7 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
-import { formatCurrency } from "../../utils/currency";  
+import { formatCurrency } from "../../utils/currency";
 
 export default function SalesOrders() {
   const navigate = useNavigate();
@@ -9,12 +9,33 @@ export default function SalesOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Search and filter
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+
   const loadOrders = async () => {
     try {
-      const data = await salesOrderApi.getAll();
+      setLoading(true);
+
+      const data = await salesOrderApi.getAll({
+        page,
+        limit,
+        search,
+        status,
+      });
+
       setOrders(data.items || []);
+
+      setTotalPages(
+        Number(data.totalPages || 1)
+      );
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load sales orders:", err);
     } finally {
       setLoading(false);
     }
@@ -22,107 +43,276 @@ export default function SalesOrders() {
 
   useEffect(() => {
     loadOrders();
-  }, []);
+  }, [page, search, status]);
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+    setPage(1);
+  };
+
+  const clearFilters = () => {
+    setSearch("");
+    setStatus("");
+    setPage(1);
+  };
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <div className="p-6">
+        Loading Sales Orders...
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 bg-white rounded shadow">
+    <div className="p-6">
 
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
+
         <h1 className="text-2xl font-bold">
           Sales Orders
         </h1>
 
         <Link
           to="/sales-orders/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
           Create Sales Order
         </Link>
+
       </div>
 
-      <table className="w-full border">
 
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border">SO Number</th>
-            <th className="p-2 border">Customer</th>
-            <th className="p-2 border">Status</th>
-            <th className="p-2 border">Total</th>
-            <th className="p-2 border">Date</th>
-            <th className="p-2 border">Actions</th>
-          </tr>
-        </thead>
+      {/* Search + Filter */}
+      <div className="flex flex-wrap gap-3 mb-4">
 
-        <tbody>
+        <input
+          type="text"
+          placeholder="Search sales orders..."
+          value={search}
+          onChange={handleSearch}
+          className="border rounded px-3 py-2 w-64"
+        />
 
-          {orders.length === 0 && (
+        <select
+          value={status}
+          onChange={handleStatusChange}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">
+            All Statuses
+          </option>
+
+          <option value="DRAFT">
+            Draft
+          </option>
+
+          <option value="CONFIRMED">
+            Confirmed
+          </option>
+        </select>
+
+        {(search || status) && (
+          <button
+            onClick={clearFilters}
+            className="border px-3 py-2 rounded hover:bg-gray-100"
+          >
+            Clear
+          </button>
+        )}
+
+      </div>
+
+
+      {/* Sales Orders Table */}
+      <div className="overflow-x-auto">
+
+        <table className="w-full border border-collapse">
+
+          <thead className="bg-gray-100">
+
             <tr>
-              <td
-                colSpan="6"
-                className="text-center p-4"
-              >
-                No Sales Orders Found
-              </td>
+
+              <th className="p-2 border text-left">
+                SO Number
+              </th>
+
+              <th className="p-2 border text-left">
+                Customer
+              </th>
+
+              <th className="p-2 border text-left">
+                Status
+              </th>
+
+              <th className="p-2 border text-right">
+                Total
+              </th>
+
+              <th className="p-2 border text-left">
+                Date
+              </th>
+
+              <th className="p-2 border text-left">
+                Actions
+              </th>
+
             </tr>
-          )}
 
-          {orders.map((order) => (
-            <tr key={order.id}>
+          </thead>
 
-              <td className="border p-2">
-                {order.so_number}
-              </td>
 
-              <td className="border p-2">
-                {order.customer_name}
-              </td>
+          <tbody>
 
-              <td className="border p-2">
-                {order.status}
-              </td>
+            {orders.length === 0 && (
 
-              <td className="border p-2 text-right">
-                {formatCurrency(Number(order.total_amount).toFixed(2))}
-              </td>
+              <tr>
 
-              <td className="border p-2">
-                {new Date(
-                  order.created_at
-                ).toLocaleDateString()}
-              </td>
+                <td
+                  colSpan="6"
+                  className="text-center p-6 text-gray-500"
+                >
+                  No Sales Orders Found
+                </td>
 
-            <td className="space-x-2">
+              </tr>
 
-            <button
-              onClick={() => navigate(`/sales-orders/${order.id}`)}
-              className="px-3 py-1 rounded bg-blue-600 text-white"
-            >
-              View
-            </button>
-
-            {order.status === "DRAFT" && (
-              <button
-                onClick={() =>
-                  navigate(`/sales-orders/edit/${order.id}`)
-                }
-                className="px-3 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
-              >
-                Edit
-              </button>
             )}
 
-          </td>
 
-            </tr>
-          ))}
+            {orders.map((order) => (
 
-        </tbody>
+              <tr
+                key={order.id}
+                className="hover:bg-gray-50"
+              >
 
-      </table>
+                <td className="border p-2">
+                  {order.so_number}
+                </td>
+
+
+                <td className="border p-2">
+                  {order.customer_name}
+                </td>
+
+
+                <td className="border p-2">
+
+                  <span
+                    className={`
+                      px-2 py-1 rounded text-xs font-semibold
+                      ${
+                        order.status === "CONFIRMED"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }
+                    `}
+                  >
+                    {order.status}
+                  </span>
+
+                </td>
+
+
+                <td className="border p-2 text-right">
+                  {formatCurrency(
+                    Number(order.total_amount)
+                  )}
+                </td>
+
+
+                <td className="border p-2">
+                  {new Date(
+                    order.created_at
+                  ).toLocaleDateString()}
+                </td>
+
+
+                <td className="border p-2">
+
+                  <div className="flex gap-2">
+
+                    {/* View */}
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/sales-orders/${order.id}`
+                        )
+                      }
+                      className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      View
+                    </button>
+
+
+                    {/* Edit Draft */}
+                    {order.status === "DRAFT" && (
+
+                      <button
+                        onClick={() =>
+                          navigate(
+                            `/sales-orders/edit/${order.id}`
+                          )
+                        }
+                        className="px-3 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white"
+                      >
+                        Edit
+                      </button>
+
+                    )}
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4">
+
+        <button
+          disabled={page <= 1}
+          onClick={() =>
+            setPage((current) => current - 1)
+          }
+          className="px-4 py-2 border rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+        >
+          Previous
+        </button>
+
+
+        <span className="text-sm text-gray-600">
+          Page {page} of {totalPages}
+        </span>
+
+
+        <button
+          disabled={page >= totalPages}
+          onClick={() =>
+            setPage((current) => current + 1)
+          }
+          className="px-4 py-2 border rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+        >
+          Next
+        </button>
+
+      </div>
 
     </div>
   );
