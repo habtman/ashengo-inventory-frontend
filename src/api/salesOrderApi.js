@@ -3,15 +3,22 @@ import { apiFetch } from "./api";
 
 const salesOrderApi = {
 
-  getAll: ({
-    page = 1,
-    limit = 10,
-    search = "",
-    status = ""
-  } = {}) =>
-    apiFetch(
-      `/api/v1/sales-orders?page=${page}&limit=${limit}&search=${search}&status=${status}`
-    ),
+getAll: ({
+  page = 1,
+  limit = 10,
+  search = "",
+  status = "",
+  startDate = "",
+  endDate = ""
+} = {}) =>
+  apiFetch(
+    `/api/v1/sales-orders?page=${page}` +
+    `&limit=${limit}` +
+    `&search=${encodeURIComponent(search)}` +
+    `&status=${encodeURIComponent(status)}` +
+    `&startDate=${encodeURIComponent(startDate)}` +
+    `&endDate=${encodeURIComponent(endDate)}`
+  ),
 
   getById: (id) =>
     apiFetch(`/api/v1/sales-orders/${id}`),

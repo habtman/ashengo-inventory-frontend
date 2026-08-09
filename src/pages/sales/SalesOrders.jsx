@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { formatCurrency } from "../../utils/currency";
 
@@ -9,89 +9,173 @@ export default function SalesOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Pagination
-  const [page, setPage] = useState(1);
-  const limit = 10;
-  const [totalPages, setTotalPages] = useState(1);
-
-  // Search
-  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
-  // Filter
-  const [status, setStatus] = useState("");
+  const [page, setPage] = useState(1);
 
-  /*
-   * Debounce search.
-   *
-   * The user can type:
-   * 1
-   * 12
-   * 126
-   *
-   * without triggering a request after every keystroke.
-   */
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearch(searchInput);
-      setPage(1);
-    }, 400);
+  const [sortField, setSortField] = useState("created_at");
+  const [sortDirection, setSortDirection] = useState("desc");
 
-    return () => clearTimeout(timer);
-  }, [searchInput]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  /*
-   * Reset pagination when status changes.
-   */
-  useEffect(() => {
-    setPage(1);
-  }, [status]);
+  const pageSize = 10;
 
-  /*
-   * Load orders whenever the actual search,
-   * status, or page changes.
-   */
+  // --------------------------------------------------
+  // LOAD ORDERS ONCE
+  // --------------------------------------------------
+
   useEffect(() => {
     const loadOrders = async () => {
       try {
         setLoading(true);
 
         const data = await salesOrderApi.getAll({
-          page,
-          limit,
-          search,
-          status,
+          page: 1,
+          limit: 1000,
         });
 
         setOrders(data.items || []);
-
-        setTotalPages(
-          Number(data.totalPages || 1)
-        );
       } catch (err) {
-        console.error(
-          "Failed to load sales orders:",
-          err
-        );
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     loadOrders();
-  }, [page, search, status]);
+  }, []);
 
-  const clearFilters = () => {
-    setSearchInput("");
-    setSearch("");
-    setStatus("");
+  // --------------------------------------------------
+  // RESET PAGE WHEN SEARCH/FILTER CHANGES
+  // --------------------------------------------------
+
+  useEffect(() => {
     setPage(1);
+  }, [search, statusFilter, sortField, sortDirection]);
+
+  // --------------------------------------------------
+  // SEARCH + STATUS FILTER
+  // --------------------------------------------------
+
+const filteredOrders = orders.filter((order) => {
+  const searchValue = search.trim().toLowerCase();
+
+  const matchesSearch =
+    !searchValue ||
+    String(order.so_number || "")
+      .toLowerCase()
+      .includes(searchValue) ||
+    String(order.customer_name || "")
+      .toLowerCase()
+      .includes(searchValue);
+
+  const matchesStatus =
+    statusFilter === "ALL" ||
+    order.status === statusFilter;
+
+  const orderDate = new Date(order.created_at);
+
+  const matchesStartDate =
+    !startDate ||
+    orderDate >= new Date(`${startDate}T00:00:00`);
+
+  const matchesEndDate =
+    !endDate ||
+    orderDate <= new Date(`${endDate}T23:59:59.999`);
+
+  return (
+    matchesSearch &&
+    matchesStatus &&
+    matchesStartDate &&
+    matchesEndDate
+  );
+});
+
+  // --------------------------------------------------
+  // SORT
+  // --------------------------------------------------
+
+  const numericFields = [
+    "total_amount",
+  ];
+
+  const dateFields = [
+    "created_at",
+  ];
+
+  const sortedOrders = [...filteredOrders].sort(
+    (a, b) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
+
+      if (numericFields.includes(sortField)) {
+        aValue = Number(aValue || 0);
+        bValue = Number(bValue || 0);
+      } else if (dateFields.includes(sortField)) {
+        aValue = new Date(aValue || 0).getTime();
+        bValue = new Date(bValue || 0).getTime();
+      } else {
+        aValue = String(aValue || "").toLowerCase();
+        bValue = String(bValue || "").toLowerCase();
+      }
+
+      if (aValue < bValue) {
+        return sortDirection === "asc" ? -1 : 1;
+      }
+
+      if (aValue > bValue) {
+        return sortDirection === "asc" ? 1 : -1;
+      }
+
+      return 0;
+    }
+  );
+
+  // --------------------------------------------------
+  // PAGINATION
+  // --------------------------------------------------
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedOrders.length / pageSize)
+  );
+
+  const paginatedOrders = sortedOrders.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+
+  // --------------------------------------------------
+  // SORT HANDLER
+  // --------------------------------------------------
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(
+        sortDirection === "asc"
+          ? "desc"
+          : "asc"
+      );
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const sortIndicator = (field) => {
+    if (sortField !== field) return "";
+
+    return sortDirection === "asc"
+      ? " ↑"
+      : " ↓";
   };
 
   if (loading) {
     return (
       <div className="p-6">
-        Loading Sales Orders...
+        Loading sales orders...
       </div>
     );
   }
@@ -100,6 +184,7 @@ export default function SalesOrders() {
     <div className="p-6">
 
       {/* HEADER */}
+
       <div className="flex justify-between items-center mb-6">
 
         <h1 className="text-2xl font-bold">
@@ -115,86 +200,121 @@ export default function SalesOrders() {
 
       </div>
 
+      {/* SEARCH + FILTERS */}
 
-      {/* SEARCH + FILTER */}
-      <div className="flex flex-wrap gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 mb-6">
 
         <input
           type="text"
-          placeholder="Search sales orders..."
-          value={searchInput}
-          onChange={(e) =>
-            setSearchInput(e.target.value)
-          }
-          className="border rounded px-3 py-2 w-64"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search SO number or customer..."
+          className="border rounded px-3 py-2 w-72"
         />
 
-
         <select
-          value={status}
+          value={statusFilter}
           onChange={(e) =>
-            setStatus(e.target.value)
+            setStatusFilter(e.target.value)
           }
           className="border rounded px-3 py-2"
         >
-
-          <option value="">
-            All Statuses
-          </option>
-
-          <option value="DRAFT">
-            Draft
-          </option>
-
-          <option value="CONFIRMED">
-            Confirmed
-          </option>
-
+          <option value="ALL">All Statuses</option>
+          <option value="DRAFT">Draft</option>
+          <option value="CONFIRMED">Confirmed</option>
         </select>
 
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="border rounded px-3 py-2"
+        />
 
-        {(searchInput || status) && (
-          <button
-            onClick={clearFilters}
-            className="border px-3 py-2 rounded hover:bg-gray-100"
-          >
-            Clear
-          </button>
-        )}
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="border rounded px-3 py-2"
+        />
+
+        <button
+          onClick={() => {
+            setSearch("");
+            setStatusFilter("ALL");
+            setStartDate("");
+            setEndDate("");
+            setPage(1);
+          }}
+          className="border px-3 py-2 rounded hover:bg-gray-100"
+        >
+          Clear
+        </button>
 
       </div>
 
+      {/* SUMMARY */}
+
+      <div className="mb-4 text-sm text-gray-600">
+        Showing {paginatedOrders.length} of{" "}
+        {sortedOrders.length} sales orders
+      </div>
 
       {/* TABLE */}
+
       <div className="overflow-x-auto">
 
-        <table className="w-full border border-collapse">
+        <table className="w-full border">
 
           <thead className="bg-gray-100">
 
             <tr>
 
-              <th className="p-2 border text-left">
+              <th
+                className="p-2 border text-left cursor-pointer"
+                onClick={() =>
+                  handleSort("so_number")
+                }
+              >
                 SO Number
+                {sortIndicator("so_number")}
               </th>
 
-              <th className="p-2 border text-left">
+              <th
+                className="p-2 border text-left cursor-pointer"
+                onClick={() =>
+                  handleSort("customer_name")
+                }
+              >
                 Customer
+                {sortIndicator("customer_name")}
               </th>
 
-              <th className="p-2 border text-left">
+              <th className="p-2 border">
                 Status
               </th>
 
-              <th className="p-2 border text-right">
+              <th
+                className="p-2 border text-right cursor-pointer"
+                onClick={() =>
+                  handleSort("total_amount")
+                }
+              >
                 Total
+                {sortIndicator("total_amount")}
               </th>
 
-              <th className="p-2 border text-left">
+              <th
+                className="p-2 border cursor-pointer"
+                onClick={() =>
+                  handleSort("created_at")
+                }
+              >
                 Date
+                {sortIndicator("created_at")}
               </th>
 
-              <th className="p-2 border text-left">
+              <th className="p-2 border">
                 Actions
               </th>
 
@@ -202,10 +322,10 @@ export default function SalesOrders() {
 
           </thead>
 
-
           <tbody>
 
-            {orders.length === 0 && (
+            {paginatedOrders.length === 0 && (
+
               <tr>
 
                 <td
@@ -216,10 +336,10 @@ export default function SalesOrders() {
                 </td>
 
               </tr>
+
             )}
 
-
-            {orders.map((order) => (
+            {paginatedOrders.map((order) => (
 
               <tr
                 key={order.id}
@@ -230,43 +350,39 @@ export default function SalesOrders() {
                   {order.so_number}
                 </td>
 
-
                 <td className="border p-2">
                   {order.customer_name}
                 </td>
 
-
                 <td className="border p-2">
 
                   <span
-                    className={`
-                      px-2 py-1 rounded text-xs font-semibold
-                      ${
-                        order.status === "CONFIRMED"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }
-                    `}
+                    className={`px-2 py-1 rounded text-xs font-medium ${
+                      order.status === "CONFIRMED"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
                   >
                     {order.status}
                   </span>
 
                 </td>
 
-
                 <td className="border p-2 text-right">
+
                   {formatCurrency(
-                    Number(order.total_amount)
+                    Number(order.total_amount || 0)
                   )}
+
                 </td>
 
-
                 <td className="border p-2">
+
                   {new Date(
                     order.created_at
                   ).toLocaleDateString()}
-                </td>
 
+                </td>
 
                 <td className="border p-2">
 
@@ -278,11 +394,10 @@ export default function SalesOrders() {
                           `/sales-orders/${order.id}`
                         )
                       }
-                      className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white"
+                      className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
                     >
                       View
                     </button>
-
 
                     {order.status === "DRAFT" && (
 
@@ -292,7 +407,7 @@ export default function SalesOrders() {
                             `/sales-orders/edit/${order.id}`
                           )
                         }
-                        className="px-3 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white"
+                        className="px-3 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
                       >
                         Edit
                       </button>
@@ -313,37 +428,56 @@ export default function SalesOrders() {
 
       </div>
 
-
       {/* PAGINATION */}
-      <div className="flex justify-between items-center mt-4">
 
-        <button
-          disabled={page <= 1}
-          onClick={() =>
-            setPage((current) => current - 1)
-          }
-          className="px-4 py-2 border rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
-        >
-          Previous
-        </button>
+      {totalPages > 1 && (
 
+        <div className="flex justify-center items-center gap-2 mt-6">
 
-        <span className="text-sm text-gray-600">
-          Page {page} of {totalPages}
-        </span>
+          <button
+            disabled={page === 1}
+            onClick={() =>
+              setPage((p) => p - 1)
+            }
+            className="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            Previous
+          </button>
 
+          {Array.from(
+            { length: totalPages },
+            (_, i) => i + 1
+          ).map((pageNumber) => (
 
-        <button
-          disabled={page >= totalPages}
-          onClick={() =>
-            setPage((current) => current + 1)
-          }
-          className="px-4 py-2 border rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
-        >
-          Next
-        </button>
+            <button
+              key={pageNumber}
+              onClick={() =>
+                setPage(pageNumber)
+              }
+              className={`px-3 py-1 border rounded ${
+                page === pageNumber
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {pageNumber}
+            </button>
 
-      </div>
+          ))}
+
+          <button
+            disabled={page === totalPages}
+            onClick={() =>
+              setPage((p) => p + 1)
+            }
+            className="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            Next
+          </button>
+
+        </div>
+
+      )}
 
     </div>
   );
