@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { formatCurrency } from "../../utils/currency";
@@ -18,7 +18,7 @@ export default function SalesOrders() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
 
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -39,11 +39,11 @@ export default function SalesOrders() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, search, status]);
 
   useEffect(() => {
     loadOrders();
-  }, [page, search, status]);
+  }, [loadOrders]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
