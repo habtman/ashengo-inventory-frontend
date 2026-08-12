@@ -12,8 +12,13 @@ export default function PurchaseOrderCreate() {
   const [suppliers, setSuppliers] = useState([]);
   const [inventoryList, setInventoryList] = useState([]);
   const [items, setItems] = useState([
-    { inventoryId: "", quantity: 1, costPrice: 0 }
-  ]);
+    {
+      inventoryId: "",
+      quantity: 1,
+      costPrice: 0,
+      inventoryCostPriceETB: 0
+      }
+    ]);
 
   const [currency, setCurrency] = useState("ETB");
   const [exchangeRate, setExchangeRate] = useState(1);
@@ -30,6 +35,44 @@ useEffect(() => {
   load();
 }, []);
 
+  // Recalculate PO prices whenever currency/rate changes
+  useEffect(() => {
+    if (!items.length) return;
+
+    const rate = Number(exchangeRate);
+
+    if (
+      currency !== "ETB" &&
+      (!rate || rate <= 0)
+    ) {
+      return;
+    }
+
+    setItems((currentItems) =>
+      currentItems.map((item) => {
+        if (!item.inventoryId) {
+          return item;
+        }
+
+        const etbCost = Number(
+          item.inventoryCostPriceETB || 0
+        );
+
+        const purchaseCurrencyCost =
+          currency === "ETB"
+            ? etbCost
+            : etbCost / rate;
+
+        return {
+          ...item,
+          costPrice: Number(
+            purchaseCurrencyCost.toFixed(4)
+          ),
+        };  
+      })
+    );
+  }, [currency, exchangeRate, items.length]);
+
   const updateItem = (i, field, value) => {
     const updated = [...items];
     updated[i][field] = value;
@@ -37,8 +80,47 @@ useEffect(() => {
   };
 
   const addItem = () => {
-    setItems([...items, { inventoryId: "", quantity: 1, costPrice: 0 }]);
+    setItems([...items, { 
+       inventoryId: "",
+       quantity: 1,
+       costPrice: 0, 
+       inventoryCostPriceETB: 0
+       }]);
   };
+
+  useEffect(() => {
+  if (!items.length) return;
+
+  const rate = Number(exchangeRate);
+
+  if (currency !== "ETB" && (!rate || rate <= 0)) {
+    return;
+  }
+
+  setItems((currentItems) =>
+    currentItems.map((item) => {
+      if (!item.inventoryId) {
+        return item;
+      }
+
+      const etbCost = Number(
+        item.inventoryCostPriceETB || 0
+      );
+
+      const purchaseCurrencyCost =
+        currency === "ETB"
+          ? etbCost
+          : etbCost / rate;
+
+      return {
+        ...item,
+        costPrice: Number(
+          purchaseCurrencyCost.toFixed(4)
+        ),
+      };
+    })
+  );
+}, [currency, exchangeRate, items.length]);
 
   const removeItem = (i) => {
     setItems(items.filter((_, idx) => idx !== i));
@@ -221,19 +303,33 @@ const localTotalAmount =
                     const inventoryId = Number(e.target.value);
 
                     const inventory = inventoryList.find(
-                        item => item.id === inventoryId
+                      item => item.id === inventoryId
                     );
+
+                    const etbCostPrice = Number(
+                      inventory?.cost_price || 0
+                    );
+
+                    const purchaseCurrencyCost =
+                      currency === "ETB"
+                        ? etbCostPrice
+                        : Number(exchangeRate) > 0
+                          ? etbCostPrice / Number(exchangeRate)
+                          : 0;
 
                     const updated = [...items];
 
                     updated[i] = {
-                        ...updated[i],
-                        inventoryId,
-                        costPrice: Number(inventory?.cost_price || 0)
+                      ...updated[i],
+                      inventoryId,
+                      inventoryCostPriceETB: etbCostPrice,
+                      costPrice: Number(
+                        purchaseCurrencyCost.toFixed(4)
+                      )
                     };
 
                     setItems(updated);
-                }}
+                  }}
                 >
                   <option value="">Select</option>
                   {inventoryList.map(inv => (
