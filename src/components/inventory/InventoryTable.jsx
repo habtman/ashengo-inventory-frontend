@@ -1,7 +1,6 @@
 import InventoryRow from "./InventoryRow";
 import InventorySkeleton from "./InventorySkeleton";
 
-
 export default function InventoryTable({
   items = [],
   loading,
@@ -13,74 +12,122 @@ export default function InventoryTable({
   onEdit,
   onDelete,
   onAddStock,
-  //onSell,
 }) {
-  if (loading) return <InventorySkeleton />;
+  if (loading) {
+    return <InventorySkeleton />;
+  }
 
   if (!items.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-        <div className="text-lg font-medium">No inventory items found</div>
-        <p className="text-sm mt-2 text-slate-400">
+      <div className="py-12 text-center text-slate-500">
+        <p className="font-medium">
+          No inventory items found
+        </p>
+
+        <p className="mt-1 text-sm">
           Try adjusting filters or add a new item.
         </p>
       </div>
     );
   }
 
-  const allSelected = selectedIds.length === items.length;
+  const allSelected =
+    selectedIds.length === items.length;
 
   return (
-    <div className="overflow-x-auto rounded-2xl bg-white shadow-sm border border-slate-100">
-      <table className="min-w-full text-sm text-slate-700">
-        <thead className="bg-slate-50 border-b border-slate-100">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+
+      <table className="min-w-full">
+
+        <thead className="bg-slate-50">
+
           <tr>
-            <th className="w-12 px-6 py-4">
+
+            {/* Select */}
+            <th className="px-6 py-4 text-left">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-4 w-4 rounded border-slate-300
+                           text-indigo-600 focus:ring-indigo-500"
                 checked={allSelected}
                 onChange={() =>
                   allSelected
                     ? onSelectAll([])
-                    : onSelectAll(items.map(i => i.id))
+                    : onSelectAll(items.map((i) => i.id))
                 }
               />
             </th>
 
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Product Name
+            {/* Name */}
+            <th className="px-6 py-4 text-left text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
+              Name
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* SKU */}
+            <th className="px-6 py-4 text-left text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               SKU
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* Price */}
+            <th className="px-6 py-4 text-right text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Price
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* Cost */}
+            <th className="px-6 py-4 text-right text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Cost Price
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* Markup */}
+            <th className="px-6 py-4 text-right text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Markup
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* Profit Margin */}
+            <th className="px-6 py-4 text-right text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Profit Margin
             </th>
 
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+            {/* Stock */}
+            <th className="px-6 py-4 text-right text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Total Stock
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* Status */}
+            <th className="px-6 py-4 text-left text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Status
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
+            {/* Actions */}
+            <th className="px-6 py-4 text-left text-xs
+                           font-semibold uppercase tracking-wider
+                           text-slate-500">
               Actions
             </th>
+
           </tr>
+
         </thead>
 
-        <tbody>
-          {items.map(item => (
+        <tbody className="divide-y divide-slate-100">
+
+          {items.map((item) => (
             <InventoryRow
               key={item.id}
               item={item}
@@ -92,11 +139,13 @@ export default function InventoryTable({
               onDelete={() => onDelete(item)}
               status={item.status}
               onAddStock={onAddStock}
-              //onSell={onSell} 
             />
           ))}
+
         </tbody>
+
       </table>
+
     </div>
   );
 }
