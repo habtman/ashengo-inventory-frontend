@@ -155,8 +155,8 @@ const localTotal = Number(grn.total_amount || 0);
             <th>SKU</th>
             <th>Item</th>
             <th>Received</th>
-            <th>Unit Cost</th>
-            <th>Line Total</th>
+            <th>Unit Cost in ETB</th>
+            <th>Line Total in ETB</th>
         </tr>
         </thead>
 

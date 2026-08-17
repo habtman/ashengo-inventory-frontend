@@ -49,7 +49,7 @@ export default function InventoryTable({
             </th>
 
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Name
+              Product Name
             </th>
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               SKU
@@ -60,6 +60,13 @@ export default function InventoryTable({
             <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
               Cost Price
             </th>
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Markup
+            </th>
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Profit Margin
+            </th>
+
             <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
               Total Stock
             </th>

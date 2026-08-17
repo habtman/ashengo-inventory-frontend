@@ -194,6 +194,7 @@ const localTotalAmount =
       </label>
 
       <select
+          className="w-full border rounded px-3 py-2" 
           value={selectedSupplier?.id || ""}
           
           onChange={(e) => {

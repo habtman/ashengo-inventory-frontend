@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { inventoryApi } from "../../api/inventoryApi";
 import StockByLocation from "./StockByLocation";
-import { formatCurrency } from "../../utils/currency";  
+import { formatCurrency } from "../../utils/currency";
 
 export default function InventoryRow({
   item,
@@ -10,25 +10,18 @@ export default function InventoryRow({
   onEdit,
   onSelect,
   onDelete,
-  //onSell,
+  // onSell,
   permissions,
 }) {
-  // Expanded state
   const [expanded, setExpanded] = useState(false);
-
-  // Location stock state
   const [stock, setStock] = useState([]);
-
-  // Local total stock (so UI updates instantly)
-  
-
   const [loading, setLoading] = useState(false);
 
-  // Fetch stock by location
   const toggle = async () => {
     if (!expanded) {
       try {
         setLoading(true);
+
         const data = await inventoryApi.getStockByLocation(item.id);
         setStock(data);
       } catch (err) {
@@ -41,26 +34,11 @@ export default function InventoryRow({
     setExpanded((prev) => !prev);
   };
 
-  // 🔥 Optimistic updater (used by Sell / Add / Transfer)
- /*const updateLocationStock = (locationId, quantityChange) => {
-  const change = Number(quantityChange);
-
-  setStock(prev =>
-    prev.map(loc =>
-      loc.location_id === locationId
-        ? {
-            ...loc,
-            quantity: Number(loc.quantity) + change,
-          }
-        : loc
-    )
-  );
-};*/
-
-
+  // ----------------------------------
   // Derived stock + status
-  const totalStock = Number(item.total_stock || 0);
+  // ----------------------------------
 
+  const totalStock = Number(item.total_stock || 0);
   const threshold = Number(item.low_stock_threshold || 0);
 
   let statusLabel = "In Stock";
@@ -73,14 +51,33 @@ export default function InventoryRow({
     statusLabel = "Low Stock";
     statusColor = "bg-yellow-100 text-yellow-700";
   }
-  else {
-    statusLabel = "In Stock";
-    statusColor = "bg-green-100 text-green-700";
-  } 
+
+  // ----------------------------------
+  // Pricing
+  // ----------------------------------
+
+  const costPrice = Number(item.cost_price || 0);
+  const sellingPrice = Number(item.price || 0);
+
+  const markupPercent =
+    item.markup_percent !== undefined &&
+    item.markup_percent !== null
+      ? Number(item.markup_percent)
+      : costPrice > 0
+        ? ((sellingPrice - costPrice) / costPrice) * 100
+        : 0;
+
+  const profitMarginPercent =
+    item.profit_margin_percent !== undefined &&
+    item.profit_margin_percent !== null
+      ? Number(item.profit_margin_percent)
+      : sellingPrice > 0
+        ? ((sellingPrice - costPrice) / sellingPrice) * 100
+        : 0;
 
   return (
     <>
-      <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+      <tr className="border-b border-slate-100 hover:bg-slate-50">
         {/* Checkbox */}
         <td className="px-6 py-4">
           <input
@@ -101,14 +98,44 @@ export default function InventoryRow({
           {item.sku}
         </td>
 
-        {/* Price */}
+        {/* Selling Price */}
         <td className="px-6 py-4 text-right tabular-nums text-slate-700">
-          {formatCurrency(Number(item.price))}
+          {formatCurrency(sellingPrice)}
         </td>
 
-        {/* Cost */}
+        {/* Cost Price */}
         <td className="px-6 py-4 text-right tabular-nums text-slate-500">
-          {formatCurrency(Number(item.cost_price))} 
+          {formatCurrency(costPrice)}
+        </td>
+
+        {/* Markup */}
+        <td className="px-6 py-4 text-right tabular-nums">
+          <span
+            className={
+              markupPercent > 0
+                ? "font-medium text-emerald-600"
+                : markupPercent < 0
+                  ? "font-medium text-red-600"
+                  : "text-slate-500"
+            }
+          >
+            {markupPercent.toFixed(2)}%
+          </span>
+        </td>
+
+        {/* Profit Margin */}
+        <td className="px-6 py-4 text-right tabular-nums">
+          <span
+            className={
+              profitMarginPercent > 0
+                ? "font-medium text-emerald-600"
+                : profitMarginPercent < 0
+                  ? "font-medium text-red-600"
+                  : "text-slate-500"
+            }
+          >
+            {profitMarginPercent.toFixed(2)}%
+          </span>
         </td>
 
         {/* Total Stock */}
@@ -135,17 +162,14 @@ export default function InventoryRow({
               {expanded ? "Hide" : "Locations"}
             </button>
 
-
-              {permissions?.canView && (
-                <button
-                  onClick={() => onView(item)}
-                  className="text-slate-600 hover:text-emerald-600 transition"
-                >
-                  View
-                </button>
-              )}
-          
-            
+            {permissions?.canView && (
+              <button
+                onClick={() => onView(item)}
+                className="text-slate-600 hover:text-emerald-600 transition"
+              >
+                View
+              </button>
+            )}
 
             {permissions?.canEdit && (
               <button
@@ -165,7 +189,8 @@ export default function InventoryRow({
               </button>
             )}
 
-            {/*{permissions?.canSell && (
+            {/*
+            {permissions?.canSell && (
               <button
                 onClick={() =>
                   onSell(item, updateLocationStock)
@@ -174,7 +199,8 @@ export default function InventoryRow({
               >
                 Sell
               </button>
-            )}*/}
+            )}
+            */}
           </div>
         </td>
       </tr>
@@ -182,7 +208,7 @@ export default function InventoryRow({
       {/* Expanded Row */}
       {expanded && (
         <tr>
-          <td colSpan={8} className="bg-slate-50 px-6 py-6">
+          <td colSpan={10} className="bg-slate-50 px-6 py-6">
             {loading ? (
               <div className="text-sm text-slate-500">
                 Loading locations...
