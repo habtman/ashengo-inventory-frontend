@@ -1,16 +1,39 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
-import { hasPermission } from "../utils/permissions";
+import {
+  hasPermission,
+  hasAnyPermission,
+} from "../utils/permissions";
 
 export default function Sidebar() {
   const location = useLocation();
-  const { user } = useAuth();
-  //const { user, permissions } = useAuth();
 
   const canViewUsers = hasPermission("users.view");
   const canViewAuditLogs = hasPermission("audit_logs.view");
   const canEditCompanySettings = hasPermission("settings.company_edit");
+
+  const canAccessAdministration = hasAnyPermission(
+    "users.view",
+    "audit_logs.view",
+    "settings.company_edit"
+  );
+
+  const canViewInventory = hasPermission("inventory.view");
+  const canViewLocations = hasAnyPermission(
+    "locations.create",
+    "locations.edit",
+    "locations.delete"
+  );
+
+  const canViewSalesOrders = hasPermission("sales_orders.view");
+  const canViewCustomers = hasPermission("customers.view");
+  const canViewInvoices = hasPermission("invoices.view");
+  const canViewSalesReports = hasPermission("reports.sales");
+
+  const canViewSuppliers = hasPermission("suppliers.view");
+  const canViewPurchaseOrders = hasPermission("purchase_orders.view");
+  const canCreatePurchaseOrders = hasPermission("purchase_orders.create");
+  const canViewGoodsReceipts = hasPermission("goods_receipts.view");
 
 const getMenuFromPath = (pathname) => {
   if (pathname.startsWith("/invoices")) {
@@ -94,7 +117,7 @@ const getMenuFromPath = (pathname) => {
     >
       {/* Dashboard */}
      {/* Administration */}
-{(canViewUsers || canViewAuditLogs || canEditCompanySettings) && (
+{canAccessAdministration && (
   <div>
     <button
       onClick={() => toggle("admin")}
@@ -103,7 +126,7 @@ const getMenuFromPath = (pathname) => {
       <span className="flex items-center gap-2">
         Administration
       </span>
-       
+
       <span>
         {activeMenu === "admin" ? "−" : "+"}
       </span>
@@ -145,12 +168,19 @@ const getMenuFromPath = (pathname) => {
             Company Settings
           </NavLink>
         )}
+
       </div>
     )}
   </div>
 )}
 
       {/* Inventory */}
+    {hasAnyPermission(
+      "inventory.view",
+      "locations.create",
+      "locations.edit",
+      "locations.delete"
+    ) && (
       <div>
         <button
           onClick={() => toggle("inventory")}
@@ -166,95 +196,122 @@ const getMenuFromPath = (pathname) => {
 
         {activeMenu === "inventory" && (
           <div className="ml-4 mt-1 space-y-1">
-            <NavLink
-              to="/inventory"
-              className={linkClass}
-            >
-              Products
-            </NavLink>
+            {canViewInventory && (
+              <NavLink
+                to="/inventory"
+                className={linkClass}
+              >
+                Products
+              </NavLink>
+            )}
 
-            <NavLink
-              to="/stock-history"
-              className={linkClass}
-            >
-              Stock History
-            </NavLink>
+            {canViewInventory && (
+              <NavLink
+                to="/stock-history"
+                className={linkClass}
+              >
+                Stock History
+              </NavLink>
+            )}
 
-            <NavLink
-              to="/locations"
-              className={linkClass}
-            >
-              Warehouses
-            </NavLink>
+            {canViewLocations && (
+              <NavLink
+                to="/locations"
+                className={linkClass}
+              >
+                Warehouses
+              </NavLink>
+            )}
           </div>
         )}
       </div>
+    )}
 
-      {/* Sales and invoices*/}
-        <div>
-            <button
-            onClick={() => toggle("sales")}
-            className={menuButton}
-          >
-            <span>Sales</span>
+ {hasAnyPermission(
+  "sales_orders.view",
+  "customers.view",
+  "invoices.view",
+  "reports.sales"
+) && (
+  <div>
+    <button
+      onClick={() => toggle("sales")}
+      className={menuButton}
+    >
+      <span>Sales</span>
 
-            <span>
-              {activeMenu === "sales" ? "−" : "+"}
-            </span>
-          </button>
+      <span>
+        {activeMenu === "sales" ? "−" : "+"}
+      </span>
+    </button>
 
     {activeMenu === "sales" && (
       <div className="ml-4 mt-1 space-y-1">
 
-        <NavLink
-          to="/sales-orders"
-          className={linkClass}
-        >
-          Sales Orders
-        </NavLink>
+        {canViewSalesOrders && (
+          <NavLink to="/sales-orders" className={linkClass}>
+            Sales Orders
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/customers/credit-dashboard"
-          className={linkClass}
-        >
-          Credit Dashboard
-        </NavLink>
+        {canViewCustomers && (
+          <NavLink
+            to="/customers/credit-dashboard"
+            className={linkClass}
+          >
+            Credit Dashboard
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/customers"
-          className={linkClass}
-        >
-          Customers
-        </NavLink>
+        {canViewCustomers && (
+          <NavLink
+            to="/customers"
+            className={linkClass}
+          >
+            Customers
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/customers/aging"
-          className={linkClass}
-        >
-          Aging Report
-        </NavLink>
+        {canViewCustomers && (
+          <NavLink
+            to="/customers/aging"
+            className={linkClass}
+          >
+            Aging Report
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/invoices"
-          className={linkClass}
-        >
-          Invoices
-        </NavLink>
+        {canViewInvoices && (
+          <NavLink
+            to="/invoices"
+            className={linkClass}
+          >
+            Invoices
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/sales/analytics"
-          className={linkClass}
-        >
-          Analytics
-        </NavLink>
+        {canViewSalesReports && (
+          <NavLink
+            to="/sales/analytics"
+            className={linkClass}
+          >
+            Analytics
+          </NavLink>
+        )}
 
       </div>
     )}
-      
-    </div>
+  </div>
+)}
 
       
     {/* Purchasing */}
+    {hasAnyPermission(
+      "suppliers.view",
+      "purchase_orders.view",
+      "purchase_orders.create",
+      "goods_receipts.view"
+    ) && (
     <div>
       <button
         onClick={() => toggle("purchase")}
@@ -270,37 +327,40 @@ const getMenuFromPath = (pathname) => {
       {activeMenu === "purchase" && (
         <div className="ml-4 mt-1 space-y-1">
 
-          <NavLink
-            to="/suppliers"
-            className={linkClass}
-          >
-            Suppliers
-          </NavLink>
+          {canViewSuppliers && (
+            <NavLink to="/suppliers" className={linkClass}>
+              Suppliers
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/purchase-orders"
-            className={linkClass}
-          >
-            Purchase Orders
-          </NavLink>
+          {canViewPurchaseOrders && (
+            <NavLink
+              to="/purchase-orders"
+              className={linkClass}
+            >
+              Purchase Orders
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/purchase-orders/new"
-            className={linkClass}
-          >
-            Create Purchase Order
-          </NavLink>
+          {canCreatePurchaseOrders && (
+            <NavLink
+              to="/purchase-orders/new"
+              className={linkClass}
+            >
+              Create Purchase Order
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/grn"
-            className={linkClass}
-          >
-            Goods Receipt Notes
-          </NavLink>
+          {canViewGoodsReceipts && (
+            <NavLink to="/grn" className={linkClass}>
+              Goods Receipt Notes
+            </NavLink>
+          )}
 
         </div>
       )}
     </div>
+    )}
     </aside>
   );
 }
