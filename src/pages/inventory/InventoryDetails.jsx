@@ -1,5 +1,6 @@
 import { useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { hasPermission } from "../../utils/permissions";
 import { inventoryApi } from "../../api/inventoryApi";
 import stockApi from "../../api/stockApi";
 
@@ -24,6 +25,11 @@ function SummaryCard({ title, value }) {
 
 export default function InventoryDetails() {
   const { id } = useParams();
+  const canAdjust = hasPermission("inventory.adjust");
+  const canTransfer = hasPermission("inventory.transfer");
+  const canCreateSalesOrder = hasPermission("sales_orders.create");
+  const canViewPurchases = hasPermission("goods_receipts.view");
+  const canViewSales = hasPermission("sales_orders.view");
 
   const [product, setProduct] = useState(null);
   const [stock, setStock] = useState([]);
@@ -289,6 +295,7 @@ const totalPurchaseCost = purchases.reduce(
 
       <div className="flex gap-3">
 
+      {canAdjust && (
         <button
           onClick={() => setShowAdjustment(true)}
           className="
@@ -301,12 +308,12 @@ const totalPurchaseCost = purchases.reduce(
         >
           Adjust Stock
         </button>
+      )}
 
+      {canCreateSalesOrder && ( 
         <button
           onClick={() =>
-            navigate(
-              `/sales-orders/new?inventoryId=${product.id}`
-            )
+            navigate(`/sales-orders/new?inventoryId=${product.id}`)
           }
           className="
             bg-green-600
@@ -318,7 +325,9 @@ const totalPurchaseCost = purchases.reduce(
         >
           Create Sales Order
         </button>
+      )}
 
+      {canTransfer && (
         <button
           onClick={() => setShowTransfer(true)}
           className="
@@ -331,6 +340,7 @@ const totalPurchaseCost = purchases.reduce(
         >
           Transfer Stock
         </button>
+      )}
 
       </div>
 
@@ -393,7 +403,7 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
       {/* Summary Cards */}
-      {activeTab === "overview" && (
+      { activeTab === "overview" && (
         <>
       <div className="grid grid-cols-4 gap-4">
 
@@ -717,7 +727,7 @@ const totalPurchaseCost = purchases.reduce(
     )}
 
     {/* Purchase History */}
-    {activeTab === "purchases" && (
+    {canViewPurchases && activeTab === "purchases" && (
       <>
       <div className="border rounded p-4">
       <h2 className="text-xl font-semibold mb-4">
@@ -833,7 +843,7 @@ const totalPurchaseCost = purchases.reduce(
 
 
       {/* Sales History */}
-    {activeTab === "sales" && (
+    {canViewSales && activeTab === "sales" && (
       <>
       <div className="border rounded p-4">
       <h2 className="text-xl font-semibold mb-4">
@@ -949,7 +959,7 @@ const totalPurchaseCost = purchases.reduce(
 
 
 
-{showTransfer && (
+{canTransfer && showTransfer && (
   <StockTransferModal
     title="Transfer Stock"
     onClose={() => setShowTransfer(false)}
@@ -966,8 +976,7 @@ const totalPurchaseCost = purchases.reduce(
 )}
 
 
-{
-showAdjustment && (
+{canAdjust && showAdjustment && (
   <StockTransferModal
     title="Adjust Stock"
     onClose={() =>
