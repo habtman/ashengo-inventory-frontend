@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useAuth } from "../../context/useAuth";
+import {
+  hasPermission,
+} from "../../utils/permissions";
 import { inventoryApi } from "../../api/inventoryApi";
-import { inventoryPermissions } from "../../config/inventoryPermissions";
+
 import { useNavigate } from "react-router-dom";
 
 
@@ -24,8 +26,13 @@ import SellItemForm from "../../components/sell/SellItemForm";
 
 export default function InventoryPage() {
 
-const { user } = useAuth();
-const permissions = user ? inventoryPermissions[user.role] : {};
+const canCreate = hasPermission("inventory.create");
+const canEdit = hasPermission("inventory.edit");
+const canDelete = hasPermission("inventory.delete");
+const canTransfer = hasPermission("inventory.transfer");
+const canAddStock = hasPermission("inventory.receive");
+
+
 
 const [items, setItems] = useState([]);
 const [loading, setLoading] = useState(true);
@@ -52,9 +59,6 @@ const [undoItem, setUndoItem] = useState(null);
 const [showTransfer, setShowTransfer] = useState(false);
 const [showAddStock, setShowAddStock] = useState(false);
 
-
-  const [showSell, setShowSell] = useState(false);
-  const [sellItem, setSellItem] = useState(null);
   const [pagination, setPagination] = useState({
   page: 1,
   totalPages: 1,
@@ -223,7 +227,7 @@ return (
       </div>
 
       <div className="flex items-center gap-2">
-          {permissions.canCreate && (
+          {canCreate && (
             <button
               onClick={() => setShowCreate(true)}
               className="bg-indigo-600 text-white px-4 py-2 rounded"
@@ -232,7 +236,7 @@ return (
             </button>
           )}
 
-      {permissions.canAddStock && (
+      {canAddStock && (
         <button
           disabled={!items.length}
           onClick={() => setShowAddStock(true)}
@@ -246,7 +250,7 @@ return (
 
 
 
-      {permissions.canTransfer && (
+      {canTransfer && (
         <button
           disabled={!selectedIds.length || allSelectedOutOfStock}
           onClick={() => setShowTransfer(true)}
@@ -295,32 +299,28 @@ return (
   </div>
     
 
-    <InventoryTable
-        items={items}
-        loading={loading}
-        permissions={permissions}
-        selectedIds={selectedIds}
-        onSelect={(id) =>
-          setSelectedIds(prev =>
-            prev.includes(id)
-              ? prev.filter(i => i !== id)
-              : [...prev, id]
-          )
-        }
-        onView={handleView}
-        onSelectAll={(ids) => setSelectedIds(ids)}
-        onEdit={setEditItem}
-        onDelete={item => handleDelete(item)} 
-        onBulkDelete={handleBulkDelete} 
-        onUndo={handleUndo }
-        onSell={(item) => {
-          setSellItem(item);
-          setShowSell(true);
-        }}
+        <InventoryTable
+          items={items}
+          loading={loading}
+          selectedIds={selectedIds}
+          onSelect={(id) =>
+            setSelectedIds(prev =>
+              prev.includes(id)
+                ? prev.filter(i => i !== id)
+                : [...prev, id]
+            )
+          }
+          onView={handleView}
+          onSelectAll={(ids) => setSelectedIds(ids)}
+          onEdit={setEditItem}
+          onDelete={handleDelete}
+          onBulkDelete={handleBulkDelete}
+          onUndo={handleUndo}
+          canEdit={canEdit}
+          canDelete={canDelete}
+        />
       
-      />
-      
-      {permissions.canDelete && selectedIds.length > 0 && (
+      {canDelete && selectedIds.length > 0 && (
         <div className="flex items-center justify-between bg-slate-100 border rounded-lg p-3">
           <span className="text-sm">
             {selectedIds.length} items selected
@@ -344,7 +344,7 @@ return (
 
     </div>
 
-    {showCreate && (
+    {canCreate && showCreate (
       <InventoryCreate
         
         onClose={() => setShowCreate(false)}
@@ -352,19 +352,18 @@ return (
       />
     )}
 
-    {editItem && (
+    {canEdit && editItem && (
       <InventoryEdit
         item={editItem}
         onClose={() => setEditItem(null)}
         onSubmit={handleEdit}
       />
-
     )}
 
     </div>
 
   
-        {showAddStock && (
+        {canAddStock && showAddStock && (
           <AddStockModal onClose={() => setShowAddStock(false)}>
             <AddStockForm
               items={items}
@@ -383,7 +382,7 @@ return (
 
     <div className="fixed bottom-6 right-6">
 
-{showTransfer && (
+{canTransfer && showTransfer && (
 <StockTransferModal
   title="Transfer Stock"
   onClose={() => setShowTransfer(false)}
@@ -401,29 +400,6 @@ return (
         />
       </StockTransferModal>
       )}
-
-
-{showSell && sellItem && (
-<SellItemModal
-  title={`Sell ${sellItem.name}`}
-  onClose={() => setShowSell(false)}
->
-  <SellItemForm
-    item={sellItem}
-    onSuccess={async () => {
-      setSelectedIds([]);  // Clear selected IDs after selling  
-      await fetchInventory();        // 🔥 critical
-      setShowSell(false);
-
-      setToast({
-        type: "success",
-        message: "Item sold successfully"
-      });
-    }}
-    onCancel={() => setShowSell(false)}
-  />
-</SellItemModal>
-)}
         
     </div>
 
