@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { hasAnyPermission } from "../utils/permissions";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -15,6 +16,21 @@ export default function Navbar() {
   const linkClass =
     "px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-indigo-500";
 
+  const canAccessStaff = hasAnyPermission(
+    "inventory.view",
+    "sales_orders.view",
+    "purchase_orders.view",
+    "customers.view",
+    "invoices.view",
+    "goods_receipts.view"
+  );
+
+  const canAccessAdmin = hasAnyPermission(
+    "users.view",
+    "audit_logs.view",
+    "settings.company_edit"
+  );
+
   return (
     <nav className="bg-indigo-600 px-6 py-3 flex items-center justify-between">
       {/* LEFT SIDE */}
@@ -27,13 +43,13 @@ export default function Navbar() {
           Dashboard
         </NavLink>
 
-        {(user.role === "staff" || user.role === "admin") && (
+        {canAccessStaff && (
           <NavLink to="/staff" className={linkClass}>
             Staff
           </NavLink>
         )}
 
-        {user.role === "admin" && (
+        {canAccessAdmin && (
           <NavLink to="/admin" className={linkClass}>
             Admin
           </NavLink>
@@ -43,7 +59,7 @@ export default function Navbar() {
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-4">
         <span className="text-white text-sm">
-          {user.email} ({user.role})
+          {user.email}
         </span>
 
         <button
