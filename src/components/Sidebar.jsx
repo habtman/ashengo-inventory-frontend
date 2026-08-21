@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import {useAuth} from "../context/useAuth";
+import { useAuth } from "../context/useAuth";
+import { hasPermission } from "../utils/permissions";
 
 export default function Sidebar() {
   const location = useLocation();
   const { user } = useAuth();
+  //const { user, permissions } = useAuth();
+
+  const canViewUsers = hasPermission("users.view");
+  const canViewAuditLogs = hasPermission("audit_logs.view");
+  const canEditCompanySettings = hasPermission("settings.company_edit");
 
 const getMenuFromPath = (pathname) => {
   if (pathname.startsWith("/invoices")) {
@@ -88,7 +94,7 @@ const getMenuFromPath = (pathname) => {
     >
       {/* Dashboard */}
      {/* Administration */}
-{user?.role === "admin" && (
+{(canViewUsers || canViewAuditLogs || canEditCompanySettings) && (
   <div>
     <button
       onClick={() => toggle("admin")}
@@ -113,26 +119,32 @@ const getMenuFromPath = (pathname) => {
           Dashboard
         </NavLink>
 
-        <NavLink
-          to="/admin/users"
-          className={linkClass}
-        >
-          Users
-        </NavLink>
+        {canViewUsers && (
+          <NavLink
+            to="/admin/users"
+            className={linkClass}
+          >
+            Users
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/admin/audit-logs"
-          className={linkClass}
-        >
-          Audit Logs
-        </NavLink>
+        {canViewAuditLogs && (
+          <NavLink
+            to="/admin/audit-logs"
+            className={linkClass}
+          >
+            Audit Logs
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/admin/settings"
-          className={linkClass}
-        >
-          Company Settings
-        </NavLink>
+        {canEditCompanySettings && (
+          <NavLink
+            to="/admin/settings"
+            className={linkClass}
+          >
+            Company Settings
+          </NavLink>
+        )}
       </div>
     )}
   </div>
