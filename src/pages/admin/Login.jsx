@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../context/useAuth";
-import { useNavigate } from "react-router-dom";
-import { redirectByRole } from "../../utils/redirectByRole";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,16 +9,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-
-  const navigate = useNavigate();
-  const { login, user } = useAuth();
-
-  // ✅ Auto-redirect once user is authenticated
-  useEffect(() => {
-    if (user?.role) {
-      navigate(redirectByRole(user.role), { replace: true });
-    }
-  }, [user, navigate]);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     if (loading) return;
@@ -48,25 +37,20 @@ export default function Login() {
         throw new Error("Server error. Try again later.");
       }
 
-
       const data = await res.json();
       const decoded = jwtDecode(data.accessToken);
 
-      // ✅ Update auth state ONLY
-      login({
+      await login({
         user: {
           id: decoded.id,
           email: decoded.email,
-          role: decoded.role,
         },
         accessToken: data.accessToken,
       });
 
-      // ❌ no navigate here
-
     } catch (err) {
-  setError(err.message || "Login failed");
-    }finally {
+      setError(err.message || "Login failed");
+    } finally {
       setLoading(false);
     }
   };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AuthContext } from "./AuthContext";
+import { apiFetch } from "../api/api";
 
-// AuthProvider component to manage authentication state
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
@@ -11,23 +11,67 @@ export default function AuthProvider({ children }) {
     }
   });
 
-  // Access token state
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken")
   );
-// Login function
-  const login = ({ user, accessToken }) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("accessToken", accessToken);
-    setUser(user);
-    setAccessToken(accessToken);
+
+  const [permissions, setPermissions] = useState(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem("permissions")
+      ) || [];
+    } catch {
+      return [];
+    }
+  });
+
+  const loadPermissions = async () => {
+    const data = await apiFetch("/api/v1/permissions");
+
+    const permissionList = Array.isArray(data.permissions)
+      ? data.permissions
+      : [];
+
+    localStorage.setItem(
+      "permissions",
+      JSON.stringify(permissionList)
+    );
+
+    setPermissions(permissionList);
+
+    return permissionList;
   };
 
-  // Logout function
+  const login = async ({ user, accessToken }) => {
+    localStorage.setItem(
+      "user",
+      JSON.stringify(user)
+    );
+
+    localStorage.setItem(
+      "accessToken",
+      accessToken
+    );
+
+    setUser(user);
+    setAccessToken(accessToken);
+
+    await loadPermissions();
+  };
+
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("permissions");
+
     setUser(null);
     setAccessToken(null);
+    setPermissions([]);
+  };
+
+  const hasPermission = (permission) => {
+    return permissions.includes(permission);
   };
 
   return (
@@ -35,6 +79,8 @@ export default function AuthProvider({ children }) {
       value={{
         user,
         accessToken,
+        permissions,
+        hasPermission,
         isAuthenticated: !!accessToken,
         login,
         logout,
