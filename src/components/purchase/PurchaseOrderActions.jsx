@@ -1,6 +1,7 @@
+import { hasPermission } from "../../utils/permissions";
+
 export default function PurchaseOrderActions({
   po,
-  user,
   statusColor,
   actionLoading,
   modal,
@@ -11,6 +12,11 @@ export default function PurchaseOrderActions({
   onDownloadPdf,
   onReceive
 }) {
+
+const canApprovePurchaseOrder = hasPermission("purchase_orders.approve");
+const canRejectPurchaseOrder = hasPermission("purchase_orders.reject");
+
+
   return (
     <>
       {/* Status */}
@@ -34,24 +40,27 @@ export default function PurchaseOrderActions({
             </button>
           )}
 
-          {po.status === "PENDING_APPROVAL" &&
-            user?.role === "admin" && (
-              <>
+          {po.status === "PENDING_APPROVAL" && (
+            <>
+              {canApprovePurchaseOrder && (
                 <button
                   onClick={() => setModal("approve")}
                   className="bg-green-600 text-white px-4 py-2 rounded"
                 >
                   Approve
                 </button>
+              )}
 
+              {canRejectPurchaseOrder && (
                 <button
                   onClick={() => setModal("reject")}
                   className="bg-red-600 text-white px-4 py-2 rounded"
                 >
                   Reject
                 </button>
-              </>
-            )}
+              )}
+            </>
+          )}
 
           {(po.status === "APPROVED" ||
             po.status === "PARTIALLY_RECEIVED") && (
