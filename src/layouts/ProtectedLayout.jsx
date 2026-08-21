@@ -1,10 +1,10 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import Navbar from "../components/Navbar";
-import { redirectByRole } from "../utils/redirectByRole";
+import { getDefaultRoute } from "../utils/permissions";
 
 export default function ProtectedLayout() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated) {
@@ -12,7 +12,7 @@ export default function ProtectedLayout() {
   }
 
   if (location.pathname === "/") {
-    return <Navigate to={redirectByRole(user.role)} replace />;
+    return <Navigate to={getDefaultRoute()} replace />;
   }
 
   return (
