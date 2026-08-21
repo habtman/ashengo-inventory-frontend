@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../context/useAuth";
+import { getDefaultRoute } from "../../utils/permissions";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -47,6 +50,7 @@ export default function Login() {
         },
         accessToken: data.accessToken,
       });
+      navigate(getDefaultRoute(), { replace: true });
 
     } catch (err) {
       setError(err.message || "Login failed");
