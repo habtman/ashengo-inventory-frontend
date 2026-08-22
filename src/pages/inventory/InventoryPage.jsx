@@ -344,7 +344,7 @@ return (
 
     </div>
 
-    {canCreate && showCreate (
+    {canCreate && showCreate &&(
       <InventoryCreate
         
         onClose={() => setShowCreate(false)}

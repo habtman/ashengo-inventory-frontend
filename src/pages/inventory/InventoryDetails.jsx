@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { hasPermission } from "../../utils/permissions";
 import { inventoryApi } from "../../api/inventoryApi";
@@ -25,6 +25,7 @@ function SummaryCard({ title, value }) {
 
 export default function InventoryDetails() {
   const { id } = useParams();
+
   const canAdjust = hasPermission("inventory.adjust");
   const canTransfer = hasPermission("inventory.transfer");
   const canCreateSalesOrder = hasPermission("sales_orders.create");
@@ -61,7 +62,9 @@ export default function InventoryDetails() {
 
 
 
-      const load = async () => {
+      const load = useCallback(async () => {
+        setLoading(true);
+
         try {
           const [
             productData,
@@ -86,11 +89,11 @@ export default function InventoryDetails() {
         } finally {
           setLoading(false);
         }
-      };
+      }, [id]);
 
       useEffect(() => {
         load();
-      }, [id]);
+      }, [load]);
 
       useEffect(() => {
         setMovementPage(1);
