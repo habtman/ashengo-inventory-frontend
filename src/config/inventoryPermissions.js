@@ -1,3 +1,4 @@
+// inventoryPermissions.js
 
 export const inventoryPermissions = {
   admin: {
@@ -5,11 +6,13 @@ export const inventoryPermissions = {
     canCreate: true,
     canEdit: true,
     canDelete: true,
-    canBulkDelete: true,   
-    canTransfer: true, 
+    canBulkDelete: true,
+    canTransfer: true,
     canAddStock: true,
+    canAdjust: true,
     canSell: true,
   },
+
   staff: {
     canView: true,
     canCreate: false,
@@ -18,18 +21,19 @@ export const inventoryPermissions = {
     canBulkDelete: false,
     canTransfer: true,
     canAddStock: true,
+    canAdjust: true,
     canSell: true,
   },
+
   user: {
     canView: true,
     canCreate: false,
     canEdit: false,
     canDelete: false,
-    canBulkDelete: false, 
+    canBulkDelete: false,
     canTransfer: false,
     canAddStock: false,
+    canAdjust: false,
     canSell: false,
-    
   },
 };
-
