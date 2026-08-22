@@ -286,25 +286,6 @@ const handleReceive = useCallback(async () => {
       }
     }, [id, load]);
 
-    
-/*
-    const handleEmail = async () => {
-
-        try {
-
-            await purchaseOrderApi.email(po.id);
-
-            alert("Purchase Order emailed successfully.");
-
-        } catch (err) {
-
-            alert(err.message);
-
-        }
-
-    };  */
-
-
 
       if (!id) {
         return (
@@ -391,7 +372,6 @@ const handleReceive = useCallback(async () => {
         handleAction={handleAction}
         onReceive={openReceiveModal}  
         onPrint ={handlePrint}
-        //onEmail={handleEmail}
         onDownloadPdf={handleDownloadPdf}
 
     />
