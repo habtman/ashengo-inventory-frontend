@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import { hasPermission } from "../../utils/permissions";
 import { inventoryApi } from "../../api/inventoryApi";
 import stockApi from "../../api/stockApi";
@@ -25,6 +26,7 @@ function SummaryCard({ title, value }) {
 
 export default function InventoryDetails() {
   const { id } = useParams();
+
 
   const canAdjust = hasPermission("inventory.adjust");
   const canTransfer = hasPermission("inventory.transfer");
