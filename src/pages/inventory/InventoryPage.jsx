@@ -31,6 +31,7 @@ const canEdit = hasPermission("inventory.edit");
 const canDelete = hasPermission("inventory.delete");
 const canTransfer = hasPermission("inventory.transfer");
 const canAddStock = hasPermission("inventory.receive");
+const canView = hasPermission("inventory.view");
 
 
 
@@ -318,6 +319,7 @@ return (
           onUndo={handleUndo}
           canEdit={canEdit}
           canDelete={canDelete}
+          canView ={canView}
         />
       
       {canDelete && selectedIds.length > 0 && (

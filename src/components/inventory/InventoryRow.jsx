@@ -10,7 +10,9 @@ export default function InventoryRow({
   onEdit,
   onSelect,
   onDelete,
-  permissions,
+  canView = false,
+  canEdit = false,
+  canDelete = false,
 }) {
   const [expanded, setExpanded] = useState(false);
   const [stock, setStock] = useState([]);
@@ -183,7 +185,7 @@ export default function InventoryRow({
                 : "Locations"}
             </button>
 
-            {permissions?.canView && (
+            {canView && (
               <button
                 onClick={() => onView(item)}
                 className="text-slate-600
@@ -194,7 +196,7 @@ export default function InventoryRow({
               </button>
             )}
 
-            {permissions?.canEdit && (
+            {canEdit && (
               <button
                 onClick={() => onEdit(item)}
                 className="text-slate-600
@@ -205,7 +207,7 @@ export default function InventoryRow({
               </button>
             )}
 
-            {permissions?.canDelete && (
+            {canDelete && (
               <button
                 onClick={() => onDelete(item)}
                 className="text-slate-600
