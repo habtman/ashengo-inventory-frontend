@@ -5,6 +5,8 @@ export default function InventoryTable({
   items = [],
   loading,
   permissions,
+  canEdit = false,
+  canDelete = false,
   selectedIds = [],
   onSelect,
   onSelectAll,
@@ -131,6 +133,8 @@ export default function InventoryTable({
             <InventoryRow
               key={item.id}
               item={item}
+              canEdit={canEdit}
+              canDelete={canDelete}
               permissions={permissions}
               selected={selectedIds.includes(item.id)}
               onSelect={onSelect}
