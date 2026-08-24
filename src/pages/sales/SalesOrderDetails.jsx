@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; 
 import salesOrderApi from "../../api/salesOrderApi";
 import { formatCurrency } from "../../utils/currency";
+import { hasPermission } from "../../utils/permissions";  
 
 
 export default function SalesOrderDetails() { 
   const { id } = useParams(); 
   const navigate = useNavigate();
+
+  const canConfirmSalesOrder =
+  hasPermission("sales_orders.confirm");
+
   const [so, setSo] = useState(null); 
   const [loading, setLoading] = useState(true); 
   const [confirming, setConfirming] = useState(false);
@@ -179,7 +184,8 @@ const handleConfirm = async () => {
 
 
      <div className="flex justify-end gap-2 mt-6"> 
-        {so.status === "DRAFT" && (
+      
+        {canConfirmSalesOrder && so.status === "DRAFT" && (
          <button
              onClick={handleConfirm}
              disabled={confirming}   
