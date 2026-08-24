@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
+import { hasPermission } from "../../utils/permissions";
+
 import { useAuth } from "../../context/useAuth";   
 import locationsApi from "../../api/locationsApi";
 import PurchaseOrderSummary from "../../components/purchase/PurchaseOrderSummary";
@@ -15,6 +17,7 @@ import PurchaseOrderAttachments from "../../components/purchase/PurchaseOrderAtt
 
 
 export default function PurchaseOrderDetails() {
+  const canReceivePurchaseOrder = hasPermission("purchase_orders.receive");
     
   const { id } = useParams();
 
@@ -219,6 +222,11 @@ const openReceiveModal = useCallback(() => {
 
 
 const handleReceive = useCallback(async () => {
+    if (!canReceivePurchaseOrder) {
+      alert("You do not have permission to receive goods.");
+    return;
+  }
+
   try {
     setReceiving(true);
 
@@ -255,7 +263,7 @@ const handleReceive = useCallback(async () => {
   } finally {
     setReceiving(false);
   }
-}, [receiveItems, locationId, id, load]);
+}, [receiveItems, locationId, id, canReceivePurchaseOrder, load]);
 
 
 
@@ -337,6 +345,8 @@ const handleReceive = useCallback(async () => {
       poId={po.id}
     />
 
+
+  {canReceivePurchaseOrder && (
     <PurchaseOrderReceiveModal
       open={showReceiveModal}
       onClose={() => setShowReceiveModal(false)}
@@ -351,6 +361,7 @@ const handleReceive = useCallback(async () => {
       totalReceived={totalReceived}
       progress={progress}
     />
+  )}
 
     <PurchaseOrderTimeline
       history={history}

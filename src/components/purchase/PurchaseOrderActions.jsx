@@ -14,6 +14,9 @@ export default function PurchaseOrderActions({
 
 const canApprovePurchaseOrder = hasPermission("purchase_orders.approve");
 const canRejectPurchaseOrder = hasPermission("purchase_orders.reject");
+const canReceivePurchaseOrder = hasPermission("purchase_orders.receive");
+
+
 
 
   return (
@@ -61,14 +64,15 @@ const canRejectPurchaseOrder = hasPermission("purchase_orders.reject");
             </>
           )}
 
-          {(po.status === "APPROVED" ||
-            po.status === "PARTIALLY_RECEIVED") && (
-            <button
-              onClick={onReceive}
-              className="bg-green-700 text-white px-4 py-2 rounded"
-            >
-              Receive Goods
-            </button>
+          {canReceivePurchaseOrder &&
+            (po.status === "APPROVED" ||
+              po.status === "PARTIALLY_RECEIVED") && (
+              <button
+                onClick={onReceive}
+                className="bg-green-700 text-white px-4 py-2 rounded"
+              >
+                Receive Goods
+              </button>
           )}
 
         <button
