@@ -31,8 +31,9 @@ export default function InventoryDetails() {
   const canAdjust = hasPermission("inventory.adjust");
   const canTransfer = hasPermission("inventory.transfer");
   const canCreateSalesOrder = hasPermission("sales_orders.create");
-  const canViewPurchases = hasPermission("goods_receipts.view");
-  const canViewSales = hasPermission("sales_orders.view");
+  const canViewSalesReport = hasPermission("reports.sales");
+  const canViewPurchaseReport = hasPermission("reports.purchase");
+  
 
   const [product, setProduct] = useState(null);
   const [stock, setStock] = useState([]);
@@ -68,30 +69,69 @@ export default function InventoryDetails() {
         setLoading(true);
 
         try {
+          // These are required for inventory details.
           const [
             productData,
             stockData,
             movementData,
-            salesData,
-            purchaseData
           ] = await Promise.all([
             inventoryApi.getById(id),
             inventoryApi.getStockByLocation(id),
             inventoryApi.getMovements(id),
-            stockApi.getSalesHistory(id),
-            stockApi.getPurchaseHistory(id)
           ]);
+
           setProduct(productData);
           setStock(stockData);
           setMovements(movementData);
-          setSales(salesData);
-          setPurchases(purchaseData);
+
+          // Sales history is only requested when the user has
+          // permission to view sales reports.
+          if (canViewSalesReport) {
+            try {
+              const salesData = await stockApi.getSalesHistory(id);
+              setSales(salesData);
+            } catch (err) {
+              console.error("Failed to load sales history:", err);
+              setSales([]);
+            }
+          } else {
+            setSales([]);
+          }
+
+          // Purchase history is only requested when the user has
+          // permission
+          // to view purchase reports.
+          if (canViewPurchaseReport) {
+            try {
+              const purchaseData =
+                await stockApi.getPurchaseHistory(id);
+
+              setPurchases(purchaseData);
+            } catch (err) {
+              console.error(
+                "Failed to load purchase history:",
+                err
+              );
+
+              setPurchases([]);
+            }
+          } else {
+            setPurchases([]);
+          }
+
         } catch (err) {
-          console.error(err);
+          console.error(
+            "Failed to load inventory details:",
+            err
+          );
         } finally {
           setLoading(false);
         }
-      }, [id]);
+      }, [
+        id,
+        canViewSalesReport,
+        canViewPurchaseReport,
+      ]);
 
       useEffect(() => {
         load();
@@ -383,7 +423,7 @@ const totalPurchaseCost = purchases.reduce(
         >
           Movements
         </button>
-
+    {canViewPurchaseReport && (
         <button
           onClick={() => setActiveTab("purchases")}
           className={`px-3 py-2 rounded ${
@@ -394,7 +434,9 @@ const totalPurchaseCost = purchases.reduce(
         >
           Purchases
         </button>
+    )}
 
+      {canViewSalesReport && (
         <button
           onClick={() => setActiveTab("sales")}
           className={`px-3 py-2 rounded ${
@@ -405,6 +447,7 @@ const totalPurchaseCost = purchases.reduce(
         >
           Sales
         </button>
+    )}
       </div>
 
       {/* Summary Cards */}
@@ -732,7 +775,7 @@ const totalPurchaseCost = purchases.reduce(
     )}
 
     {/* Purchase History */}
-    {canViewPurchases && activeTab === "purchases" && (
+    {canViewPurchaseReport && activeTab === "purchases" && (
       <>
       <div className="border rounded p-4">
       <h2 className="text-xl font-semibold mb-4">
@@ -848,7 +891,7 @@ const totalPurchaseCost = purchases.reduce(
 
 
       {/* Sales History */}
-    {canViewSales && activeTab === "sales" && (
+    {canViewSalesReport && activeTab === "sales" && (
       <>
       <div className="border rounded p-4">
       <h2 className="text-xl font-semibold mb-4">
