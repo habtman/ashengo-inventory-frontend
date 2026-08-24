@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import invoiceApi from "../../api/invoiceApi";
 import { formatCurrency } from "../../utils/currency";
+import { hasPermission } from "../../utils/permissions";
 import {
   exportInvoicesExcel,
   exportInvoicesPDF,
@@ -10,7 +11,12 @@ import {
 
 
 export default function InvoicesList() {
+
+
+  
   const navigate = useNavigate();
+  const canViewInvoices = hasPermission("invoices.view");
+
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -25,17 +31,25 @@ export default function InvoicesList() {
 
   const invoicePageSize = 10;
 
+  
 
 
 
-  useEffect(() => {
+
+useEffect(() => {
   const loadInvoices = async () => {
+    if (!canViewInvoices) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const data = await invoiceApi.getAll({
         search,
         startDate,
         endDate
       });
+
       setInvoices(data);
     } catch (err) {
       console.error(err);
@@ -45,7 +59,7 @@ export default function InvoicesList() {
   };
 
   loadInvoices();
-}, [search, startDate, endDate]);
+}, [search, startDate, endDate, canViewInvoices]);
 
 useEffect(() => {
   setInvoicePage(1);
@@ -140,8 +154,26 @@ const paginatedInvoices =
     invoicePage * invoicePageSize
   );
 
+if (!canViewInvoices) {
+  return (
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="border rounded-lg p-6 text-center">
+        <h2 className="text-xl font-semibold text-red-600">
+          Access Denied
+        </h2>
 
-  if (loading) return <p>Loading invoices...</p>;
+        <p className="text-slate-600 mt-2">
+          You do not have permission to view invoices.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+if (loading) {
+  return <p>Loading invoices...</p>;
+}
+
  
 
   return (
@@ -560,10 +592,6 @@ const paginatedInvoices =
             <td className="border p-2">
               {inv.invoice_number}
             </td>
-
-           {/* <td className="border p-2">
-              {inv.so_number}
-            </td>*/}
 
             <td className="border p-2">
               {inv.customer_name}

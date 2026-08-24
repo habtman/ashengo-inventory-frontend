@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { hasPermission } from "../../utils/permissions";
 import invoiceApi from "../../api/invoiceApi";
 import { formatCurrency } from "../../utils/currency";  
 
 export default function InvoiceDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const canViewInvoices = hasPermission("invoices.view");
+  const canReceivePayments = hasPermission("payments.receive");
+  const canViewPayments = hasPermission("payments.view");
+
 
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,6 +61,10 @@ const [savingPayment, setSavingPayment] =
 }
 
 const handleRecordPayment = async () => {
+  if (!hasPermission("payments.receive")) {
+    alert("You do not have permission to receive payments.");
+    return;
+  }
 
   try {
 
@@ -123,6 +132,26 @@ const handlePrint = async () => {
 
   window.open(url, "_blank");
 };
+
+    if (!canViewInvoices) {
+      return (
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="border rounded-lg p-6 text-center">
+            <h2 className="text-xl font-semibold text-red-600">
+              Access Denied
+            </h2>
+
+            <p className="text-slate-600 mt-2">
+              You do not have permission to view invoices.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (loading) {
+      return <p>Loading invoice...</p>;
+    }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded-xl">
@@ -308,7 +337,7 @@ const handlePrint = async () => {
         Total: {formatCurrency(invoice.total_amount)}
       </div>
 
-      {invoice.payments?.length > 0 && (
+     {canViewPayments && invoice.payments?.length > 0 && (
 
       <div className="mt-8">
 
@@ -400,15 +429,9 @@ const handlePrint = async () => {
           Print Invoice
         </button>
 
-       {/* <button
-            onClick={() => setShowPaymentModal(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
-            Record Payment
-          </button>*/}
 
-        {invoice.balance_due > 0 && (
-
+        {canReceivePayments && invoice.balance_due > 0 && 
+          hasPermission("payments.receive") && (
           <button
             onClick={() =>
               setShowPaymentModal(true)
@@ -417,9 +440,7 @@ const handlePrint = async () => {
           >
             Record Payment
           </button>
-
-        )}
-
+          )}
       </div>
 
       {showPaymentModal && (
