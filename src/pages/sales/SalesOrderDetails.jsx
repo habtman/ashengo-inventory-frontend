@@ -184,15 +184,16 @@ const handleConfirm = async () => {
 
 
      <div className="flex justify-end gap-2 mt-6"> 
-      
+
         {canConfirmSalesOrder && so.status === "DRAFT" && (
-         <button
-             onClick={handleConfirm}
-             disabled={confirming}   
-             className="bg-green-600 text-white px-4 py-2 rounded"> 
-                {confirming ? "Confirming..." : "Confirm Sales Order"}
-         </button> 
-       )}  
+          <button
+            onClick={handleConfirm}
+            disabled={confirming}
+            className="bg-green-600 text-white px-4 py-2 rounded"
+          >
+            {confirming ? "Confirming..." : "Confirm Sales Order"}
+          </button>
+        )}
          {so.status === "CONFIRMED" && (
          <button
             onClick={() =>
