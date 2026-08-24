@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
+import { hasPermission } from "../../utils/permissions";
 
 export default function PurchaseOrderAttachments({ poId }) {
 
     const [attachments, setAttachments] = useState([]);
     const [uploading, setUploading] = useState(false);
+
+    const canDeleteAttachments =
+    hasPermission("purchase_orders.delete_attachments");
+
+    const canCreateAttachments =
+    hasPermission("purchase_orders.create_attachments");
 
     const load = useCallback(async () => {
 
@@ -65,17 +72,17 @@ export default function PurchaseOrderAttachments({ poId }) {
                     Attachments
                 </h3>
 
+                {canCreateAttachments && (
                 <label className="bg-blue-600 text-white px-3 py-2 rounded cursor-pointer">
-
                     Upload
 
                     <input
-                        hidden
-                        type="file"
-                        onChange={upload}
+                    hidden
+                    type="file"
+                    onChange={upload}
                     />
-
                 </label>
+                )}
 
             </div>
 
@@ -123,21 +130,21 @@ export default function PurchaseOrderAttachments({ poId }) {
                         Download
                     </button>
 
+                {canDeleteAttachments && (
                     <button
                         className="text-red-600 hover:underline"
                         onClick={async () => {
-
                             if (!window.confirm("Delete attachment?"))
                                 return;
 
                             await purchaseOrderApi.deleteAttachment(file.id);
 
                             load();
-
                         }}
                     >
                         Delete
                     </button>
+                )}
 
                 </div>
 
