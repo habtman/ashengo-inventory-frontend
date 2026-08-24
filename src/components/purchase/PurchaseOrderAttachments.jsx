@@ -13,6 +13,9 @@ export default function PurchaseOrderAttachments({ poId }) {
     const canCreateAttachments =
     hasPermission("purchase_orders.create_attachments");
 
+    const canViewAttachments =
+     hasPermission("purchase_orders.view_attachments");
+
     const load = useCallback(async () => {
 
         try {
@@ -121,14 +124,16 @@ export default function PurchaseOrderAttachments({ poId }) {
 
                 <div className="flex gap-2">
 
-                    <button
-                        className="text-blue-600 hover:underline"
-                        onClick={() =>
-                            purchaseOrderApi.downloadAttachment(file)
-                        }
-                    >
-                        Download
-                    </button>
+                {canViewAttachments && (
+                <button
+                    className="text-blue-600 hover:underline"
+                    onClick={() =>
+                    purchaseOrderApi.downloadAttachment(file)
+                    }
+                >
+                    Download
+                </button>
+                )}
 
                 {canDeleteAttachments && (
                     <button
