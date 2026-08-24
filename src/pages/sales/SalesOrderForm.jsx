@@ -332,20 +332,6 @@ const handleSubmit = async () => {
     const salesOrderId =
       createRes.soId;
 
-    // =========================================================
-    // 6. CONFIRM SALES ORDER
-    // =========================================================
-
-    const confirmRes =
-      await salesOrderApi.confirm(
-        salesOrderId
-      );
-
-    console.log(
-      "CONFIRM RESPONSE:",
-      confirmRes
-    );
-
     navigate(
       `/sales-orders/${salesOrderId}`
     );
