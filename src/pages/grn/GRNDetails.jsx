@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import grnApi from "../../api/grnApi";
-import { formatCurrency } from "../../utils/currency";   
+import { formatCurrency } from "../../utils/currency";  
+import { hasPermission } from "../../utils/permissions"; 
+
 
 export default function GRNDetails() {
 
   const { id } = useParams();
+  const canReverseGRN = hasPermission("goods_receipts.reverse");
+
+
+  const canViewPurchaseReport =
+  hasPermission("reports.purchase");
+
+
   const navigate = useNavigate();
 
   const [grn, setGrn] = useState(null);
@@ -106,12 +115,14 @@ const localTotal = Number(grn.total_amount || 0);
       Print
     </button>
 
-    <button
-      onClick={handleReverse}
-      className="bg-red-600 text-white px-4 py-2 rounded"
-    >
-      Reverse Goods Receipt
-    </button>
+      {canReverseGRN && (
+        <button
+          onClick={handleReverse}
+          className="bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Reverse Goods Receipt
+        </button>
+      )}
 
   </div>
 
@@ -148,95 +159,99 @@ const localTotal = Number(grn.total_amount || 0);
       </div>
 
       <table className="w-full border">
-
-
         <thead>
-        <tr className="bg-gray-100">
+          <tr className="bg-gray-100">
             <th>SKU</th>
             <th>Item</th>
             <th>Received</th>
-            <th>Unit Cost in ETB</th>
-            <th>Line Total in ETB</th>
-        </tr>
+
+            {canViewPurchaseReport && (
+              <>
+                <th>Unit Cost in ETB</th>
+                <th>Line Total in ETB</th>
+              </>
+            )}
+          </tr>
         </thead>
 
-
         <tbody>
+          {items.map(item => (
+            <tr key={item.inventory_id}>
+              <td>{item.sku}</td>
 
-        {items.map(item => (
-          
+              <td>{item.item_name}</td>
 
-        <tr key={item.inventory_id}>
+              <td>{item.received_quantity}</td>
 
-            <td>{item.sku}</td>
+              {canViewPurchaseReport && (
+                <>
+                  <td>
+                    {Number(item.cost_price || 0).toFixed(2)}
+                  </td>
 
-            <td>{item.item_name}</td>
-
-            <td>{item.received_quantity}</td>
-
-            <td>
-                {Number(item.cost_price).toFixed(2)}
-            </td>
-
-            <td>
-                {(
-                    Number(item.received_quantity) *
-                    Number(item.cost_price)
-                ).toFixed(2)}
-            </td>
-
-        </tr>
-
-        ))}
-
+                  <td>
+                    {(
+                      Number(item.received_quantity || 0) *
+                      Number(item.cost_price || 0)
+                    ).toFixed(2)}
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
         </tbody>
-
       </table>
 
-<div className="mt-6 border rounded-lg p-5 bg-gray-50">
+      {canViewPurchaseReport && (
+        <div className="mt-6 border rounded-lg p-5 bg-gray-50">
+          <h3 className="text-lg font-semibold mb-4">
+            Financial Summary
+          </h3>
 
-  <h3 className="text-lg font-semibold mb-4">
-    Financial Summary
-  </h3>
+          <div className="grid grid-cols-2 gap-y-3">
 
-  <div className="grid grid-cols-2 gap-y-3">
+            <span>Total Quantity</span>
 
-    <span>Total Quantity</span>
-    <span className="text-right font-medium">
-      {totalQuantity}
-    </span>
+            <span className="text-right font-medium">
+              {totalQuantity}
+            </span>
 
-    <span>Currency</span>
-    <span className="text-right">
-      {grn.currency}
-    </span>
+            <span>Currency</span>
 
-    <span>Exchange Rate</span>
-    <span className="text-right">
-      {exchangeRate.toFixed(2)}
-    </span>
+            <span className="text-right">
+              {grn.currency}
+            </span>
 
-    <span>Supplier Total ({grn.currency})</span>
-    <span className="text-right">
-      {foreignTotal.toLocaleString(undefined,{
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      })}
-    </span>
+            <span>Exchange Rate</span>
 
-    <hr className="col-span-2 my-2"/>
+            <span className="text-right">
+              {exchangeRate.toFixed(2)}
+            </span>
 
-    <span className="font-bold">
-      Grand Total (ETB)
-    </span>
+            <span>
+              Supplier Total ({grn.currency})
+            </span>
 
-    <span className="text-right font-bold text-lg">
-      {formatCurrency(localTotal)}  
-    </span>
+            <span className="text-right">
+              {foreignTotal.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
+            </span>
 
-  </div>
+            <hr className="col-span-2 my-2" />
 
-</div>
+            <span className="font-bold">
+              Grand Total (ETB)
+            </span>
+
+            <span className="text-right font-bold text-lg">
+              {formatCurrency(localTotal)}
+            </span>
+
+          </div>
+        </div>
+      )}
   
 <div className="grid grid-cols-2 gap-12 mt-16">
 
