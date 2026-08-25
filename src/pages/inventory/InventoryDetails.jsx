@@ -28,8 +28,6 @@ export default function InventoryDetails() {
   const { id } = useParams();
 
 
-  const canViewOverview =
-  canViewSalesReport || canViewPurchaseReport;
 
 
 
@@ -39,6 +37,9 @@ export default function InventoryDetails() {
   const canViewSalesReport = hasPermission("reports.sales");
   const canViewPurchaseReport = hasPermission("reports.purchase");
   
+  const canViewOverview =
+    canViewSalesReport || canViewPurchaseReport;
+
 
   const [product, setProduct] = useState(null);
   const [stock, setStock] = useState([]);
@@ -462,7 +463,7 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
       {/* Summary Cards */}
-      { canViewOverview && activeTab === "overview" && (
+      {canViewOverview && activeTab === "overview" && (
         <>
       <div className="grid grid-cols-4 gap-4">
 
