@@ -25,26 +25,22 @@ function SummaryCard({ title, value }) {
 }
 
 export default function InventoryDetails() {
-  const { id } = useParams();
+      const { id } = useParams();
 
+      const canAdjust = hasPermission("inventory.adjust");
+      const canTransfer = hasPermission("inventory.transfer");
+      const canCreateSalesOrder = hasPermission("sales_orders.create");
+      const canViewSalesReport = hasPermission("reports.sales");
+      const canViewPurchaseReport = hasPermission("reports.purchase");
+      
+      const canViewInventoryOverview =
+        hasPermission("reports.sales") &&
+        hasPermission("reports.purchase");
 
-
-
-
-  const canAdjust = hasPermission("inventory.adjust");
-  const canTransfer = hasPermission("inventory.transfer");
-  const canCreateSalesOrder = hasPermission("sales_orders.create");
-  const canViewSalesReport = hasPermission("reports.sales");
-  const canViewPurchaseReport = hasPermission("reports.purchase");
-  
-  const canViewOverview =
-    canViewSalesReport || canViewPurchaseReport;
-
-
-  const [product, setProduct] = useState(null);
-  const [stock, setStock] = useState([]);
-  const [movements, setMovements] = useState([]);
-  const [loading, setLoading] = useState(true);
+      const [product, setProduct] = useState(null);
+      const [stock, setStock] = useState([]);
+      const [movements, setMovements] = useState([]);
+      const [loading, setLoading] = useState(true);
 
       const [showTransfer, setShowTransfer] = useState(false);
       const [showAdjustment, setShowAdjustment] = useState(false);
@@ -52,8 +48,9 @@ export default function InventoryDetails() {
       const [sales, setSales] = useState([]);
       const [purchases, setPurchases] = useState([]);
 
+
       const [activeTab, setActiveTab] = useState(
-        canViewOverview ? "overview" : "locations"
+        canViewInventoryOverview ? "overview" : "locations"
       );
 
       const [movementPage, setMovementPage] = useState(1);
@@ -401,7 +398,7 @@ const totalPurchaseCost = purchases.reduce(
 
       {/*Add Tab buttons*/}
       <div className="flex gap-2 border-b pb-2 mb-4">
-        {canViewOverview &&
+        {canViewInventoryOverview &&
         <button
           onClick={() => setActiveTab("overview")}
           className={`px-3 py-2 rounded ${
@@ -463,7 +460,7 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
       {/* Summary Cards */}
-      {canViewOverview && activeTab === "overview" && (
+      {canViewInventoryOverview && activeTab === "overview" && (
         <>
       <div className="grid grid-cols-4 gap-4">
 
