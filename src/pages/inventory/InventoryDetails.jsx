@@ -28,6 +28,11 @@ export default function InventoryDetails() {
   const { id } = useParams();
 
 
+  const canViewOverview =
+  canViewSalesReport || canViewPurchaseReport;
+
+
+
   const canAdjust = hasPermission("inventory.adjust");
   const canTransfer = hasPermission("inventory.transfer");
   const canCreateSalesOrder = hasPermission("sales_orders.create");
@@ -45,7 +50,11 @@ export default function InventoryDetails() {
 
       const [sales, setSales] = useState([]);
       const [purchases, setPurchases] = useState([]);
-      const [activeTab, setActiveTab] = useState("overview");
+
+      const [activeTab, setActiveTab] = useState(
+        canViewOverview ? "overview" : "locations"
+      );
+
       const [movementPage, setMovementPage] = useState(1);
 
       const movementPageSize = 10;
@@ -451,7 +460,7 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
       {/* Summary Cards */}
-      { activeTab === "overview" && (
+      { canViewOverview && activeTab === "overview" && (
         <>
       <div className="grid grid-cols-4 gap-4">
 
