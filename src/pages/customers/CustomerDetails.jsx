@@ -5,8 +5,14 @@ import CustomerLedger from "./CustomerLedger";
 import { formatCurrency } from "../../utils/currency";   
 import RecordPaymentModal from "./modals/RecordPaymentModal";
 import CustomerStatement from "./reports/CustomerStatement";
+import { hasPermission } from "../../utils/permissions"; 
 
 export default function CustomerDetails() {
+  const canReceivePayments = hasPermission("payments.receive");
+  const canViewPayments = hasPermission("payments.view");
+ 
+ 
+
   const [activeTab, setActiveTab] = useState("invoices");
 
   const { id } = useParams();
@@ -94,7 +100,7 @@ const totalPaid =
       </div>
 
       <div className="flex gap-4 mb-6">
-
+    {canReceivePayments && (
         <button
           onClick={() =>
             setShowPaymentModal(true)
@@ -109,6 +115,7 @@ const totalPaid =
         >
           Record Payment
         </button>
+    )}
 
       </div>
 
@@ -127,6 +134,7 @@ const totalPaid =
       Invoices
     </button>
 
+  {canViewPayments && (
     <button
       onClick={() => setActiveTab("payments")}
       className={`px-6 py-3 ${
@@ -137,7 +145,8 @@ const totalPaid =
     >
       Payments
     </button>
-
+  )}
+    
     <button
       onClick={() => setActiveTab("statement")}
       className={`px-6 py-3 ${
@@ -153,14 +162,14 @@ const totalPaid =
 
   <div className="p-6">
 
-    {activeTab === "invoices" && (
+    {canViewPayments && activeTab === "invoices" && (
       <CustomerLedger
         customerId={id}
         mode="invoices"
       />
     )}
 
-    {activeTab === "payments" && (
+    {canReceivePayments && activeTab === "payments" && (
       <CustomerLedger
         customerId={id}
         mode="payments"
@@ -176,7 +185,7 @@ const totalPaid =
   </div>
 
 </div>
-             {showPaymentModal && (
+       {canReceivePayments && showPaymentModal && (
 
           <RecordPaymentModal
             customerId={id}

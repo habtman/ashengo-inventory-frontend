@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";  
 import EditCreditLimitModal from "./modals/EditCreditLimitModal";
+//import { hasPermission } from "../../utils/permissions";  
 
 
 
 export default function CustomersList() {
+  
 
   const [customers, setCustomers] =
     useState([]);

@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";  
 import supplierApi from "../../api/supplierApi";
+//import { hasPermission } from "../../utils/permissions"; 
 
 export default function SupplierDetailsPage() {
   const { id } = useParams();
+  /*const canCreateSupplier = hasPermission("suppliers.create");
+  const canEditSupplier = hasPermission("suppliers.edit");
+  const canDeleteSupplier = hasPermission("suppliers.delete");*/
   
   const navigate = useNavigate();
 
