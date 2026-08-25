@@ -169,7 +169,7 @@ const totalPaid =
       />
     )}
 
-    {canReceivePayments && activeTab === "payments" && (
+    {canViewPayments && activeTab === "payments" && (
       <CustomerLedger
         customerId={id}
         mode="payments"
