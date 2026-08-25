@@ -196,7 +196,7 @@ const handleConfirm = async () => {
                 : "Confirm Sales Order"}
             </button>
           )}
-          
+
          {so.status === "CONFIRMED" && (
          <button
             onClick={() =>
