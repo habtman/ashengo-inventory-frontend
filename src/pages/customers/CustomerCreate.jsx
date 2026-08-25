@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 import customerApi from "../../api/customerApi";
 
 export default function CustomerCreate() {
+
+
 
   const navigate = useNavigate();
 
@@ -83,7 +86,6 @@ export default function CustomerCreate() {
           onChange={handleChange}
           className="border p-2 w-full"
         />
-
         <button
           type="submit"
           className="

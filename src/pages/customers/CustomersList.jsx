@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";  
 import EditCreditLimitModal from "./modals/EditCreditLimitModal";
-//import { hasPermission } from "../../utils/permissions";  
+import { hasPermission} from "../../utils/permissions";
+ 
 
 
 
 export default function CustomersList() {
-  
+  const canCreateCustomer = hasPermission("customers.create");
+  const canEditCustomerCreditLimit = hasPermission("customers.manage_credit");
 
   const [customers, setCustomers] =
     useState([]);
@@ -38,7 +40,7 @@ export default function CustomersList() {
         <h1 className="text-2xl font-bold">
           Customers
         </h1>
-
+      {canCreateCustomer && (
         <Link
           to="/customers/new"
           className="
@@ -51,7 +53,7 @@ export default function CustomersList() {
         >
           New Customer
         </Link>
-
+      )}
       </div>
 
       <table className="w-full border">
@@ -106,6 +108,7 @@ export default function CustomersList() {
                 {formatCurrency(customer.credit_limit)}
               </span>
 
+          {canEditCustomerCreditLimit && (
               <button
                 onClick={() => {
                   setSelectedCustomer(customer);
@@ -115,6 +118,7 @@ export default function CustomersList() {
               >
                 ✏️
               </button>
+          )}
             </div>
           </td>
 
@@ -137,7 +141,7 @@ export default function CustomersList() {
 
       </table>
 
-      {showLimitModal && selectedCustomer && (
+      {canEditCustomerCreditLimit && showLimitModal && selectedCustomer && (
       <EditCreditLimitModal
         customer={selectedCustomer}
         onClose={() => {
