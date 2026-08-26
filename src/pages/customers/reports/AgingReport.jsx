@@ -26,6 +26,10 @@ export default function AgingReport() {
   };
 
   useEffect(() => {
+  load();
+}, []);
+
+  useEffect(() => {
   if (!canViewAgingReports) return;
 
   load();
