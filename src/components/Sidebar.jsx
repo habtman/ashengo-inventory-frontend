@@ -233,7 +233,8 @@ const getMenuFromPath = (pathname) => {
   "sales_orders.view",
   "customers.view",
   "invoices.view",
-  "reports.sales"
+  "reports.sales",
+  "customers.aging.view"
 ) && (
   <div>
     <button
