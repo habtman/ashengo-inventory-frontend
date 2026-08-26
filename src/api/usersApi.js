@@ -26,12 +26,12 @@ const usersApi = {
       })
     }),
 
-  deactivate: (userId) =>
+  deactivateUser: (userId) =>
     apiFetch(`/api/v1/users/${userId}/deactivate`, {
       method: "PUT"
     }),
 
-  reactivate: (userId) =>
+  reactivateUser: (userId) =>
     apiFetch(`/api/v1/users/${userId}/reactivate`, {
       method: "POST"
     }),

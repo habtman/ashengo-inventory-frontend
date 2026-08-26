@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
 import usersApi from "../../api/usersApi";  
+import { hasPermission } from "../../utils/permissions";  
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
+
+  const canViewUsers = hasPermission("users.view");
+  const canCreateUsers = hasPermission("users.create");
+  const canAssignRoles = hasPermission("users.assign_roles");
+  const canDisableUsers = hasPermission("users.disable");
+  const canEnableUsers = hasPermission("users.enable");
+  const canDeleteUsers = hasPermission("users.delete");
+
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -22,6 +31,14 @@ export default function UsersPage() {
   useEffect(() => {
     loadUsers();
   }, []);
+
+    if (!canViewUsers) {
+  return (
+    <div className="p-6 text-red-600">
+      You do not have permission to view the Users page.
+    </div>
+  );
+}
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -68,7 +85,7 @@ export default function UsersPage() {
 
 const handleRoleChange = async (id, role) => {
   try {
-    await usersApi.changeUserRole(id, role);
+    await usersApi.changeRole(id, role);
 
     await loadUsers();
   } catch (err) {
@@ -76,6 +93,21 @@ const handleRoleChange = async (id, role) => {
     alert("Failed to change role");
   }
 };
+
+const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to permanently delete this user?")) {
+    return;
+  }
+
+  try {
+    await usersApi.deleteUser(id);
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete user");
+  }
+};
+
 
   return (
     <div className="bg-white p-6 rounded shadow">
@@ -86,12 +118,14 @@ const handleRoleChange = async (id, role) => {
           Users
         </h2>
 
+    {canCreateUsers &&(
         <button
           onClick={() => setShowCreateModal(true)}
           className="bg-indigo-600 text-white px-4 py-2 rounded"
         >
           + New User
         </button>
+    )}
       </div>
 
       {/* Users Table */}
@@ -118,6 +152,8 @@ const handleRoleChange = async (id, role) => {
               </td>
 
               <td className="border p-2">
+
+          {canAssignRoles && (
                 <select
                   value={user.role}
                   onChange={(e) =>
@@ -128,6 +164,7 @@ const handleRoleChange = async (id, role) => {
                   <option value="staff">Staff</option>
                   <option value="admin">Admin</option>
                 </select>
+          )}
               </td>
 
               <td className="border p-2">
@@ -142,30 +179,45 @@ const handleRoleChange = async (id, role) => {
                 )}
               </td>
 
-          <td className="border p-2">
-          {user.is_active ? (
-            <button
-              onClick={() => handleDeactivate(user.id)}
-              className="px-3 py-1 bg-red-600 text-white rounded"
-            >
-              Deactivate
-            </button>
-          ) : (
-            <button
-              onClick={() => handleReactivate(user.id)}
-              className="px-3 py-1 bg-green-600 text-white rounded"
-            >
-              Reactivate
-            </button>
-          )}
-        </td>
+              <td className="border p-2">
+                <div className="flex gap-2">
+
+                  {user.is_active && canDisableUsers && (
+                    <button
+                      onClick={() => handleDeactivate(user.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded"
+                    >
+                      Deactivate
+                    </button>
+                  )}
+
+                  {!user.is_active && canEnableUsers && (
+                    <button
+                      onClick={() => handleReactivate(user.id)}
+                      className="px-3 py-1 bg-green-600 text-white rounded"
+                    >
+                      Reactivate
+                    </button>
+                  )}
+
+                  {canDeleteUsers && (
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="px-3 py-1 bg-gray-800 text-white rounded"
+                    >
+                      Delete
+                    </button>
+                  )}
+
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
       {/* Create User Modal */}
-      {showCreateModal && (
+      {canCreateUsers && showCreateModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
@@ -231,13 +283,13 @@ const handleRoleChange = async (id, role) => {
                   }
                   className="w-full border rounded px-3 py-2"
                 >
-                  <option value="staff">
-                    Staff
-                  </option>
-
-                  <option value="admin">
-                    Admin
-                  </option>
+                  <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="staff">Staff</option>
+                  <option value="sales">Sales</option>
+                  <option value="warehouse">Warehouse</option>
+                  <option value="accountant">Accountant</option>
+                  <option value="user">User</option>
                 </select>
               </div>
 
@@ -249,13 +301,14 @@ const handleRoleChange = async (id, role) => {
                 >
                   Cancel
                 </button>
-
+        {canCreateUsers && (
                 <button
                   type="submit"
                   className="px-4 py-2 bg-indigo-600 text-white rounded"
                 >
                   Create User
                 </button>
+        )}
               </div>
 
             </form>
