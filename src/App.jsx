@@ -63,7 +63,7 @@ export default function App() {
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/staff" element={<Staff />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="/users" element={<UsersPage />} />
           <Route path="/locations" element={<LocationsPage />} />
           <Route path="/stock" element={<DashboardPage />} />
           <Route path="/stock-history" element={<StockHistoryPage />} />  
@@ -76,7 +76,6 @@ export default function App() {
           <Route path="/purchase-orders/new" element={<PurchaseOrderCreate />} />
           <Route path="/purchase-orders/:id" element={<PurchaseOrderDetails />} />
           <Route path="/admin/audit-logs" element={<AuditLogsPage />} /> 
-          <Route path="/admin/users" element={<UsersPage />} /> 
           <Route path="/admin/settings" element={<CompanySettingsPage />} /> 
           <Route path="/invoices/:id/print" element={<InvoicePrintPage />} />
           <Route path="/suppliers" element={<SuppliersPage />} />
