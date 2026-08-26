@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import userApi from "../../api/usersApi";  
+import usersApi from "../../api/usersApi";  
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -11,7 +11,7 @@ export default function UsersPage() {
 
   const loadUsers = async () => {
     try {
-      const data = await userApi.getAll();
+      const data = await usersApi.getAll();
         //console.log("Loaded users:", data);
       setUsers(data);
     } catch (err) {
@@ -27,7 +27,7 @@ export default function UsersPage() {
     e.preventDefault();
 
     try {
-      await userApi.createUser(
+      await usersApi.createUser(
         email,
         password,
         role
@@ -49,7 +49,7 @@ export default function UsersPage() {
 
   const handleDeactivate = async (id) => {
     try {
-      await userApi.deactivateUser(id);
+      await usersApi.deactivateUser(id);
       await loadUsers();
     } catch (err) {
       console.error(err);
@@ -58,7 +58,7 @@ export default function UsersPage() {
 
   const handleReactivate = async (id) => {
   try {
-    await userApi.reactivateUser(id);
+    await usersApi.reactivateUser(id);
     await loadUsers();
   } catch (err) {
     console.error(err);
@@ -68,7 +68,7 @@ export default function UsersPage() {
 
 const handleRoleChange = async (id, role) => {
   try {
-    await userApi.changeUserRole(id, role);
+    await usersApi.changeUserRole(id, role);
 
     await loadUsers();
   } catch (err) {
