@@ -91,7 +91,7 @@ export default function AgingReport() {
   if (!canViewAgingReports) {
   return (
     <div className="p-6 text-red-600">
-      You do not have permission to view the customer credit dashboard.
+      You do not have permission to view the aging reports.
     </div>
   );
 }
