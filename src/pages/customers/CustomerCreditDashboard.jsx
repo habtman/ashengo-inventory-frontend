@@ -3,9 +3,10 @@ import customerApi from "../../api/customerApi";
 import { formatCurrency } from "../../utils/currency";
 import CustomerCreditTable from "../../components/customers/CustomerCreditTable";
 import CreditDashboardCharts from "../../components/customers/CreditDashboardCharts";
+import { hasPermission } from "../../utils/permissions";
 
 export default function CustomerCreditDashboard() {
-
+  const canManageCredit = hasPermission("customers.manage_credit");
   const [summary, setSummary] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,14 @@ export default function CustomerCreditDashboard() {
     load();
 
   }, []);
+
+  if (!canManageCredit) {
+  return (
+    <div className="p-6 text-red-600">
+      You do not have permission to view the customer credit dashboard.
+    </div>
+  );
+}
 
   if (loading) {
 
