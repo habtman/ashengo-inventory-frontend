@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import adminApi from "../../api/adminApi";
+import userApi from "../../api/userApi";  
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -11,8 +11,8 @@ export default function UsersPage() {
 
   const loadUsers = async () => {
     try {
-      const data = await adminApi.getUsers();
-      //console.log("Loaded users:", data);
+      const data = await userApi.getAll();
+        //console.log("Loaded users:", data);
       setUsers(data);
     } catch (err) {
       console.error(err);
@@ -27,7 +27,7 @@ export default function UsersPage() {
     e.preventDefault();
 
     try {
-      await adminApi.createUser(
+      await userApi.createUser(
         email,
         password,
         role
@@ -49,7 +49,7 @@ export default function UsersPage() {
 
   const handleDeactivate = async (id) => {
     try {
-      await adminApi.deactivateUser(id);
+      await userApi.deactivateUser(id);
       await loadUsers();
     } catch (err) {
       console.error(err);
@@ -58,7 +58,7 @@ export default function UsersPage() {
 
   const handleReactivate = async (id) => {
   try {
-    await adminApi.reactivateUser(id);
+    await userApi.reactivateUser(id);
     await loadUsers();
   } catch (err) {
     console.error(err);
@@ -68,7 +68,7 @@ export default function UsersPage() {
 
 const handleRoleChange = async (id, role) => {
   try {
-    await adminApi.changeUserRole(id, role);
+    await userApi.changeUserRole(id, role);
 
     await loadUsers();
   } catch (err) {
