@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import customerApi from "../../../api/customerApi";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../../utils/currency";  
-import { hasPermission } from "../../utils/permissions";
+import { hasPermission } from "../../../utils/permissions";
 
 export default function AgingReport() {
 
