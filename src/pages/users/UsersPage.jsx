@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import usersApi from "../../api/usersApi";  
-import { hasPermission } from "../../utils/permissions";  
+import usersApi from "../../api/usersApi";
+import { hasPermission } from "../../utils/permissions";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
+
+  const [role, setRole] = useState("staff");
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const canViewUsers = hasPermission("users.view");
   const canCreateUsers = hasPermission("users.create");
@@ -12,67 +19,61 @@ export default function UsersPage() {
   const canEnableUsers = hasPermission("users.enable");
   const canDeleteUsers = hasPermission("users.delete");
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRoles] = useState("staff");
-
   const loadUsers = async () => {
     try {
       const data = await usersApi.getAll();
-        //console.log("Loaded users:", data);
       setUsers(data);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load users:", err);
     }
   };
 
   const loadRoles = async () => {
-  try {
-    const data = await usersApi.getRoles();
-    setRoles(data);
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-  useEffect(() => {
-    loadUsers();
-    loadRoles();
-  }, []);
-
-    if (!canViewUsers) {
-  return (
-    <div className="p-6 text-red-600">
-      You do not have permission to view the Users page.
-    </div>
-  );
-}
-
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
-
     try {
-      await usersApi.createUser(
-        email,
-        password,
-        role
-      );
-
-      setShowCreateModal(false);
-
-      setEmail("");
-      setPassword("");
-      setRoles("");
-
-      await loadUsers();
-
+      const data = await usersApi.getRoles();
+      console.log("Available roles:", data);
     } catch (err) {
-      console.error(err);
-      alert("Failed to create user");
+      console.error("Failed to load roles:", err);
     }
   };
+
+  useEffect(() => {
+    if (canViewUsers) {
+      loadUsers();
+      loadRoles();
+    }
+  }, [canViewUsers]);
+
+  if (!canViewUsers) {
+    return (
+      <div className="p-6 text-red-600">
+        You do not have permission to view the Users page.
+      </div>
+    );
+  }
+
+const handleCreateUser = async (e) => {
+  e.preventDefault();
+
+  try {
+    await usersApi.create(
+      email,
+      password,
+      role
+    );
+
+    setShowCreateModal(false);
+
+    setEmail("");
+    setPassword("");
+    setRole("staff");
+
+    await loadUsers();
+  } catch (err) {
+    console.error("Failed to create user:", err);
+    alert("Failed to create user");
+  }
+};
 
   const handleDeactivate = async (id) => {
     try {
@@ -105,19 +106,22 @@ const handleRoleChange = async (id, role) => {
 };
 
 const handleDelete = async (id) => {
-  if (!window.confirm("Are you sure you want to permanently delete this user?")) {
+  if (
+    !window.confirm(
+      "Are you sure you want to permanently delete this user?"
+    )
+  ) {
     return;
   }
 
   try {
-    await usersApi.deleteUser(id);
+    await usersApi.remove(id);
     await loadUsers();
   } catch (err) {
-    console.error(err);
+    console.error("Failed to delete user:", err);
     alert("Failed to delete user");
   }
 };
-
 
   return (
     <div className="bg-white p-6 rounded shadow">
@@ -294,7 +298,7 @@ const handleDelete = async (id) => {
                 <select
                   value={role}
                   onChange={(e) =>
-                    setRoles(e.target.value)
+                    setRole(e.target.value)
                   }
                   className="w-full border rounded px-3 py-2"
                 >
