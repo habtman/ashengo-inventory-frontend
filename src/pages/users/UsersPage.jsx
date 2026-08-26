@@ -16,7 +16,7 @@ export default function UsersPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("staff");
+  const [role, setRoles] = useState("staff");
 
   const loadUsers = async () => {
     try {
@@ -28,8 +28,18 @@ export default function UsersPage() {
     }
   };
 
+  const loadRoles = async () => {
+  try {
+    const data = await usersApi.getRoles();
+    setRoles(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   useEffect(() => {
     loadUsers();
+    loadRoles();
   }, []);
 
     if (!canViewUsers) {
@@ -54,7 +64,7 @@ export default function UsersPage() {
 
       setEmail("");
       setPassword("");
-      setRole("staff");
+      setRoles("");
 
       await loadUsers();
 
@@ -161,8 +171,13 @@ const handleDelete = async (id) => {
                   }
                   className="border rounded px-2 py-1"
                 >
-                  <option value="staff">Staff</option>
                   <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="staff">Staff</option>
+                  <option value="sales">Sales</option>
+                  <option value="warehouse">Warehouse</option>
+                  <option value="accountant">Accountant</option>
+                  <option value="user">User</option>
                 </select>
           )}
               </td>
@@ -279,7 +294,7 @@ const handleDelete = async (id) => {
                 <select
                   value={role}
                   onChange={(e) =>
-                    setRole(e.target.value)
+                    setRoles(e.target.value)
                   }
                   className="w-full border rounded px-3 py-2"
                 >

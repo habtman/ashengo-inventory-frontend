@@ -14,6 +14,7 @@ export default function Sidebar() {
   const canViewCustomersDashboard = hasPermission("customers.manage_credit");
   const canViewAgingReports = hasPermission("customers.aging.view");
 
+
   const canAccessAdministration = hasAnyPermission(
     "users.view",
     "audit_logs.view",
@@ -68,13 +69,7 @@ const getMenuFromPath = (pathname) => {
     return "inventory";
   }
 
-  if (
-  pathname.startsWith("/admin") ||
-  pathname.startsWith("/users") ||
-  pathname.startsWith("/staff") ||
-  pathname.startsWith("/audit-logs") ||
-  pathname.startsWith("/admin/settings")
-) {
+if (pathname.startsWith("/admin")) {
   return "admin";
 }
 
