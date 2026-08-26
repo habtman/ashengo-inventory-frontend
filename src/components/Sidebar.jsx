@@ -11,6 +11,7 @@ export default function Sidebar() {
   const canViewUsers = hasPermission("users.view");
   const canViewAuditLogs = hasPermission("audit_logs.view");
   const canEditCompanySettings = hasPermission("settings.company_edit");
+  const canViewCustomersDashboard = hasPermission("customers.manage_credit");
 
   const canAccessAdministration = hasAnyPermission(
     "users.view",
@@ -254,7 +255,7 @@ const getMenuFromPath = (pathname) => {
           </NavLink>
         )}
 
-        {canViewCustomers && (
+        {canViewCustomersDashboard && (
           <NavLink
             to="/customers/credit-dashboard"
             className={linkClass}
