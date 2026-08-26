@@ -5,7 +5,8 @@ import { hasPermission } from "../../utils/permissions";
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
 
-  const [role, setRole] = useState("staff");
+
+  const [roles, setRoles] = useState([]);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -18,6 +19,8 @@ export default function UsersPage() {
   const canDisableUsers = hasPermission("users.disable");
   const canEnableUsers = hasPermission("users.enable");
   const canDeleteUsers = hasPermission("users.delete");
+
+  const [role, setRole] = useState("staff");
 
   const loadUsers = async () => {
     try {
@@ -168,21 +171,19 @@ const handleDelete = async (id) => {
               <td className="border p-2">
 
           {canAssignRoles && (
-                <select
-                  value={user.role}
-                  onChange={(e) =>
-                    handleRoleChange(user.id, e.target.value)
-                  }
-                  className="border rounded px-2 py-1"
-                >
-                  <option value="admin">Admin</option>
-                  <option value="manager">Manager</option>
-                  <option value="staff">Staff</option>
-                  <option value="sales">Sales</option>
-                  <option value="warehouse">Warehouse</option>
-                  <option value="accountant">Accountant</option>
-                  <option value="user">User</option>
-                </select>
+            <select
+              value={user.role}
+              onChange={(e) =>
+                handleRoleChange(user.id, e.target.value)
+              }
+              className="border rounded px-2 py-1"
+            >
+              {roles.map((r) => (
+                <option key={r.id} value={r.name}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
           )}
               </td>
 
@@ -295,21 +296,17 @@ const handleDelete = async (id) => {
                   Role
                 </label>
 
-                <select
-                  value={role}
-                  onChange={(e) =>
-                    setRole(e.target.value)
-                  }
-                  className="w-full border rounded px-3 py-2"
-                >
-                  <option value="admin">Admin</option>
-                  <option value="manager">Manager</option>
-                  <option value="staff">Staff</option>
-                  <option value="sales">Sales</option>
-                  <option value="warehouse">Warehouse</option>
-                  <option value="accountant">Accountant</option>
-                  <option value="user">User</option>
-                </select>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+              >
+                {roles.map((r) => (
+                  <option key={r.id} value={r.name}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
