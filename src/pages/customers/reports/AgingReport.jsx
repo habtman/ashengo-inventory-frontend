@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import customerApi from "../../../api/customerApi";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../../utils/currency";  
+import { hasPermission } from "../../utils/permissions";
 
 export default function AgingReport() {
+
+  const canViewAgingReports = hasPermission("customers.aging.view");
 
   const [rows, setRows] = useState([]);
 
@@ -84,6 +87,14 @@ export default function AgingReport() {
     Number(row.days_31_60 || 0) +
     Number(row.days_61_90 || 0) +
     Number(row.over_90 || 0);
+
+  if (!canViewAgingReports) {
+  return (
+    <div className="p-6 text-red-600">
+      You do not have permission to view the customer credit dashboard.
+    </div>
+  );
+}
 
 
   return (
