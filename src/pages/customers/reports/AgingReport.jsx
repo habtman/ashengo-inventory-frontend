@@ -91,14 +91,6 @@ export default function AgingReport() {
     Number(row.days_61_90 || 0) +
     Number(row.over_90 || 0);
 
-  if (!canViewAgingReports) {
-  return (
-    <div className="p-6 text-red-600">
-      You do not have permission to view the aging reports.
-    </div>
-  );
-}
-
 
   return (
     <div className="p-6">
