@@ -24,7 +24,7 @@ import PurchaseOrderCreate from "./pages/purchase/PurchaseOrderCreate";
 import PurchaseOrderDetails from "./pages/purchase/PurchaseOrderDetails";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AuditLogsPage from "./pages/admin/AuditLogsPage";  
-import UsersPage from "./pages/admin/UsersPage";  
+import UsersPage from "./pages/users/UsersPage";  
 import CompanySettingsPage from "./pages/admin/CompanySettingsPage";  
 import InvoicePrintPage from "./pages/invoice/InvoicePrintPage";  
 import SuppliersPage from "./pages/suppliers/SuppliersPage";
@@ -63,7 +63,7 @@ export default function App() {
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/staff" element={<Staff />} />
-          <Route path="/user" element={<User />} />
+          <Route path="/users" element={<Users />} />
           <Route path="/locations" element={<LocationsPage />} />
           <Route path="/stock" element={<DashboardPage />} />
           <Route path="/stock-history" element={<StockHistoryPage />} />  
