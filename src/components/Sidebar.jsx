@@ -12,7 +12,7 @@ export default function Sidebar() {
   const canViewAuditLogs = hasPermission("audit_logs.view");
   const canEditCompanySettings = hasPermission("settings.company_edit");
   const canViewCustomersDashboard = hasPermission("customers.manage_credit");
-  const canViewAgingReports = hasPermission("customers.aging.view");
+  //const canViewAgingReports = hasPermission("customers.aging.view");
 
   const canAccessAdministration = hasAnyPermission(
     "users.view",
@@ -233,8 +233,7 @@ const getMenuFromPath = (pathname) => {
   "sales_orders.view",
   "customers.view",
   "invoices.view",
-  "reports.sales",
-  "customers.aging.view"
+  "reports.sales"
 ) && (
   <div>
     <button
@@ -275,7 +274,7 @@ const getMenuFromPath = (pathname) => {
           </NavLink>
         )}
 
-        {canViewAgingReports && (
+        {canViewCustomers && (
           <NavLink
             to="/customers/aging"
             className={linkClass}

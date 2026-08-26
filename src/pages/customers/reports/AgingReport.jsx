@@ -24,9 +24,12 @@ export default function AgingReport() {
       console.error(err);
     }
   };
-    useEffect(() => {
-    load();
-  }, []);
+
+  useEffect(() => {
+  if (!canViewAgingReports) return;
+
+  load();
+}, [canViewAgingReports]);
 
   const totalCurrent =
     rows.reduce(
@@ -104,7 +107,7 @@ export default function AgingReport() {
   Customer Aging Report
 </h1>
 
-<div className="grid grid-cols-5 gap-4 mb-8">
+<div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
 
   <div className="bg-white rounded shadow p-4">
     <p className="text-gray-500 text-sm">Current</p>
