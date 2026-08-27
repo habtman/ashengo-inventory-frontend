@@ -15,7 +15,10 @@ export default function Sidebar() {
   const canViewAgingReports = hasPermission("customers.aging.view");
 
 
+  const canViewAdminDashboard = hasPermission("dashboard.view");
+
   const canAccessAdministration = hasAnyPermission(
+    "dashboard.view",
     "users.view",
     "audit_logs.view",
     "settings.company_edit"
@@ -132,12 +135,11 @@ if (pathname.startsWith("/admin")) {
     {activeMenu === "admin" && (
       <div className="ml-4 mt-1 space-y-1">
 
-        <NavLink
-          to="/admin"
-          className={linkClass}
-        >
-          Dashboard
-        </NavLink>
+    {canViewAdminDashboard && (
+      <NavLink to="/admin" className={linkClass}>
+        Dashboard
+      </NavLink>
+    )}
 
         {canViewUsers && (
           <NavLink
