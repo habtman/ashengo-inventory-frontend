@@ -10,7 +10,6 @@ import Inventory from "./pages/inventory/InventoryPage";
 import AppLayout from "./layouts/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LocationsPage from "./pages/locations/LocationsPage";
-import DashboardPage from "./pages/dashboard/DashboardPage";
 import StockHistoryPage from "./pages/stock/StockHistoryPage";
 import SalesPage from "./pages/salesOldFile/SalesPage";
 import SalesAnalyticsPage from "./pages/salesOldFile/SalesAnalyticsPage";
