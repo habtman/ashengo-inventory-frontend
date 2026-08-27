@@ -1,10 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/admin/Login";
-import Admin from "./pages/admin/Admin";
+import Login from "./pages/auth/Login";
 import Staff from "./pages/admin/Staff";
-import User from "./pages/admin/User";
-import Forbidden from "./pages/admin/Forbidden";
+import Forbidden from "./pages/auth/Forbidden";
 
 import Inventory from "./pages/inventory/InventoryPage";
 
@@ -63,7 +61,7 @@ export default function App() {
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/staff" element={<Staff />} />
-          <Route path="/users" element={<UsersPage />} />
+          <Route path="/admin/users" element={<UsersPage />} />
           <Route path="/locations" element={<LocationsPage />} />
           <Route path="/stock" element={<DashboardPage />} />
           <Route path="/stock-history" element={<StockHistoryPage />} />  
