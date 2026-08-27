@@ -36,4 +36,16 @@ export const inventoryPermissions = {
     canAdjust: false,
     canSell: false,
   },
+
+  sales: {
+    canView: true,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false,
+    canBulkDelete: false,
+    canTransfer: false,
+    canAddStock: false,
+    canAdjust: false,
+    canSell: false,
+  },
 };
