@@ -30,9 +30,9 @@ export async function apiFetch(endpoint, options = {}) {
     const newToken = await refreshToken();
 
     if (!newToken) {
-      localStorage.clear();
-      window.location.href = "/login";
-      throw new Error("Session expired");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        localStorage.removeItem("permissions");
     }
 
     res = await makeRequest(newToken);
