@@ -33,6 +33,8 @@ export async function apiFetch(endpoint, options = {}) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
         localStorage.removeItem("permissions");
+        window.location.href = "/login";
+     throw new Error("Session expired");
     }
 
     res = await makeRequest(newToken);
