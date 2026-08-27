@@ -22,14 +22,28 @@ export default function UsersPage() {
 
   const [role, setRole] = useState("staff");
 
-  const loadUsers = async () => {
+  /*const loadUsers = async () => {
     try {
       const data = await usersApi.getAll();
       setUsers(data);
     } catch (err) {
       console.error("Failed to load users:", err);
     }
-  };
+  };*/
+
+  const loadUsers = async () => {
+  try {
+    console.log("ACCESS TOKEN:", localStorage.getItem("accessToken"));
+
+    const data = await usersApi.getAll();
+
+    console.log("Loaded users:", data);
+
+    setUsers(data);
+  } catch (err) {
+    console.error("LOAD USERS ERROR:", err);
+  }
+};
 
   const loadRoles = async () => {
     try {
