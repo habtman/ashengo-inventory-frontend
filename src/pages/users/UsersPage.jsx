@@ -22,35 +22,25 @@ export default function UsersPage() {
 
   const [role, setRole] = useState("staff");
 
-  /*const loadUsers = async () => {
+  const loadUsers = async () => {
     try {
       const data = await usersApi.getAll();
       setUsers(data);
     } catch (err) {
       console.error("Failed to load users:", err);
     }
-  };*/
+  };
 
-  const loadUsers = async () => {
-  try {
-    console.log("ACCESS TOKEN:", localStorage.getItem("accessToken"));
-
-    const data = await usersApi.getAll();
-
-    console.log("Loaded users:", data);
-
-    setUsers(data);
-  } catch (err) {
-    console.error("LOAD USERS ERROR:", err);
-  }
-};
 
   const loadRoles = async () => {
     try {
       const data = await usersApi.getRoles();
+
       console.log("Available roles:", data);
+
+      setRoles(data);
     } catch (err) {
-      console.error("Failed to load roles:", err);
+      console.error("LOAD ROLES ERROR:", err);
     }
   };
 
@@ -184,7 +174,7 @@ const handleDelete = async (id) => {
 
               <td className="border p-2">
 
-          {canAssignRoles && (
+{canAssignRoles && (
             <select
               value={user.role}
               onChange={(e) =>
@@ -198,7 +188,8 @@ const handleDelete = async (id) => {
                 </option>
               ))}
             </select>
-          )}
+)}
+          
               </td>
 
               <td className="border p-2">
@@ -312,7 +303,7 @@ const handleDelete = async (id) => {
 
               <select
                 value={role}
-                onChange={(e) => setRoles(e.target.value)}
+                onChange={(e) => setRole(e.target.value)}
                 className="w-full border rounded px-3 py-2"
               >
                 {roles.map((r) => (
