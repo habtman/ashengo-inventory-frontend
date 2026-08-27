@@ -62,7 +62,6 @@ export default function App() {
           <Route path="/staff" element={<Staff />} />
           <Route path="/admin/users" element={<UsersPage />} />
           <Route path="/locations" element={<LocationsPage />} />
-          <Route path="/stock" element={<DashboardPage />} />
           <Route path="/stock-history" element={<StockHistoryPage />} />  
           <Route path="/sales" element={<SalesPage />} /> 
           <Route path="/sales/analytics" element={<SalesAnalyticsPage />} />
