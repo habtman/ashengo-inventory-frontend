@@ -1,8 +1,14 @@
 import {useEffect, useState} from 'react';
 import supplierApi from '../../api/supplierApi';
 import { useNavigate } from 'react-router-dom'; 
+import { hasPermission } from '../../utils/permissions';  
 
 export default function SuppliersPage() {
+    const canViewsuppliers = hasPermission("suppliers.view");
+    const canEditSuppliers = hasPermission("suppliers.edit");
+    const canDeletesuppliers = hasPermission("suppliers.delete");
+   
+
     const [suppliers, setSuppliers] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingSupplier, setEditingSupplier] = useState(null);
@@ -243,6 +249,7 @@ const totalPages = Math.ceil(
                 
                 <td className="border p-2">
                 <div className="flex gap-2">
+            {canViewsuppliers && (
                   <button
                     onClick={() =>
                       navigate(`/suppliers/${supplier.id}`)
@@ -251,13 +258,17 @@ const totalPages = Math.ceil(
                   >
                     View
                   </button>
+            )}
 
+            {canEditSuppliers && (
                     <button
                     onClick={() => handleEditSupplier(supplier)}
                     className="px-3 py-1 bg-blue-600 text-white rounded"
                     >
                     Edit
                     </button>
+            )}
+            {canDeletesuppliers && (
 
                     <button
                         onClick={() => handleDeleteSupplier(supplier.id)}
@@ -265,6 +276,7 @@ const totalPages = Math.ceil(
                         >
                         Delete
                     </button>
+            )}
 
                     {supplier.is_active ? (
                     <button
