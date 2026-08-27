@@ -43,13 +43,14 @@ export default function Login() {
       const data = await res.json();
       const decoded = jwtDecode(data.accessToken);
 
-      await login({
-        user: {
-          id: decoded.id,
-          email: decoded.email,
-        },
-        accessToken: data.accessToken,
-      });
+        await login({
+          user: {
+            id: decoded.id,
+            email: decoded.email,
+            role: decoded.role,
+          },
+          accessToken: data.accessToken,
+        });
       navigate(getDefaultRoute(), { replace: true });
 
     } catch (err) {
