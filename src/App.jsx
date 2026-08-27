@@ -12,7 +12,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LocationsPage from "./pages/locations/LocationsPage";
 import StockHistoryPage from "./pages/stock/StockHistoryPage";
 import SalesPage from "./pages/salesOldFile/SalesPage";
-import SalesAnalyticsPage from "./pages/salesOldFile/SalesAnalyticsPage";
 import InvoicesList from "./pages/invoice/InvoicesList";
 import InvoiceCreate from "./pages/invoice/InvoiceCreate";  
 import InvoiceDetails from "./pages/invoice/InvoiceDetails";   
@@ -64,7 +63,6 @@ export default function App() {
           <Route path="/locations" element={<LocationsPage />} />
           <Route path="/stock-history" element={<StockHistoryPage />} />  
           <Route path="/sales" element={<SalesPage />} /> 
-          <Route path="/sales/analytics" element={<SalesAnalyticsPage />} />
           <Route path="/invoices" element={<InvoicesList />} />
           <Route path="/invoices/new" element={<InvoiceCreate />} />
           <Route path="/invoices/:id" element={<InvoiceDetails />} />
