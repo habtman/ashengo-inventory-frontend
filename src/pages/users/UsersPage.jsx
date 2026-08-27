@@ -298,7 +298,7 @@ const handleDelete = async (id) => {
 
               <select
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={(e) => setRoles(e.target.value)}
                 className="w-full border rounded px-3 py-2"
               >
                 {roles.map((r) => (
