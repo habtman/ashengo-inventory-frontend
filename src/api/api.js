@@ -1,43 +1,98 @@
 import { refreshToken } from "./refresh";
 
-const API_BASE = "https://ashengo-inventory-production.fly.dev";
+const API_BASE =
+  "https://ashengo-inventory-production.fly.dev";
+
+/*
+|--------------------------------------------------------------------------
+| Shared refresh lock
+|--------------------------------------------------------------------------
+|
+| If multiple requests receive 401 simultaneously,
+| only ONE refresh request is allowed to run.
+|
+*/
 
 let refreshPromise = null;
 
-async function refreshAccessToken() {
+async function getFreshAccessToken() {
+
   if (!refreshPromise) {
-    refreshPromise = refreshToken()
-      .finally(() => {
-        refreshPromise = null;
-      });
+
+    refreshPromise =
+      refreshToken()
+        .finally(() => {
+          refreshPromise = null;
+        });
   }
 
   return refreshPromise;
 }
 
-export async function apiFetch(endpoint, options = {}) {
-  let accessToken = localStorage.getItem("accessToken");
+export async function apiFetch(
+  endpoint,
+  options = {}
+) {
 
-  const makeRequest = async (token) => {
-    const headers = {
-      ...(token
-        ? { Authorization: `Bearer ${token}` }
-        : {}),
-      ...(options.headers || {}),
+  /*
+  |--------------------------------------------------------------------------
+  | Current access token
+  |--------------------------------------------------------------------------
+  */
+
+  const accessToken =
+    localStorage.getItem(
+      "accessToken"
+    );
+
+  /*
+  |--------------------------------------------------------------------------
+  | Request builder
+  |--------------------------------------------------------------------------
+  */
+
+  const makeRequest =
+    async (token) => {
+
+      const headers = {
+        ...(token && {
+          Authorization:
+            `Bearer ${token}`
+        }),
+        ...options.headers
+      };
+
+      /*
+      | Don't overwrite FormData headers.
+      */
+
+      if (
+        !(options.body instanceof FormData)
+      ) {
+        headers["Content-Type"] =
+          "application/json";
+      }
+
+      return fetch(
+        `${API_BASE}${endpoint}`,
+        {
+          ...options,
+          headers,
+          credentials: "include"
+        }
+      );
     };
 
-    if (!(options.body instanceof FormData)) {
-      headers["Content-Type"] = "application/json";
-    }
+  /*
+  |--------------------------------------------------------------------------
+  | First request
+  |--------------------------------------------------------------------------
+  */
 
-    return fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers,
-      credentials: "include",
-    });
-  };
-
-  let res = await makeRequest(accessToken);
+  let res =
+    await makeRequest(
+      accessToken
+    );
 
   /*
   |--------------------------------------------------------------------------
@@ -46,50 +101,91 @@ export async function apiFetch(endpoint, options = {}) {
   */
 
   if (res.status === 401) {
-    const newToken = await refreshAccessToken();
 
-    if (!newToken) {
-      localStorage.removeItem("accessToken");
+    let newToken;
 
-      window.location.href = "/login";
+    try {
 
-      throw new Error("Session expired");
+      newToken =
+        await getFreshAccessToken();
+
+    } catch {
+
+      newToken = null;
     }
 
-    accessToken = newToken;
+    /*
+    |--------------------------------------------------------------------------
+    | Refresh failed
+    |--------------------------------------------------------------------------
+    */
 
-    res = await makeRequest(accessToken);
+    if (!newToken) {
+
+      localStorage.removeItem(
+        "accessToken"
+      );
+
+      /*
+      | Do not call localStorage.clear().
+      | Only remove authentication state.
+      */
+
+      if (
+        window.location.pathname !==
+        "/login"
+      ) {
+        window.location.href =
+          "/login";
+      }
+
+      throw new Error(
+        "Session expired"
+      );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Retry with fresh token
+    |--------------------------------------------------------------------------
+    */
+
+    res =
+      await makeRequest(
+        newToken
+      );
   }
 
   /*
   |--------------------------------------------------------------------------
-  | Authorization failure
-  |--------------------------------------------------------------------------
-  |
-  | IMPORTANT:
-  | 403 means the authenticated identity does not have permission.
-  | Do NOT refresh the token on 403.
-  |
+  | API error
   |--------------------------------------------------------------------------
   */
 
   if (!res.ok) {
-    let errorMessage = "API Error";
+
+    let errorMessage =
+      "API Error";
 
     try {
-      const errorData = await res.json();
+
+      const errorData =
+        await res.json();
 
       errorMessage =
         errorData.error ||
         errorMessage;
 
     } catch {
+
       errorMessage =
         res.statusText ||
         errorMessage;
     }
 
-    throw new Error(errorMessage);
+    throw new Error(
+      errorMessage
+    );
   }
 
   /*

@@ -159,19 +159,24 @@ export default function UsersPage() {
   */
 
 const handleRoleChange = async (id, newRole) => {
+
   try {
 
-    const updatedUser =
-      await usersApi.changeRole(id, newRole);
+    const updated =
+      await usersApi.changeRole(
+        id,
+        newRole
+      );
 
     setUsers((currentUsers) =>
       currentUsers.map((user) =>
         user.id === id
           ? {
               ...user,
-              role: updatedUser.role,
-              role_id: updatedUser.role_id,
-              role_mismatch: false
+              role: updated.role,
+              role_id: updated.role_id,
+              role_mismatch:
+                updated.role_mismatch
             }
           : user
       )
@@ -179,13 +184,21 @@ const handleRoleChange = async (id, newRole) => {
 
   } catch (err) {
 
-    console.error("Failed to change role:", err);
-
-    alert(
-      err.message || "Failed to change role"
+    console.error(
+      "Failed to change role:",
+      err
     );
 
-    // Reload so UI reflects the actual database state
+    alert(
+      err.message ||
+      "Failed to change role"
+    );
+
+    /*
+    | Reload so the select returns to
+    | the database's actual value.
+    */
+
     await loadUsers();
   }
 };
