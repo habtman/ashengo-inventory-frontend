@@ -6,6 +6,7 @@ import supplierApi from "../../api/supplierApi";
 
 export default function SupplierDetailsPage() {
   const { id } = useParams();
+  
   /*const canCreateSupplier = hasPermission("suppliers.create");
   const canEditSupplier = hasPermission("suppliers.edit");
   const canDeleteSupplier = hasPermission("suppliers.delete");*/
