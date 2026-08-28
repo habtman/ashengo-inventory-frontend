@@ -61,8 +61,6 @@ export default function CreditDashboardCharts({ customers = [] }) {
     .sort((a, b) => b.outstanding - a.outstanding)
     .slice(0, 10);
 
-  console.log(customers[0]);
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 

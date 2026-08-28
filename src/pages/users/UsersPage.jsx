@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import usersApi from "../../api/usersApi";
-import { hasPermission } from "../../utils/permissions";
+import { useAuth } from "../../context/useAuth";  
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
+  const { hasPermission } = useAuth();
 
 
   const [roles, setRoles] = useState([]);
@@ -20,7 +21,7 @@ export default function UsersPage() {
   const canEnableUsers = hasPermission("users.enable");
   const canDeleteUsers = hasPermission("users.delete");
 
-  const [role, setRole] = useState("staff");
+  const [role, setRole] = useState("");
 
   const loadUsers = async () => {
     try {
@@ -31,18 +32,18 @@ export default function UsersPage() {
     }
   };
 
+const loadRoles = async () => {
+  try {
+    const data = await usersApi.getRoles();
+    setRoles(data);
 
-  const loadRoles = async () => {
-    try {
-      const data = await usersApi.getRoles();
-
-      console.log("Available roles:", data);
-
-      setRoles(data);
-    } catch (err) {
-      console.error("LOAD ROLES ERROR:", err);
+    if (data.length > 0) {
+      setRole((current) => current || data[0].name);
     }
-  };
+  } catch (err) {
+    console.error("Failed to load roles:", err);
+  }
+};
 
   useEffect(() => {
     if (canViewUsers) {
@@ -63,22 +64,17 @@ const handleCreateUser = async (e) => {
   e.preventDefault();
 
   try {
-    await usersApi.create(
-      email,
-      password,
-      role
-    );
+    await usersApi.create(email, password, role);
 
     setShowCreateModal(false);
-
     setEmail("");
     setPassword("");
-    setRole("staff");
+    setRole(roles[0]?.name || "");
 
     await loadUsers();
   } catch (err) {
     console.error("Failed to create user:", err);
-    alert("Failed to create user");
+    alert(err.message || "Failed to create user");
   }
 };
 
@@ -108,7 +104,7 @@ const handleRoleChange = async (id, role) => {
     await loadUsers();
   } catch (err) {
     console.error(err);
-    alert("Failed to change role");
+    alert(err.message || "Failed to change role");
   }
 };
 
@@ -174,9 +170,9 @@ const handleDelete = async (id) => {
 
               <td className="border p-2">
 
-{canAssignRoles && (
+          {canAssignRoles ? (
             <select
-              value={user.role}
+              value={user.role_name || user.role || ""}
               onChange={(e) =>
                 handleRoleChange(user.id, e.target.value)
               }
@@ -188,7 +184,11 @@ const handleDelete = async (id) => {
                 </option>
               ))}
             </select>
-)}
+          ) : (
+            <span className="capitalize">
+              {user.role_name || user.role || "—"}
+            </span>
+          )}
           
               </td>
 
