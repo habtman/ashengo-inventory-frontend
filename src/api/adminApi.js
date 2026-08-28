@@ -27,7 +27,8 @@ const adminApi = {
   },
 
   getAuditUsers: () =>
-    apiFetch("/api/v1/admin/audit-users")
+    apiFetch("/api/v1/admin/audit-users"),
+
 
 };
 

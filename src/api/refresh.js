@@ -6,7 +6,20 @@ export async function refreshToken() {
     credentials: "include", // required for cookie
   });
 
-  if (!res.ok) return null;
+  if (!res.ok) {
+    let error = "Refresh failed";
+
+    try {
+      const data = await res.json();
+      error = data.error || error;
+    } catch (err) {
+      console.error("❌ Failed to parse refresh error response:", err);
+    }
+
+    console.error("❌ Refresh failed:", res.status, error);
+
+    return null;
+  }
 
   const data = await res.json();
 
