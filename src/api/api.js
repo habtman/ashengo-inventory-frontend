@@ -3,8 +3,6 @@ import { refreshToken } from "./refresh";
 const API_BASE = "https://ashengo-inventory-production.fly.dev";
 
 export async function apiFetch(endpoint, options = {}) {
-  const accessToken = localStorage.getItem("accessToken");
-
   const makeRequest = async (token) => {
     const headers = {
       ...(token && { Authorization: `Bearer ${token}` }),
@@ -23,22 +21,22 @@ export async function apiFetch(endpoint, options = {}) {
     });
   };
 
-  let res = await makeRequest(accessToken);
+let res = await makeRequest(
+  localStorage.getItem("accessToken")
+);
 
-  // 🔁 Handle expired token
-  if (res.status === 401) {
-    const newToken = await refreshToken();
+if (res.status === 401) {
+  const newToken = await refreshToken();
 
-    if (!newToken) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-        localStorage.removeItem("permissions");
-        window.location.href = "/login";
-     throw new Error("Session expired");
-    }
+  if (!newToken) {
+    localStorage.clear();
+    window.location.href = "/login";
 
-    res = await makeRequest(newToken);
+    throw new Error("Session expired");
   }
+
+  res = await makeRequest(newToken);
+}
 
   // ❌ Proper error handling
   if (!res.ok) {
