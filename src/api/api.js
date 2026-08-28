@@ -2,14 +2,30 @@ import { refreshToken } from "./refresh";
 
 const API_BASE = "https://ashengo-inventory-production.fly.dev";
 
+let refreshPromise = null;
+
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = refreshToken()
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
 export async function apiFetch(endpoint, options = {}) {
+  let accessToken = localStorage.getItem("accessToken");
+
   const makeRequest = async (token) => {
     const headers = {
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
+      ...(token
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
+      ...(options.headers || {}),
     };
 
-    // Only set JSON content type if we're NOT uploading files
     if (!(options.body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
     }
@@ -21,38 +37,67 @@ export async function apiFetch(endpoint, options = {}) {
     });
   };
 
-let res = await makeRequest(
-  localStorage.getItem("accessToken")
-);
+  let res = await makeRequest(accessToken);
 
-if (res.status === 401) {
-  const newToken = await refreshToken();
+  /*
+  |--------------------------------------------------------------------------
+  | Access token expired
+  |--------------------------------------------------------------------------
+  */
 
-  if (!newToken) {
-    localStorage.clear();
-    window.location.href = "/login";
+  if (res.status === 401) {
+    const newToken = await refreshAccessToken();
 
-    throw new Error("Session expired");
+    if (!newToken) {
+      localStorage.removeItem("accessToken");
+
+      window.location.href = "/login";
+
+      throw new Error("Session expired");
+    }
+
+    accessToken = newToken;
+
+    res = await makeRequest(accessToken);
   }
 
-  res = await makeRequest(newToken);
-}
+  /*
+  |--------------------------------------------------------------------------
+  | Authorization failure
+  |--------------------------------------------------------------------------
+  |
+  | IMPORTANT:
+  | 403 means the authenticated identity does not have permission.
+  | Do NOT refresh the token on 403.
+  |
+  |--------------------------------------------------------------------------
+  */
 
-  // ❌ Proper error handling
   if (!res.ok) {
     let errorMessage = "API Error";
 
     try {
       const errorData = await res.json();
-      errorMessage = errorData.error || errorMessage;
+
+      errorMessage =
+        errorData.error ||
+        errorMessage;
+
     } catch {
-      errorMessage = res.statusText;
+      errorMessage =
+        res.statusText ||
+        errorMessage;
     }
 
     throw new Error(errorMessage);
   }
 
-  // Handle no-content
+  /*
+  |--------------------------------------------------------------------------
+  | No content
+  |--------------------------------------------------------------------------
+  */
+
   if (res.status === 204) {
     return null;
   }
