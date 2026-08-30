@@ -4,14 +4,12 @@ const API_BASE =
   "https://ashengo-inventory-production.fly.dev";
 
 export async function refreshToken() {
-
   try {
-
     const res = await fetch(
       `${API_BASE}/api/v1/auth/refresh`,
       {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
       }
     );
 
@@ -19,8 +17,7 @@ export async function refreshToken() {
       return null;
     }
 
-    const data =
-      await res.json();
+    const data = await res.json();
 
     if (!data?.accessToken) {
       return null;
@@ -31,14 +28,9 @@ export async function refreshToken() {
       data.accessToken
     );
 
-    console.log(
-      "✅ Access token refreshed"
-    );
-
     return data.accessToken;
 
   } catch (err) {
-
     console.error(
       "❌ Refresh request failed:",
       err

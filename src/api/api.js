@@ -1,202 +1,104 @@
+const API_BASE = "https://ashengo-inventory-production.fly.dev";
+
 import { refreshToken } from "./refresh";
-
-const API_BASE =
-  "https://ashengo-inventory-production.fly.dev";
-
-/*
-|--------------------------------------------------------------------------
-| Shared refresh lock
-|--------------------------------------------------------------------------
-|
-| If multiple requests receive 401 simultaneously,
-| only ONE refresh request is allowed to run.
-|
-*/
 
 let refreshPromise = null;
 
 async function getFreshAccessToken() {
-
+  // Prevent multiple simultaneous requests from
+  // attempting multiple refresh rotations.
   if (!refreshPromise) {
-
-    refreshPromise =
-      refreshToken()
-        .finally(() => {
-          refreshPromise = null;
-        });
+    refreshPromise = refreshToken().finally(() => {
+      refreshPromise = null;
+    });
   }
 
   return refreshPromise;
 }
 
-export async function apiFetch(
-  endpoint,
-  options = {}
-) {
+export async function apiFetch(path, options = {}, retry = false) {
+  let accessToken = localStorage.getItem("accessToken");
+
+  const headers = new Headers(options.headers || {});
+
+  headers.set("Content-Type", "application/json");
+
+  if (accessToken) {
+    headers.set("Authorization", `Bearer ${accessToken}`);
+  }
+
+  let response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+    credentials: "include",
+  });
 
   /*
   |--------------------------------------------------------------------------
-  | Current access token
+  | 403 = AUTHENTICATED BUT NOT AUTHORIZED
   |--------------------------------------------------------------------------
   */
 
-  const accessToken =
-    localStorage.getItem(
-      "accessToken"
-    );
+  if (response.status === 403) {
+    const data = await response.json().catch(() => ({}));
 
-  /*
-  |--------------------------------------------------------------------------
-  | Request builder
-  |--------------------------------------------------------------------------
-  */
-
-  const makeRequest =
-    async (token) => {
-
-      const headers = {
-        ...(token && {
-          Authorization:
-            `Bearer ${token}`
-        }),
-        ...options.headers
-      };
-
-      /*
-      | Don't overwrite FormData headers.
-      */
-
-      if (
-        !(options.body instanceof FormData)
-      ) {
-        headers["Content-Type"] =
-          "application/json";
-      }
-
-      return fetch(
-        `${API_BASE}${endpoint}`,
-        {
-          ...options,
-          headers,
-          credentials: "include"
-        }
-      );
-    };
-
-  /*
-  |--------------------------------------------------------------------------
-  | First request
-  |--------------------------------------------------------------------------
-  */
-
-  let res =
-    await makeRequest(
-      accessToken
-    );
-
-  /*
-  |--------------------------------------------------------------------------
-  | Access token expired
-  |--------------------------------------------------------------------------
-  */
-
-  if (res.status === 401) {
-
-    let newToken;
-
-    try {
-
-      newToken =
-        await getFreshAccessToken();
-
-    } catch {
-
-      newToken = null;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Refresh failed
-    |--------------------------------------------------------------------------
-    */
-
-    if (!newToken) {
-
-      localStorage.removeItem(
-        "accessToken"
-      );
-
-      /*
-      | Do not call localStorage.clear().
-      | Only remove authentication state.
-      */
-
-      if (
-        window.location.pathname !==
-        "/login"
-      ) {
-        window.location.href =
-          "/login";
-      }
-
-      throw new Error(
-        "Session expired"
-      );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Retry with fresh token
-    |--------------------------------------------------------------------------
-    */
-
-    res =
-      await makeRequest(
-        newToken
-      );
+    throw new Error(data.error || "Forbidden");
   }
 
   /*
   |--------------------------------------------------------------------------
-  | API error
+  | 401 = ACCESS TOKEN INVALID / EXPIRED
   |--------------------------------------------------------------------------
   */
 
-  if (!res.ok) {
+  if (response.status === 401 && !retry) {
+    const newToken = await getFreshAccessToken();
 
-    let errorMessage =
-      "API Error";
-
-    try {
-
-      const errorData =
-        await res.json();
-
-      errorMessage =
-        errorData.error ||
-        errorMessage;
-
-    } catch {
-
-      errorMessage =
-        res.statusText ||
-        errorMessage;
+    if (newToken) {
+      return apiFetch(
+        path,
+        options,
+        true
+      );
     }
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Refresh failed
+  |--------------------------------------------------------------------------
+  */
+
+  if (response.status === 401) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+
+    throw new Error("Session expired");
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Other errors
+  |--------------------------------------------------------------------------
+  */
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
 
     throw new Error(
-      errorMessage
+      data.error || `Request failed (${response.status})`
     );
   }
 
   /*
   |--------------------------------------------------------------------------
-  | No content
+  | Empty response
   |--------------------------------------------------------------------------
   */
 
-  if (res.status === 204) {
+  if (response.status === 204) {
     return null;
   }
 
-  return res.json();
+  return response.json();
 }
