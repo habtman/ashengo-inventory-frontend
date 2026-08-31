@@ -1,13 +1,22 @@
-// src/api/refresh.js
-
 const API_BASE =
   "https://ashengo-inventory-production.fly.dev";
+
+/*
+|--------------------------------------------------------------------------
+| Single-flight refresh
+|--------------------------------------------------------------------------
+|
+| Only ONE refresh request may be running at a time.
+|
+| If several API requests receive 401 simultaneously, they all wait
+| for the same refresh operation.
+|
+|--------------------------------------------------------------------------
+*/
 
 let refreshPromise = null;
 
 export async function refreshToken() {
-  // If another request is already refreshing,
-  // everyone waits for that same refresh operation.
   if (refreshPromise) {
     return refreshPromise;
   }
@@ -37,10 +46,11 @@ export async function refreshToken() {
         data.accessToken
       );
 
+      console.log("✅ Access token refreshed");
+
       return data.accessToken;
 
     } catch (err) {
-
       console.error(
         "❌ Refresh request failed:",
         err
@@ -49,9 +59,7 @@ export async function refreshToken() {
       return null;
 
     } finally {
-
       refreshPromise = null;
-
     }
   })();
 
