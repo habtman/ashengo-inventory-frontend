@@ -1,80 +1,95 @@
-// src/api/api.js
-
 import { refreshToken } from "./refresh";
 
 const API_BASE =
   "https://ashengo-inventory-production.fly.dev";
 
-let logoutInProgress = false;
-
-function clearSession() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("user");
-  localStorage.removeItem("permissions");
-}
-
-export async function apiFetch(endpoint, options = {}) {
-
-  const makeRequest = async (token) => {
-
-    const headers = {
-      ...(token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {}),
-      ...(options.headers || {}),
-    };
-
-    if (!(options.body instanceof FormData)) {
-      headers["Content-Type"] =
-        "application/json";
-    }
-
-    return fetch(
-      `${API_BASE}${endpoint}`,
-      {
-        ...options,
-        headers,
-        credentials: "include",
-      }
-    );
+async function makeRequest(endpoint, options, token) {
+  const headers = {
+    ...(token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {}),
+    ...(options.headers || {}),
   };
-
-  let token =
-    localStorage.getItem("accessToken");
-
-  let res =
-    await makeRequest(token);
 
   /*
   |--------------------------------------------------------------------------
-  | ACCESS TOKEN EXPIRED
+  | JSON requests
+  |--------------------------------------------------------------------------
+  */
+
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return fetch(
+    `${API_BASE}${endpoint}`,
+    {
+      ...options,
+      headers,
+      credentials: "include",
+    }
+  );
+}
+
+export async function apiFetch(
+  endpoint,
+  options = {}
+) {
+  let token =
+    localStorage.getItem("accessToken");
+
+  /*
+  |--------------------------------------------------------------------------
+  | First request
+  |--------------------------------------------------------------------------
+  */
+
+  let res = await makeRequest(
+    endpoint,
+    options,
+    token
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | Access token expired
+  |--------------------------------------------------------------------------
+  |
+  | Only 401 means "try refreshing".
+  |
+  | 403 means the authenticated user does not
+  | have permission and MUST NOT trigger refresh.
+  |
   |--------------------------------------------------------------------------
   */
 
   if (res.status === 401) {
-
     const newToken =
       await refreshToken();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Refresh failed
-    |--------------------------------------------------------------------------
-    */
-
     if (!newToken) {
+      /*
+      |--------------------------------------------------------------------------
+      | Session is genuinely dead
+      |--------------------------------------------------------------------------
+      */
 
-      if (!logoutInProgress) {
+      localStorage.removeItem(
+        "accessToken"
+      );
 
-        logoutInProgress = true;
+      localStorage.removeItem(
+        "user"
+      );
 
-        clearSession();
+      localStorage.removeItem(
+        "permissions"
+      );
 
-        window.location.href =
-          "/login";
-      }
+      window.location.href =
+        "/login";
 
       throw new Error(
         "Session expired"
@@ -85,58 +100,49 @@ export async function apiFetch(endpoint, options = {}) {
 
     /*
     |--------------------------------------------------------------------------
-    | Retry original request once
+    | Retry exactly once
     |--------------------------------------------------------------------------
     */
 
-    res =
-      await makeRequest(token);
+    res = await makeRequest(
+      endpoint,
+      options,
+      token
+    );
   }
 
   /*
   |--------------------------------------------------------------------------
-  | IMPORTANT:
-  |
-  | 403 is NOT a session expiration.
-  |
-  | It means the authenticated user does
-  | not currently have permission.
+  | Permission / API errors
   |--------------------------------------------------------------------------
   */
 
   if (!res.ok) {
-
     let errorMessage =
       "API Error";
 
     try {
-
       const errorData =
         await res.json();
 
       errorMessage =
-        errorData.error ||
+        errorData?.error ||
         errorMessage;
 
     } catch {
-
       errorMessage =
         res.statusText ||
         errorMessage;
     }
 
-    const error =
-      new Error(errorMessage);
-
-    error.status =
-      res.status;
-
-    throw error;
+    throw new Error(
+      errorMessage
+    );
   }
 
   /*
   |--------------------------------------------------------------------------
-  | NO CONTENT
+  | No content
   |--------------------------------------------------------------------------
   */
 
