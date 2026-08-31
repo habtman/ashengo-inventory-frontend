@@ -1,127 +1,120 @@
 import { useState } from "react";
 
 import { AuthContext } from "./AuthContext";
-
 import { apiFetch } from "../api/api";
+import { logout as logoutSession } from "../utils/logout";
 
-import { logoutRequest } from "../api/authLogout";
+export default function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
 
-export default function AuthProvider({
-  children
-}) {
+  const [accessToken, setAccessToken] = useState(() => {
+    return localStorage.getItem("accessToken");
+  });
 
-  const [user, setUser] =
-    useState(() => {
+  const [permissions, setPermissions] = useState(() => {
+    try {
+      const stored = localStorage.getItem("permissions");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
-      try {
+  /*
+  |--------------------------------------------------------------------------
+  | Load permissions from server
+  |--------------------------------------------------------------------------
+  */
 
-        return JSON.parse(
-          localStorage.getItem("user")
-        );
+  const loadPermissions = async () => {
+    const data = await apiFetch("/api/v1/permissions");
 
-      } catch {
+    const permissionList = Array.isArray(data?.permissions)
+      ? data.permissions
+      : [];
 
-        return null;
-      }
-    });
-
-  const [accessToken, setAccessToken] =
-    useState(
-      localStorage.getItem(
-        "accessToken"
-      )
+    localStorage.setItem(
+      "permissions",
+      JSON.stringify(permissionList)
     );
 
-  const [permissions, setPermissions] =
-    useState(() => {
+    setPermissions(permissionList);
 
-      try {
+    return permissionList;
+  };
 
-        return (
-          JSON.parse(
-            localStorage.getItem(
-              "permissions"
-            )
-          ) || []
-        );
+  /*
+  |--------------------------------------------------------------------------
+  | LOGIN
+  |--------------------------------------------------------------------------
+  */
 
-      } catch {
+  const login = async ({ user, accessToken }) => {
+    localStorage.setItem(
+      "user",
+      JSON.stringify(user)
+    );
 
-        return [];
-      }
-    });
-
-  const loadPermissions =
-    async () => {
-
-      const data =
-        await apiFetch(
-          "/api/v1/permissions"
-        );
-
-      const permissionList =
-        Array.isArray(
-          data.permissions
-        )
-          ? data.permissions
-          : [];
-
-      localStorage.setItem(
-        "permissions",
-        JSON.stringify(
-          permissionList
-        )
-      );
-
-      setPermissions(
-        permissionList
-      );
-
-      return permissionList;
-    };
-
-  const login =
-    async ({
-      user,
+    localStorage.setItem(
+      "accessToken",
       accessToken
-    }) => {
+    );
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(user)
-      );
+    setUser(user);
+    setAccessToken(accessToken);
 
-      localStorage.setItem(
-        "accessToken",
-        accessToken
-      );
+    await loadPermissions();
+  };
 
-      setUser(user);
+  /*
+  |--------------------------------------------------------------------------
+  | LOGOUT
+  |--------------------------------------------------------------------------
+  */
 
-      setAccessToken(
-        accessToken
-      );
+  const logout = async () => {
+    try {
+      await logoutSession();
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    }
 
-      await loadPermissions();
-    };
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("permissions");
 
-  const logout =
-    async () => {
+    // refreshToken is HttpOnly and therefore cannot actually
+    // be removed from localStorage unless an old implementation
+    // previously stored one there.
+    localStorage.removeItem("refreshToken");
 
-      await logoutRequest();
+    setUser(null);
+    setAccessToken(null);
+    setPermissions([]);
+  };
 
-      setUser(null);
+  /*
+  |--------------------------------------------------------------------------
+  | PERMISSIONS
+  |--------------------------------------------------------------------------
+  */
 
-      setAccessToken(null);
+  const hasPermission = (permission) => {
+    return permissions.includes(permission);
+  };
 
-      setPermissions([]);
-    };
-
-  const hasPermission =
-    (permission) =>
-      permissions.includes(
-        permission
-      );
+  /*
+  |--------------------------------------------------------------------------
+  | CONTEXT
+  |--------------------------------------------------------------------------
+  */
 
   return (
     <AuthContext.Provider
@@ -129,11 +122,15 @@ export default function AuthProvider({
         user,
         accessToken,
         permissions,
+
         hasPermission,
-        isAuthenticated:
-          !!accessToken,
+
+        isAuthenticated: Boolean(accessToken),
+
         login,
         logout,
+
+        loadPermissions,
       }}
     >
       {children}

@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/auth/Login";
-import Forbidden from "./pages/auth/Forbidden";
 
+import Forbidden from "./pages/auth/Forbidden";
+import LogoutButton from "./pages/auth/LogoutButton"; 
 import Inventory from "./pages/inventory/InventoryPage";
 
 
