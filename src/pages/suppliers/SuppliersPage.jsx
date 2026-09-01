@@ -278,7 +278,7 @@ const totalPages = Math.ceil(
                     </button>
             )}
 
-                    {canEditSuppliers && supplier.is_active ? (
+                    {supplier.is_active ? (
                     <button
                         onClick={() =>
                         handleDeactivateSupplier(supplier.id)
