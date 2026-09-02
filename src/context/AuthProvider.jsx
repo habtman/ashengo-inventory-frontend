@@ -13,6 +13,25 @@ const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 const ACTIVITY_THROTTLE = 30 * 1000; // update timestamp at most every 30 sec
 
 export default function AuthProvider({ children }) {
+
+function decodeJwtPayload(token) {
+  try {
+    const payload = token.split(".")[1];
+
+    return JSON.parse(
+      atob(
+        payload
+          .replace(/-/g, "+")
+          .replace(/_/g, "/")
+      )
+    );
+  } catch {
+    return null;
+  }
+}
+
+
+
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user"));
@@ -368,6 +387,61 @@ export default function AuthProvider({ children }) {
     recordActivity,
   ]);
 
+
+  useEffect(() => {
+  const handleTokenRefresh = (event) => {
+    const newToken =
+      event.detail?.accessToken;
+
+    if (!newToken) {
+      return;
+    }
+
+    setAccessToken(newToken);
+
+    const payload =
+      decodeJwtPayload(newToken);
+
+    if (!payload) {
+      return;
+    }
+
+    setUser((currentUser) => {
+      if (!currentUser) {
+        return currentUser;
+      }
+
+      const updatedUser = {
+        ...currentUser,
+        id: payload.id,
+        email: payload.email,
+        role: payload.role,
+      };
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
+
+      return updatedUser;
+    });
+  };
+
+  window.addEventListener(
+    "auth:token-refreshed",
+    handleTokenRefresh
+  );
+
+  return () => {
+    window.removeEventListener(
+      "auth:token-refreshed",
+      handleTokenRefresh
+    );
+  };
+}, []);
+
+  
+
   /*
   |--------------------------------------------------------------------------
   | Permission helper
@@ -379,6 +453,10 @@ export default function AuthProvider({ children }) {
       permissions.includes(permission),
     [permissions]
   );
+
+
+
+  
 
   return (
     <AuthContext.Provider
