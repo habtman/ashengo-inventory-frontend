@@ -1,6 +1,6 @@
 const API_BASE = "https://ashengo-inventory-production.fly.dev";
 
-export async function logout() {
+export async function clearAuthStorage() {
   const accessToken = localStorage.getItem("accessToken");
 
   try {
