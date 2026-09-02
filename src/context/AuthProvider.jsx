@@ -1,120 +1,384 @@
-import { useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { AuthContext } from "./AuthContext";
 import { apiFetch } from "../api/api";
-import { logout as logoutSession } from "../utils/logout";
+import { clearAuthStorage } from "../utils/logout";
+
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const ACTIVITY_THROTTLE = 30 * 1000; // update timestamp at most every 30 sec
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      const stored = localStorage.getItem("user");
-      return stored ? JSON.parse(stored) : null;
+      return JSON.parse(localStorage.getItem("user"));
     } catch {
       return null;
     }
   });
 
-  const [accessToken, setAccessToken] = useState(() => {
-    return localStorage.getItem("accessToken");
-  });
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem("accessToken")
+  );
 
   const [permissions, setPermissions] = useState(() => {
     try {
-      const stored = localStorage.getItem("permissions");
-      return stored ? JSON.parse(stored) : [];
+      return (
+        JSON.parse(
+          localStorage.getItem("permissions")
+        ) || []
+      );
     } catch {
       return [];
     }
   });
 
-  /*
-  |--------------------------------------------------------------------------
-  | Load permissions from server
-  |--------------------------------------------------------------------------
-  */
-
-  const loadPermissions = async () => {
-    const data = await apiFetch("/api/v1/permissions");
-
-    const permissionList = Array.isArray(data?.permissions)
-      ? data.permissions
-      : [];
-
-    localStorage.setItem(
-      "permissions",
-      JSON.stringify(permissionList)
-    );
-
-    setPermissions(permissionList);
-
-    return permissionList;
-  };
+  const lastActivityWrite = useRef(0);
+  const loggingOut = useRef(false);
 
   /*
   |--------------------------------------------------------------------------
-  | LOGIN
+  | Clear local authentication state
   |--------------------------------------------------------------------------
   */
 
-  const login = async ({ user, accessToken }) => {
-    localStorage.setItem(
-      "user",
-      JSON.stringify(user)
-    );
-
-    localStorage.setItem(
-      "accessToken",
-      accessToken
-    );
-
-    setUser(user);
-    setAccessToken(accessToken);
-
-    await loadPermissions();
-  };
-
-  /*
-  |--------------------------------------------------------------------------
-  | LOGOUT
-  |--------------------------------------------------------------------------
-  */
-
-  const logout = async () => {
-    try {
-      await logoutSession();
-    } catch (err) {
-      console.error("Logout request failed:", err);
-    }
-
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("permissions");
-
-    // refreshToken is HttpOnly and therefore cannot actually
-    // be removed from localStorage unless an old implementation
-    // previously stored one there.
-    localStorage.removeItem("refreshToken");
+  const clearSession = useCallback(() => {
+    clearAuthStorage();
 
     setUser(null);
     setAccessToken(null);
     setPermissions([]);
-  };
+  }, []);
 
   /*
   |--------------------------------------------------------------------------
-  | PERMISSIONS
+  | Server logout
   |--------------------------------------------------------------------------
   */
 
-  const hasPermission = (permission) => {
-    return permissions.includes(permission);
-  };
+  const performLogout = useCallback(async () => {
+    if (loggingOut.current) {
+      return;
+    }
+
+    loggingOut.current = true;
+
+    try {
+      const token =
+        localStorage.getItem("accessToken");
+
+      await fetch(
+        "https://ashengo-inventory-production.fly.dev/api/v1/auth/logout",
+        {
+          method: "POST",
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : {},
+          credentials: "include",
+        }
+      );
+    } catch (err) {
+      console.warn(
+        "Logout request failed; clearing local session.",
+        err
+      );
+    } finally {
+      clearSession();
+
+      window.location.replace("/login");
+    }
+  }, [clearSession]);
 
   /*
   |--------------------------------------------------------------------------
-  | CONTEXT
+  | Record user activity
   |--------------------------------------------------------------------------
   */
+
+  const recordActivity = useCallback(() => {
+    if (!localStorage.getItem("accessToken")) {
+      return;
+    }
+
+    const now = Date.now();
+
+    /*
+     * Do not write to localStorage for every mouse movement.
+     */
+
+    if (
+      now - lastActivityWrite.current <
+      ACTIVITY_THROTTLE
+    ) {
+      return;
+    }
+
+    lastActivityWrite.current = now;
+
+    localStorage.setItem(
+      "lastActivity",
+      String(now)
+    );
+  }, []);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Check inactivity
+  |--------------------------------------------------------------------------
+  */
+
+  const checkInactivity = useCallback(() => {
+    const token =
+      localStorage.getItem("accessToken");
+
+    if (!token) {
+      return;
+    }
+
+    const storedActivity =
+      Number(
+        localStorage.getItem("lastActivity")
+      );
+
+    /*
+     * If there is no activity timestamp, initialize it.
+     */
+
+    if (!storedActivity) {
+      const now = Date.now();
+
+      localStorage.setItem(
+        "lastActivity",
+        String(now)
+      );
+
+      lastActivityWrite.current = now;
+
+      return;
+    }
+
+    const inactiveFor =
+      Date.now() - storedActivity;
+
+    if (
+      inactiveFor >=
+      INACTIVITY_TIMEOUT
+    ) {
+      console.log(
+        "⏰ Session expired due to inactivity."
+      );
+
+      performLogout();
+    }
+  }, [performLogout]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Load permissions
+  |--------------------------------------------------------------------------
+  */
+
+  const loadPermissions = useCallback(
+    async () => {
+      const data =
+        await apiFetch(
+          "/api/v1/permissions"
+        );
+
+      const permissionList =
+        Array.isArray(data.permissions)
+          ? data.permissions
+          : [];
+
+      localStorage.setItem(
+        "permissions",
+        JSON.stringify(permissionList)
+      );
+
+      setPermissions(permissionList);
+
+      return permissionList;
+    },
+    []
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | Login
+  |--------------------------------------------------------------------------
+  */
+
+  const login = useCallback(
+    async ({
+      user,
+      accessToken,
+    }) => {
+      localStorage.setItem(
+        "user",
+        JSON.stringify(user)
+      );
+
+      localStorage.setItem(
+        "accessToken",
+        accessToken
+      );
+
+      const now = Date.now();
+
+      localStorage.setItem(
+        "lastActivity",
+        String(now)
+      );
+
+      lastActivityWrite.current = now;
+
+      setUser(user);
+      setAccessToken(accessToken);
+
+      await loadPermissions();
+    },
+    [loadPermissions]
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | Logout
+  |--------------------------------------------------------------------------
+  */
+
+  const logout = useCallback(
+    async () => {
+      await performLogout();
+    },
+    [performLogout]
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | Activity listeners
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    /*
+     * Check immediately when AuthProvider starts.
+     */
+
+    checkInactivity();
+
+    const activityEvents = [
+      "mousedown",
+      "mousemove",
+      "keydown",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
+
+    const handleActivity = () => {
+      checkInactivity();
+
+      if (
+        localStorage.getItem("accessToken")
+      ) {
+        recordActivity();
+      }
+    };
+
+    activityEvents.forEach((event) => {
+      window.addEventListener(
+        event,
+        handleActivity,
+        { passive: true }
+      );
+    });
+
+    /*
+     * This is extremely important for laptop sleep/wake.
+     *
+     * When the browser becomes visible again,
+     * compare Date.now() with lastActivity.
+     */
+
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState ===
+        "visible"
+      ) {
+        checkInactivity();
+      }
+    };
+
+    const handleFocus = () => {
+      checkInactivity();
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibilityChange
+    );
+
+    window.addEventListener(
+      "focus",
+      handleFocus
+    );
+
+    /*
+     * Periodic safety check while browser is awake.
+     */
+
+    const interval = setInterval(
+      checkInactivity,
+      60 * 1000
+    );
+
+    return () => {
+      activityEvents.forEach((event) => {
+        window.removeEventListener(
+          event,
+          handleActivity
+        );
+      });
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange
+      );
+
+      window.removeEventListener(
+        "focus",
+        handleFocus
+      );
+
+      clearInterval(interval);
+    };
+  }, [
+    accessToken,
+    checkInactivity,
+    recordActivity,
+  ]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Permission helper
+  |--------------------------------------------------------------------------
+  */
+
+  const hasPermission = useCallback(
+    (permission) =>
+      permissions.includes(permission),
+    [permissions]
+  );
 
   return (
     <AuthContext.Provider
@@ -122,15 +386,10 @@ export default function AuthProvider({ children }) {
         user,
         accessToken,
         permissions,
-
         hasPermission,
-
-        isAuthenticated: Boolean(accessToken),
-
+        isAuthenticated: !!accessToken,
         login,
         logout,
-
-        loadPermissions,
       }}
     >
       {children}
