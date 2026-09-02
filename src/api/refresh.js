@@ -1,4 +1,5 @@
-const API_BASE = "https://ashengo-inventory-production.fly.dev";
+const API_BASE =
+  "https://ashengo-inventory-production.fly.dev";
 
 export async function refreshToken() {
   try {
@@ -25,10 +26,23 @@ export async function refreshToken() {
       data.accessToken
     );
 
+    /*
+    |--------------------------------------------------------------------------
+    | Notify AuthProvider
+    |--------------------------------------------------------------------------
+    */
+
+    window.dispatchEvent(
+      new CustomEvent("auth:token-refreshed", {
+        detail: {
+          accessToken: data.accessToken,
+        },
+      })
+    );
+
     console.log("✅ Access token refreshed");
 
     return data.accessToken;
-
   } catch (err) {
     console.error(
       "❌ Refresh request failed:",
