@@ -9,7 +9,7 @@ import { AuthContext } from "./AuthContext";
 import { apiFetch } from "../api/api";
 import { clearAuthStorage } from "../utils/logout";
 
-const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 30 minutes
 const ACTIVITY_THROTTLE = 30 * 1000; // update timestamp at most every 30 sec
 
 export default function AuthProvider({ children }) {
