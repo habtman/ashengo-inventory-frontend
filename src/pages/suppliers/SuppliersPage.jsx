@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { hasPermission } from '../../utils/permissions';  
 
 export default function SuppliersPage() {
-    const canViewsuppliers = hasPermission("suppliers.view");
+    const canViewsuppliers = hasPermission("suppliers.edit");
     const canEditSuppliers = hasPermission("suppliers.edit");
     const canDeletesuppliers = hasPermission("suppliers.delete");
    
@@ -180,7 +180,7 @@ const totalPages = Math.ceil(
         <h2 className="text-xl font-bold">
           Suppliers({suppliers.length})
         </h2>
-
+{canEditSuppliers && (
         <button
             onClick={() => {
                 setEditingSupplier(null);
@@ -191,6 +191,7 @@ const totalPages = Math.ceil(
             >
             + New Supplier
         </button>
+)}
         
       </div>
       <div className="overflow-x-auto">

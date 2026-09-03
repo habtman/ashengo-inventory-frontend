@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";  
 import supplierApi from "../../api/supplierApi";
-//import { hasPermission } from "../../utils/permissions"; 
+import { formatCurrency } from "../../utils/currency";  
 
 export default function SupplierDetailsPage() {
   const { id } = useParams();
   
-  /*const canCreateSupplier = hasPermission("suppliers.create");
-  const canEditSupplier = hasPermission("suppliers.edit");
-  const canDeleteSupplier = hasPermission("suppliers.delete");*/
+
   
   const navigate = useNavigate();
 
@@ -138,15 +136,15 @@ export default function SupplierDetailsPage() {
             Total Spend
           </p>
           <p className="text-2xl font-bold">
-            $
-            {purchaseOrders
+            
+            {formatCurrency(purchaseOrders
               .reduce(
                 (sum, po) =>
                   sum +
                   Number(po.total_amount || 0),
                 0
               )
-              .toFixed(2)}
+              .toFixed(2))}
           </p>
         </div>
 
