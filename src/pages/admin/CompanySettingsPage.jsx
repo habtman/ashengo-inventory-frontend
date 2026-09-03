@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import settingsApi from "../../api/settingsApi";
-import { hasPermission } from "../../utils/permissions";
+
 
 export default function CompanySettingsPage() {
   const [loading, setLoading] = useState(true);
-   const canEditCompanySettings = hasPermission("settings.edit");
 
   const [form, setForm] = useState({
     company_name: "",
@@ -77,7 +76,7 @@ export default function CompanySettingsPage() {
       <h1 className="text-2xl font-bold mb-6">
         Company Settings
       </h1>
-{canEditCompanySettings && (
+
       <form
         onSubmit={handleSubmit}
         className="space-y-5"
@@ -240,7 +239,6 @@ export default function CompanySettingsPage() {
         </div>
 
       </form>
-)}
     </div>
   );
 }
