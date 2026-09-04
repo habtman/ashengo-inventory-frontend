@@ -10,7 +10,7 @@ export default function Sidebar() {
 
   const canViewUsers = hasPermission("users.view");
   const canViewAuditLogs = hasPermission("audit_logs.view");
-  const canEditCompanySettings = hasPermission("settings.company_edit");
+  const canViewCompanySettings = hasPermission("settings.view");
   const canViewCustomersDashboard = hasPermission("customers.manage_credit");
   const canViewAgingReports = hasPermission("customers.aging.view");
 
@@ -21,15 +21,14 @@ export default function Sidebar() {
     "dashboard.view",
     "users.view",
     "audit_logs.view",
-    "settings.company_edit"
+    "settings.view"
   );
 
   const canViewInventory = hasPermission("inventory.view");
   const canViewLocations = hasAnyPermission(
-    "locations.create",
-    "locations.edit",
-    "locations.delete"
-  );
+  "inventory.view",
+  "locations.view"
+)
 
   const canViewSalesOrders = hasPermission("sales_orders.view");
   const canViewCustomers = hasPermission("customers.view");
@@ -159,7 +158,7 @@ if (pathname.startsWith("/admin")) {
           </NavLink>
         )}
 
-        {canEditCompanySettings && (
+        {canViewCompanySettings && (
           <NavLink
             to="/admin/settings"
             className={linkClass}
