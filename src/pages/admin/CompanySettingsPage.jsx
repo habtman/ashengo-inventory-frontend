@@ -1,9 +1,16 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import settingsApi from "../../api/settingsApi";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://ashengo-inventory-production.fly.dev";
 
 export default function CompanySettingsPage() {
   const [loading, setLoading] = useState(true);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoPreview, setLogoPreview] = useState("");
+
+  const logoInputRef = useRef(null);
 
   const [form, setForm] = useState({
     company_name: "",
@@ -17,14 +24,22 @@ export default function CompanySettingsPage() {
     invoice_footer: ""
   });
 
-  useEffect(() => {
-    loadSettings();
+  const getLogoUrl = useCallback((logoUrl) => {
+    if (!logoUrl) return "";
+
+    if (
+      logoUrl.startsWith("http://") ||
+      logoUrl.startsWith("https://")
+    ) {
+      return logoUrl;
+    }
+
+    return `${API_BASE_URL}${logoUrl}`;
   }, []);
 
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
-      const data =
-        await settingsApi.getCompanySettings();
+      const data = await settingsApi.getCompanySettings();
 
       if (data) {
         setForm({
@@ -38,13 +53,19 @@ export default function CompanySettingsPage() {
           currency: data.currency || "ETB",
           invoice_footer: data.invoice_footer || ""
         });
+
+        setLogoPreview(getLogoUrl(data.logo_url));
       }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [getLogoUrl]);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
 
   const handleChange = (e) => {
     setForm({
@@ -65,6 +86,44 @@ export default function CompanySettingsPage() {
       alert("Failed to save settings");
     }
   };
+
+  const handleLogoUpload = async (e) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  try {
+    setUploadingLogo(true);
+
+    const result =
+      await settingsApi.uploadCompanyLogo(file);
+
+    setForm((current) => ({
+      ...current,
+      logo_url: result.logo_url || ""
+    }));
+
+    setLogoPreview(
+      getLogoUrl(result.logo_url)
+    );
+
+    alert("Company logo uploaded successfully");
+  } catch (err) {
+    console.error(err);
+
+    alert(
+      err?.message ||
+      "Failed to upload company logo"
+    );
+  } finally {
+    setUploadingLogo(false);
+
+    // Allow selecting the same file again
+    if (logoInputRef.current) {
+      logoInputRef.current.value = "";
+    }
+  }
+};
 
   if (loading) {
     return <p>Loading company settings...</p>;
@@ -97,28 +156,48 @@ export default function CompanySettingsPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">
-            Logo URL
+          <label className="block font-medium mb-2">
+            Company Logo
           </label>
 
-          <input
-            type="text"
-            name="logo_url"
-            value={form.logo_url}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+          <div className="flex items-center gap-4">
+            {logoPreview ? (
+              <img
+                src={logoPreview}
+                alt="Company Logo"
+                className="h-24 w-40 object-contain border rounded-lg p-2 bg-white"
+              />
+            ) : (
+              <div className="h-24 w-40 flex items-center justify-center border rounded-lg text-gray-400">
+                No logo
+              </div>
+            )}
 
-        {form.logo_url && (
-          <div>
-            <img
-              src={form.logo_url}
-              alt="Company Logo"
-              className="h-20 object-contain border rounded p-2"
-            />
+            <div>
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                onChange={handleLogoUpload}
+                className="hidden"
+                id="company-logo-upload"
+              />
+
+              <label
+                htmlFor="company-logo-upload"
+                className="inline-block cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+              >
+                {uploadingLogo
+                  ? "Uploading..."
+                  : "Upload Logo"}
+              </label>
+
+              <p className="text-sm text-gray-500 mt-2">
+                PNG, JPG, JPEG or SVG. Maximum 5 MB.
+              </p>
+            </div>
           </div>
-        )}
+        </div>
 
         <div>
           <label className="block font-medium mb-1">
