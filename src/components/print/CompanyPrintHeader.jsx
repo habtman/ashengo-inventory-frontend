@@ -46,15 +46,11 @@ export default function CompanyPrintHeader({
     };
   }, []);
 
-  if (!company) {
+    if (!company) {
     return (
-      <div className="text-center border-b pb-4 mb-6">
-        <h1 className="text-3xl font-bold">
-          Ashengo Inventory
-        </h1>
-      </div>
+        <div className="border-b pb-6 mb-8 min-h-[120px]" />
     );
-  }
+    }
 
   const logoUrl = resolveLogoUrl(company.logo_url);
 
