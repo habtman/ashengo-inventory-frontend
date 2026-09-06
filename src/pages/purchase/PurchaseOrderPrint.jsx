@@ -61,16 +61,6 @@ useEffect(() => {
 
 }, [po, download]);
 
-useEffect(() => {
-  if (!po) return;
-
-  const timer = setTimeout(() => {
-    window.print();
-  }, 500);
-
-  return () => clearTimeout(timer);
-}, [po]);
-
   if (!po) {
     return <div>Loading...</div>;
   }
