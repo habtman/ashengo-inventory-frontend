@@ -2,6 +2,7 @@ import { useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import salesOrderApi from "../../api/salesOrderApi";
 import { formatCurrency } from "../../utils/currency";  
+import CompanyPrintHeader from "../../components/print/CompanyPrintHeader"; 
 
 export default function SalesOrderPrint() {
   const { id } = useParams();
@@ -56,33 +57,10 @@ useEffect(() => {
     >
       {/* Company Header */}
 
-      <div className="text-center border-b pb-4 mb-6">
-
-        <h1 className="text-3xl font-bold">
-          Ashengo Inventory
-        </h1>
-
-        <p>Addis Ababa, Ethiopia</p>
-
-        <p>
-          Tel: +251 xxx xxx xxx
-        </p>
-
-        <p>
-          Email: sales@ashengo.com
-        </p>
-
-      </div>
-
-      {/* Document Title */}
-
-      <div className="text-center mb-8">
-
-        <h1 className="text-3xl font-bold">
-          SALES ORDER
-        </h1>
-
-      </div>
+      <CompanyPrintHeader
+        documentTitle="SALES ORDER"
+        documentNumber={so.so_number}
+      />
 
       {/* Header Information */}
 
