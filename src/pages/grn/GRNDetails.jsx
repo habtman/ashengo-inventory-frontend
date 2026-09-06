@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import grnApi from "../../api/grnApi";
 import { formatCurrency } from "../../utils/currency";  
 import { hasPermission } from "../../utils/permissions"; 
+import CompanyPrintHeader from "../../components/print/CompanyPrintHeader";
 
 
 export default function GRNDetails() {
@@ -127,15 +128,11 @@ const localTotal = Number(grn.total_amount || 0);
   </div>
 
 </div>
-   <div className="mb-6">
 
-          <h2 className="font-bold text-lg">
-            Ashengo Inventory
-          </h2>
-
-          <p>Addis Ababa</p>
-
-      </div>
+      <CompanyPrintHeader
+        documentTitle="GOODS RECEIPT"
+        documentNumber={grn.grn_number}
+      />
 
       <div className="space-y-2 mb-6">
 
