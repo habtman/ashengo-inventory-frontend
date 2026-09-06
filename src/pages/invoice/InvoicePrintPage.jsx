@@ -4,6 +4,9 @@ import invoiceApi from "../../api/invoiceApi";
 import settingsApi from "../../api/settingsApi";  
 
 export default function InvoicePrintPage() {
+  const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://ashengo-inventory-production.fly.dev";
   const { id } = useParams();
 
   const [invoice, setInvoice] = useState(null);
@@ -48,21 +51,34 @@ useEffect(() => {
     <div className="max-w-4xl mx-auto p-8 bg-white">
 
       {/* Company Header */}
-     <div className="text-center mb-8">
+{/* Company Header */}
+      <div className="text-center mb-8">
+
+        {company?.logo_url && (
+          <img
+            src={
+              company.logo_url.startsWith("http://") ||
+              company.logo_url.startsWith("https://")
+                ? company.logo_url
+                : `${API_BASE_URL}${company.logo_url}`
+            }
+            alt={company?.company_name || "Company logo"}
+            className="mx-auto mb-4 h-24 max-w-xs object-contain"
+          />
+        )}
+
         <h1 className="text-3xl font-bold">
-            {company?.company_name || "Company Name"}
+          {company?.company_name || "Company Name"}
         </h1>
 
         <p>{company?.address}</p>
-
         <p>{company?.phone}</p>
-
         <p>{company?.email}</p>
 
         {company?.tax_number && (
-            <p>Tax No: {company.tax_number}</p>
+          <p>Tax No: {company.tax_number}</p>
         )}
-        </div>
+      </div>
 
       {/* Invoice Info */}
       <div className="flex justify-between mb-8">
