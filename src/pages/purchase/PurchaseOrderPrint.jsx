@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import html2pdf from "html2pdf.js";
 import CompanyPrintHeader from "../../components/print/CompanyPrintHeader"; 
-import { formatCurrency } from "../../utils/currency";  
+
 
 
 export default function PurchaseOrderPrint() {
@@ -175,11 +175,11 @@ useEffect(() => {
         </td>
 
         <td className="border p-2 text-right">
-          {formatCurrency(item.cost_price)}
+          {Number(item.cost_price).toFixed(2)}
         </td>
 
         <td className="border p-2 text-right">
-          {formatCurrency(item.total_amount)} 
+          {Number(item.total_amount).toFixed(2)}
         </td>
 
       </tr>
@@ -214,7 +214,7 @@ useEffect(() => {
               </td>
 
               <td className="border p-2 text-right font-bold text-lg">
-                {formatCurrency(po.total_amount)} 
+                {Number(po.total_amount).toFixed(2)}
               </td>
 
             </tr>
