@@ -2,6 +2,7 @@ import { useEffect, useState} from "react";
 import { useParams, useLocation } from "react-router-dom";
 import purchaseOrderApi from "../../api/purchaseOrderApi";
 import html2pdf from "html2pdf.js";
+import CompanyPrintHeader from "../../components/print/CompanyPrintHeader"; 
 
 
 export default function PurchaseOrderPrint() {
@@ -79,45 +80,10 @@ useEffect(() => {
       id="print-area"
       className="max-w-4xl mx-auto bg-white p-8"
     >
-      <div className="text-center border-b pb-4 mb-6">
-
-  <h1 className="text-3xl font-bold">
-    Ashengo Inventory
-  </h1>
-
-  <p>
-    Addis Ababa, Ethiopia
-  </p>
-
-  <p>
-    Tel: +251 xxx xxx xxx
-  </p>
-
-  <p>
-    Email: procurement@ashengo.com
-  </p>
-
-</div>
-      <div className="flex items-center justify-between border-b pb-4 mb-8">
-
-        <div>
-          {/* logo */}
-          <img
-            src="/logo.png"
-            alt="Ashengo"
-            className="h-16"
-          />
-        </div>
-
-        <div className="text-right">
-          <h1 className="text-3xl font-bold">
-            PURCHASE ORDER
-          </h1>
-
-          <p>{po.po_number}</p>
-        </div>
-
-      </div>
+      <CompanyPrintHeader
+        documentTitle="PURCHASE ORDER"
+        documentNumber={po.po_number}
+      />
 
   <div className="grid grid-cols-2 gap-8 mb-8">
 
