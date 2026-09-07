@@ -6,7 +6,7 @@ export default function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex justify-end items-center gap-2 p-4">
+    <div className="flex justify-center items-center gap-2 p-4">
 
       <button
         disabled={page === 1}
