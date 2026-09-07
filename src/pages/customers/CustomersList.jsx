@@ -81,7 +81,7 @@ export default function CustomersList() {
 
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="p-6">
 
         <table className="w-full border">
 

@@ -408,7 +408,7 @@ if (loading) {
 
 </div>
 
-
+<div className="p-6">
       <table className="w-full border">
         <thead className="bg-gray-100">
           <tr>
@@ -665,6 +665,7 @@ if (loading) {
         )}
         </tbody>
       </table>
+  </div>
 
 <div className="flex justify-between items-center mt-6">
 
