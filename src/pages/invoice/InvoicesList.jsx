@@ -692,7 +692,7 @@ if (loading) {
         px-3 py-2
         border
         rounded
-        disabled:opacity-40
+        disabled:opacity-50
       "
     >
       Previous
@@ -732,7 +732,7 @@ if (loading) {
         px-3 py-2
         border
         rounded
-        disabled:opacity-40
+        disabled:opacity-50
       "
     >
       Next
