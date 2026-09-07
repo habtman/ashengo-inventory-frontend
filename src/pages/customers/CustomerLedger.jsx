@@ -14,20 +14,23 @@ export default function CustomerLedger({ customerId, mode }) {
 
  
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await customerApi.getLedger(customerId);
-        setLedger(data);
-      } catch (err) {
-        console.error("Failed to load customer ledger:", err);
-      }
-    };
+useEffect(() => {
+  const load = async () => {
+    try {
+      const data = await customerApi.getLedger(customerId);
 
-    if (customerId) {
-      load();
+      setLedger(data);
+      setInvoicePage(1);
+      setPaymentPage(1);
+    } catch (err) {
+      console.error("Failed to load customer ledger:", err);
     }
-  }, [customerId]);
+  };
+
+  if (customerId) {
+    load();
+  }
+}, [customerId]);
 
   if (!ledger) {
     return null;
