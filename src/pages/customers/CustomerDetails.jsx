@@ -162,7 +162,7 @@ const totalPaid =
 
   <div className="p-6">
 
-    {canViewPayments && activeTab === "invoices" && (
+    {activeTab === "invoices" && (
       <CustomerLedger
         customerId={id}
         mode="invoices"
