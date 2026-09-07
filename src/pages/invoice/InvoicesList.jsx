@@ -177,7 +177,7 @@ if (loading) {
  
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white shadow rounded-xl">
+    <div className="p-6">
    
      <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">
@@ -408,7 +408,7 @@ if (loading) {
 
 </div>
 
-<div className="p-6">
+
       <table className="w-full border">
         <thead className="bg-gray-100">
           <tr>
@@ -665,7 +665,6 @@ if (loading) {
         )}
         </tbody>
       </table>
-  </div>
 
 <div className="flex justify-between items-center mt-6">
 
