@@ -54,6 +54,12 @@ const cards = [
     title: "Pending POs",
     value: data.pendingPOs
   },
+
+  {
+  title: "Draft Sales Orders",
+  value: data.draftSalesOrders
+  },
+
   {
     title: "Locations",
     value: data.locations
