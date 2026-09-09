@@ -60,8 +60,6 @@ const handleExport = async () => {
 
     const response =
         await adminApi.getAuditLogs({
-            page: 1,
-            limit: 100000,
             search,
             action,
             userId,
