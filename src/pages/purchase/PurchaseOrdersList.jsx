@@ -66,11 +66,15 @@ export default function PurchaseOrdersList() {
 
     const exportData = rows.map((order) => ({
       "PO #": order.po_number || "",
-      Supplier: order.supplier_name || "",
       "Supplier Code": order.supplier_code || "",
-      Status: order.status || "",
+      "Supplier Name": order.supplier_name || "",
+      "Created By": order.created_by_name || "",
+      "Approved By": order.approved_by_name || "",
       Currency: order.currency || "",
+      "Exchange Rate": Number(order.exchange_rate || 0),
+      "Foreign Total": Number(order.foreign_total || 0),
       "Total Amount": Number(order.total_amount || 0),
+      Status: order.status || "",
       "Created Date": order.created_at
         ? new Date(order.created_at).toLocaleString()
         : "",
@@ -80,17 +84,21 @@ export default function PurchaseOrdersList() {
 
     worksheet["!cols"] = [
       { wch: 20 },
+      { wch: 18 },
       { wch: 30 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 12 },
+      { wch: 16 },
+      { wch: 18 },
       { wch: 18 },
       { wch: 22 },
-      { wch: 12 },
-      { wch: 18 },
       { wch: 22 },
     ];
 
     if (exportData.length > 0) {
       worksheet["!autofilter"] = {
-        ref: `A1:G${exportData.length + 1}`,
+        ref: `A1:K${exportData.length + 1}`,
       };
     }
 
@@ -107,7 +115,10 @@ export default function PurchaseOrdersList() {
       "purchase-orders-filtered-report.xlsx"
     );
   } catch (error) {
-    console.error("Failed to export purchase orders:", error);
+    console.error(
+      "Failed to export purchase orders:",
+      error
+    );
   }
 };
 
