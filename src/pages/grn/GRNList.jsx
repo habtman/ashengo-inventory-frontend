@@ -180,6 +180,7 @@ const handlePrint = async () => {
       </div>
     </div>
 
+<div className="print:hidden">
       <GRNFilters
         search={search}
         setSearch={setSearch}
@@ -198,6 +199,7 @@ const handlePrint = async () => {
 
         setPage={setPage}
       />
+  </div>
 
       <table className="w-full border">
 
