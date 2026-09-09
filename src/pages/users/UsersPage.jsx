@@ -19,6 +19,11 @@ export default function UsersPage() {
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [creatingUser, setCreatingUser] = useState(false);
 
+  const [editingUser, setEditingUser] = useState(null);
+  const [editFullName, setEditFullName] = useState("");
+  const [showEdit, setShowEdit] = useState(false);
+
+
   /*
   |--------------------------------------------------------------------------
   | PERMISSIONS
@@ -208,6 +213,42 @@ const handleRoleChange = async (id, newRole) => {
     */
 
     await loadUsers();
+  }
+};
+
+const handleUpdateUser = async (e) => {
+  e.preventDefault();
+
+  if (!editingUser) {
+    return;
+  }
+
+  if (!editFullName.trim()) {
+    alert("Full name is required");
+    return;
+  }
+
+  try {
+    await usersApi.updateUserProfile(
+      editingUser.id,
+      {
+        full_name: editFullName.trim()
+      }
+    );
+
+    setShowEdit(false);
+    setEditingUser(null);
+    setEditFullName("");
+
+    await loadUsers();
+
+  } catch (err) {
+    console.error(
+      "Failed to update user:",
+      err
+    );
+
+    alert("Failed to update user");
   }
 };
 
@@ -530,6 +571,13 @@ const handleRoleChange = async (id, newRole) => {
 
                       <div className="flex gap-2 flex-wrap">
 
+                      <button
+                        onClick={() => handleUpdateUser(user)}  
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
+                      >
+                        Edit
+                      </button>
+
                         {user.is_active &&
                           canDisableUsers && (
                             <button
@@ -571,6 +619,8 @@ const handleRoleChange = async (id, newRole) => {
                               Reactivate
                             </button>
                           )}
+
+                        
 
                         {canDeleteUsers && (
                           <button
@@ -850,6 +900,102 @@ const handleRoleChange = async (id, newRole) => {
 
         </div>
       )}
+
+      {showEdit && editingUser && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-xl font-bold">
+            Edit User
+          </h2>
+
+          <p className="text-sm text-gray-500">
+            Update user profile information.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setShowEdit(false);
+            setEditingUser(null);
+            setEditFullName("");
+          }}
+          className="text-gray-500 hover:text-gray-700 text-xl"
+        >
+          ×
+        </button>
+      </div>
+
+      <form
+        onSubmit={handleUpdateUser}
+        className="space-y-4"
+      >
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            value={editFullName}
+            onChange={(e) =>
+              setEditFullName(e.target.value)
+            }
+            required
+            autoFocus
+            className="w-full border rounded px-3 py-2"
+            placeholder="Enter full name"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+
+          <input
+            type="text"
+            value={editingUser.email}
+            disabled
+            className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-500"
+          />
+
+          <p className="text-xs text-gray-500 mt-1">
+            Email is not changed here.
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4">
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowEdit(false);
+              setEditingUser(null);
+              setEditFullName("");
+            }}
+            className="px-4 py-2 border rounded"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+          >
+            Save Changes
+          </button>
+
+        </div>
+
+      </form>
+    </div>
+  </div>
+)}
 
     </div>
   );

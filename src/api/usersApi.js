@@ -27,6 +27,15 @@ const usersApi = {
       })
     }),
 
+  updateUserProfile: (userId, data) =>
+    apiFetch(
+      `/api/v1/users/${userId}/profile`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data)
+      }
+    ),
+
   deactivateUser: (userId) =>
     apiFetch(`/api/v1/users/${userId}/deactivate`, {
       method: "PUT"
