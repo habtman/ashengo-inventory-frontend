@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 import adminApi from "../../api/adminApi";
-import Pagination from "../../components/inventory/Pagination"; 
+import Pagination from "../../components/inventory/Pagination";
 
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState([]);
@@ -57,35 +58,63 @@ useEffect(() => {
 }, []);
 
 const handleExport = async () => {
+  try {
+    const data = await adminApi.getAuditLogs({
+      page: 1,
+      limit: 100000,
+      search,
+      action,
+      userId,
+      from,
+      to,
+    });
 
-    const response =
-        await adminApi.getAuditLogs({
-            search,
-            action,
-            userId,
-            from,
-            to
-        }); 
+    const rows = data.items || [];
 
-    const blob =
-        await response.blob();
+    const exportData = rows.map((log) => ({
+      "Date": log.created_at
+        ? new Date(log.created_at).toLocaleString()
+        : "",
+      "User": log.email || "",
+      "Role": log.role || "",
+      "Action": log.action || "",
+      "Entity Type": log.entity_type || "",
+      "Entity ID": log.entity_id ?? "",
+    }));
 
-    const url =
-        window.URL.createObjectURL(blob);
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
 
-    const a =
-        document.createElement("a");
+    worksheet["!cols"] = [
+      { wch: 22 }, // Date
+      { wch: 30 }, // User
+      { wch: 15 }, // Role
+      { wch: 28 }, // Action
+      { wch: 20 }, // Entity Type
+      { wch: 15 }, // Entity ID
+    ];
 
-    a.href = url;
+    if (exportData.length > 0) {
+      worksheet["!autofilter"] = {
+        ref: `A1:F${exportData.length + 1}`,
+      };
+    }
 
-    a.download = "audit_logs.xlsx";
+    const workbook = XLSX.utils.book_new();
 
-    a.click();
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Audit Logs"
+    );
 
-    window.URL.revokeObjectURL(url);
-
+    XLSX.writeFile(
+      workbook,
+      "audit-logs-filtered-report.xlsx"
+    );
+  } catch (error) {
+    console.error("Failed to export audit logs:", error);
+  }
 };
-
   if (loading) {
     return <p>Loading audit logs...</p>;
   }
