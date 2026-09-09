@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import usersApi from "../../api/usersApi";
 import { useAuth } from "../../context/useAuth";
 
+
 export default function UsersPage() {
   const { hasPermission } = useAuth();
 
@@ -36,6 +37,7 @@ export default function UsersPage() {
   const canDisableUsers = hasPermission("users.disable");
   const canEnableUsers = hasPermission("users.enable");
   const canDeleteUsers = hasPermission("users.delete");
+  const canEditUsers = hasPermission("users.edit"); 
 
   /*
   |--------------------------------------------------------------------------
@@ -571,12 +573,12 @@ const handleUpdateUser = async (e) => {
 
                       <div className="flex gap-2 flex-wrap">
 
-                      <button
-                        onClick={() => handleUpdateUser(user)}  
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
-                      >
-                        Edit
-                      </button>
+                    <button
+                      onClick={() => handleUpdateUser(user)}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
 
                         {user.is_active &&
                           canDisableUsers && (
