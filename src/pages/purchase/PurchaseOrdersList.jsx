@@ -140,7 +140,11 @@ const handlePrint = async () => {
       setPrinting(false);
     }, 500);
   } catch (error) {
-    console.error("Failed to prepare purchase order print:", error);
+    console.error(
+      "Failed to prepare purchase order print:",
+      error
+    );
+
     setPrinting(false);
   }
 };
