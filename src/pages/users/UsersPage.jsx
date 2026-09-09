@@ -677,7 +677,28 @@ const handleRoleChange = async (id, newRole) => {
               {/* EMAIL */}
 
               <div>
+                <label className="block mb-1 font-medium">
+                  Full Name
+                </label>
 
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) =>
+                    setFullName(e.target.value)
+                  }
+                  className="
+                    w-full
+                    border
+                    rounded
+                    px-3
+                    py-2
+                  "
+                  required
+                />
+              </div>
+
+         <div>
                 <label className="block mb-1 font-medium">
                   Email
                 </label>
