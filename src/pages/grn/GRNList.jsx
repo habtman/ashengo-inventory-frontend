@@ -349,14 +349,14 @@ const handlePrint = async () => {
   <p className="mt-4 text-sm">
     Total GRNs: {printGrns.length}
   </p>
-
+</div>
 
     <GRNPagination
       page={page}
       totalPages={totalPages}
       setPage={setPage}
     />
-</div>
+
 
     </div>
   );
