@@ -10,6 +10,7 @@ export default function UsersPage() {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  const [fullName, setFullName] = useState("");  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
@@ -109,6 +110,11 @@ export default function UsersPage() {
   const handleCreateUser = async (e) => {
     e.preventDefault();
 
+    if (!fullName.trim()) {
+      alert("Full name is required");
+      return;
+    } 
+
     if (!email.trim()) {
       alert("Email is required");
       return;
@@ -128,6 +134,7 @@ export default function UsersPage() {
       setCreatingUser(true);
 
       await usersApi.create(
+        fullName.trim(),  
         email.trim(),
         password,
         role
@@ -135,6 +142,7 @@ export default function UsersPage() {
 
       setShowCreateModal(false);
 
+      setFullName("");  
       setEmail("");
       setPassword("");
       setRole(roles[0]?.name || "");
@@ -371,6 +379,10 @@ const handleRoleChange = async (id, newRole) => {
                 </th>
 
                 <th className="border p-2 text-left">
+                  Full Name
+                </th>
+
+                <th className="border p-2 text-left">
                   Email
                 </th>
 
@@ -410,6 +422,11 @@ const handleRoleChange = async (id, newRole) => {
                     <td className="border p-2">
                       {user.id}
                     </td>
+
+                
+                  <td className="font-medium">
+                      {user.full_name || "—"}
+                  </td>
 
                     {/* EMAIL */}
 
