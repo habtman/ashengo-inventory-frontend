@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import grnApi from "../../api/grnApi";
 import GRNPagination from "../../pages/grn/GRNPagination";
 import GRNFilters from "./GRNFilters";  
+import * as XLSX from "xlsx";
 
 export default function GRNList() {
   const [grns, setGrns] = useState([]);
@@ -16,6 +17,9 @@ export default function GRNList() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
+  const [printGrns, setPrintGrns] = useState([]);
+  const [printing, setPrinting] = useState(false);
+
   useEffect(() => {
 
     const loadOrders = async () => {
@@ -24,15 +28,15 @@ export default function GRNList() {
 
         setLoading(true);
 
-        const data = await grnApi.getAll({
-          page,
-          limit: 10,
-          search,
-          supplier,
-          warehouse,
-          dateFrom,
-          dateTo,
-        });
+      const data = await grnApi.getAllForReport({
+        search,
+        supplier,
+        warehouse,
+        dateFrom,
+        dateTo,
+      });
+
+setPrintGrns(data.items || []);
 
         setGrns(data.items || []);
         setTotalPages(data.totalPages || 1);
@@ -60,12 +64,118 @@ export default function GRNList() {
     dateTo,
   ]);
 
+  const handleExportExcel = async () => {
+  try {
+    setLoading(true);
+
+    const data = await grnApi.getAll({
+      page: 1,
+      limit: 100000,
+      search,
+      supplier,
+      warehouse,
+      dateFrom,
+      dateTo,
+    });
+
+    const rows = data.items || [];
+
+    const exportData = rows.map((grn) => ({
+      "GRN #": grn.grn_number || "",
+      "PO #": grn.po_number || "",
+      "Supplier Code": grn.supplier_code || "",
+      "Supplier Name": grn.supplier_name || "",
+      Warehouse: grn.warehouse || "",
+      Received: grn.received_at
+        ? new Date(grn.received_at).toLocaleString()
+        : "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    worksheet["!cols"] = [
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 18 },
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 22 },
+    ];
+
+    if (exportData.length > 0) {
+      worksheet["!autofilter"] = {
+        ref: `A1:F${exportData.length + 1}`,
+      };
+    }
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "GRNs"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      "grn-filtered-report.xlsx"
+    );
+  } catch (error) {
+    console.error("Failed to export GRNs:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handlePrint = async () => {
+  try {
+    setPrinting(true);
+
+    const data = await grnApi.getAllForReport({
+      search,
+      supplier,
+      warehouse,
+      dateFrom,
+      dateTo,
+    });
+
+    setPrintGrns(data.items || []);
+
+    setTimeout(() => {
+      window.print();
+      setPrinting(false);
+    }, 500);
+  } catch (error) {
+    console.error("Failed to prepare GRN print:", error);
+    setPrinting(false);
+  }
+};
+
   return (
     <div className="p-6 bg-white rounded shadow">
 
-      <h2 className="text-2xl font-bold mb-4">
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-2xl font-bold">
         Goods Receipt Notes
       </h2>
+
+      <div className="flex gap-3 print:hidden">
+        <button
+          onClick={handleExportExcel}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Export Excel
+        </button>
+
+        <button
+          onClick={handlePrint}
+          disabled={printing}
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
+        >
+          {printing ? "Preparing..." : "Print"}
+        </button>
+      </div>
+    </div>
 
       <GRNFilters
         search={search}
@@ -171,14 +281,81 @@ export default function GRNList() {
 
       </table>
 
-            <GRNPagination
-              page={page}
-              totalPages={totalPages}
-              setPage={setPage}
-            />
+
+      <div className="hidden print:block">
+  <div className="mb-6">
+    <h1 className="text-2xl font-bold">
+      GOODS RECEIPT REPORT
+    </h1>
+
+    <p className="text-sm">
+      Generated: {new Date().toLocaleString()}
+    </p>
+  </div>
+
+  <div className="mb-6 text-sm">
+    <strong>Applied Filters</strong>
+
+    <p>Search: {search || "All"}</p>
+    <p>Supplier: {supplier || "All"}</p>
+    <p>Warehouse: {warehouse || "All"}</p>
+    <p>Date From: {dateFrom || "All"}</p>
+    <p>Date To: {dateTo || "All"}</p>
+  </div>
+
+  <table className="w-full border-collapse border">
+    <thead>
+      <tr>
+        <th className="border p-2">GRN #</th>
+        <th className="border p-2">PO #</th>
+        <th className="border p-2">Supplier</th>
+        <th className="border p-2">Warehouse</th>
+        <th className="border p-2">Received</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {printGrns.map((grn) => (
+        <tr key={grn.id}>
+          <td className="border p-2">
+            {grn.grn_number}
+          </td>
+
+          <td className="border p-2">
+            {grn.po_number}
+          </td>
+
+          <td className="border p-2">
+            {grn.supplier_code}
+            <br />
+            {grn.supplier_name}
+          </td>
+
+          <td className="border p-2">
+            {grn.warehouse}
+          </td>
+
+          <td className="border p-2">
+            {grn.received_at
+              ? new Date(grn.received_at).toLocaleString()
+              : ""}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <p className="mt-4 text-sm">
+    Total GRNs: {printGrns.length}
+  </p>
 
 
-
+    <GRNPagination
+      page={page}
+      totalPages={totalPages}
+      setPage={setPage}
+    />
+</div>
 
     </div>
   );
