@@ -186,7 +186,7 @@ const handlePrint = async () => {
     </div>
 
   </div>
-
+<div className="print:hidden">
       <PurchaseOrderFilters
         search={search}
         setSearch={setSearch}
@@ -194,6 +194,7 @@ const handlePrint = async () => {
         setStatus={setStatus}
         setPage={setPage}
       />
+  </div>
 
     <div className="print:hidden">
 
@@ -210,7 +211,7 @@ const handlePrint = async () => {
 
     </div>
 
-    <div className="hidden print:block">
+<div className="hidden print:block">
 
   <h1 className="text-2xl font-bold mb-2">
     PURCHASE ORDER REPORT
@@ -238,12 +239,37 @@ const handlePrint = async () => {
 
     <thead>
       <tr>
-        <th className="border p-2 text-left">PO #</th>
-        <th className="border p-2 text-left">Supplier</th>
-        <th className="border p-2 text-left">Status</th>
-        <th className="border p-2 text-left">Currency</th>
-        <th className="border p-2 text-right">Total</th>
-        <th className="border p-2 text-left">Created</th>
+        <th className="border p-2 text-left">
+          PO #
+        </th>
+
+        <th className="border p-2 text-left">
+          Supplier
+        </th>
+
+        <th className="border p-2 text-left">
+          Created By
+        </th>
+
+        <th className="border p-2 text-left">
+          Approved By
+        </th>
+
+        <th className="border p-2 text-left">
+          Currency
+        </th>
+
+        <th className="border p-2 text-right">
+          Total
+        </th>
+
+        <th className="border p-2 text-left">
+          Status
+        </th>
+
+        <th className="border p-2 text-left">
+          Created
+        </th>
       </tr>
     </thead>
 
@@ -265,7 +291,11 @@ const handlePrint = async () => {
           </td>
 
           <td className="border p-2">
-            {order.status}
+            {order.created_by_name || ""}
+          </td>
+
+          <td className="border p-2">
+            {order.approved_by_name || ""}
           </td>
 
           <td className="border p-2">
@@ -273,18 +303,23 @@ const handlePrint = async () => {
           </td>
 
           <td className="border p-2 text-right">
-            {Number(order.total_amount || 0).toLocaleString(
-              undefined,
-              {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }
-            )}
+            {Number(
+              order.total_amount || 0
+            ).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </td>
+
+          <td className="border p-2">
+            {order.status || ""}
           </td>
 
           <td className="border p-2">
             {order.created_at
-              ? new Date(order.created_at).toLocaleString()
+              ? new Date(
+                  order.created_at
+                ).toLocaleString()
               : ""}
           </td>
 
