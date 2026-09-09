@@ -4,15 +4,29 @@ const API_BASE =
 
 
 const purchaseOrderApi = {
-  getAll: ({
-    page = 1,
-    limit = 10,
-    search = "",
-    status = ""
-  } = {}) =>
-    apiFetch(
-      `/api/v1/purchase-orders?page=${page}&limit=${limit}&search=${search}&status=${status}`
-    ),
+getAll: ({
+  page = 1,
+  limit = 10,
+  search = "",
+  status = ""
+} = {}) => {
+  const params = new URLSearchParams();
+
+  params.append("page", page);
+  params.append("limit", limit);
+
+  if (search) {
+    params.append("search", search);
+  }
+
+  if (status) {
+    params.append("status", status);
+  }
+
+  return apiFetch(
+    `/api/v1/purchase-orders?${params.toString()}`
+  );
+},
 
   getById: (id) =>
     apiFetch(`/api/v1/purchase-orders/${id}`),
