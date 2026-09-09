@@ -132,7 +132,9 @@ const handlePrint = async () => {
   try {
     setPrinting(true);
 
-    const data = await grnApi.getAllForReport({
+    const data = await grnApi.getAll({
+      page: 1,
+      limit: 100000,
       search,
       supplier,
       warehouse,
