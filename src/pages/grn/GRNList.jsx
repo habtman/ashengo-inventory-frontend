@@ -28,15 +28,15 @@ export default function GRNList() {
 
         setLoading(true);
 
-      const data = await grnApi.getAllForReport({
-        search,
-        supplier,
-        warehouse,
-        dateFrom,
-        dateTo,
-      });
-
-setPrintGrns(data.items || []);
+        const data = await grnApi.getAll({
+          page,
+          limit: 10,
+          search,
+          supplier,
+          warehouse,
+          dateFrom,
+          dateTo,
+        });
 
         setGrns(data.items || []);
         setTotalPages(data.totalPages || 1);
@@ -127,6 +127,7 @@ setPrintGrns(data.items || []);
   }
 };
 
+
 const handlePrint = async () => {
   try {
     setPrinting(true);
@@ -143,10 +144,10 @@ const handlePrint = async () => {
 
     setTimeout(() => {
       window.print();
-      setPrinting(false);
     }, 500);
   } catch (error) {
     console.error("Failed to prepare GRN print:", error);
+  } finally {
     setPrinting(false);
   }
 };
