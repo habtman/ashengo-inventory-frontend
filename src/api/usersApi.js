@@ -8,10 +8,11 @@ const usersApi = {
   getRoles: () =>
     apiFetch("/api/v1/users/roles"),
 
-  create: (email, password, role) =>
+  create: (fullName, email, password, role) =>
     apiFetch("/api/v1/users", {
       method: "POST",
       body: JSON.stringify({
+        full_name: fullName,  
         email,
         password,
         role
