@@ -28,8 +28,7 @@ const adminApi = {
 
   getAuditUsers: () =>
     apiFetch("/api/v1/admin/audit-users"),
-
-
+  
 };
 
 export default adminApi;

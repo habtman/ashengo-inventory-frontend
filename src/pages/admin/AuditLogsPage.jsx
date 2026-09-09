@@ -59,15 +59,15 @@ useEffect(() => {
 const handleExport = async () => {
 
     const response =
-        await adminApi.exportAuditLogs({
-
+        await adminApi.getAuditLogs({
+            page: 1,
+            limit: 100000,
             search,
             action,
             userId,
             from,
             to
-
-        });
+        }); 
 
     const blob =
         await response.blob();
