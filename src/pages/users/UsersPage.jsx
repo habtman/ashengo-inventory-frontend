@@ -322,31 +322,23 @@ const handleUpdateUser = async (e) => {
   |--------------------------------------------------------------------------
   */
 
-  const handleDelete = async (userId) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to permanently delete this user?"
-      )
-    ) {
-      return;
-    }
+const handleDelete = async (userId) => {
+  try {
+    await usersApi.remove(userId);
 
-    try {
-      await usersApi.remove(userId);
+    // If this was the last user on the current page,
+    // move back one page (unless we're already on page 1).
+    const nextPage =
+      users.length === 1 && usersPage > 1
+        ? usersPage - 1
+        : usersPage;
 
-      await loadUsers();
-
-    } catch (err) {
-      console.error(
-        "Failed to delete user:",
-        err
-      );
-
-      alert(
-        err.message || "Failed to delete user"
-      );
-    }
-  };
+    await loadUsers(nextPage);
+  } catch (err) {
+    console.error("Failed to delete user:", err);
+    alert("Failed to delete user");
+  }
+};
 
   /*
   |--------------------------------------------------------------------------
