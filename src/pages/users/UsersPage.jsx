@@ -48,7 +48,7 @@ export default function UsersPage() {
   |--------------------------------------------------------------------------
   */
 
-const loadUsers = async (page = usersPage) => {
+const loadUsers = async (page = 1) => {
   try {
     const data = await usersApi.getAll(
       page,
