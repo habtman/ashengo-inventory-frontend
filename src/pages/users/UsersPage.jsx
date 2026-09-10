@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import usersApi from "../../api/usersApi";
 import { useAuth } from "../../context/useAuth";
-
+import Pagination from "../../components/inventory/Pagination"; 
 
 export default function UsersPage() {
   const { hasPermission } = useAuth();
@@ -16,13 +16,16 @@ export default function UsersPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
-  const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [creatingUser, setCreatingUser] = useState(false);
 
   const [editingUser, setEditingUser] = useState(null);
   const [editFullName, setEditFullName] = useState("");
   const [showEdit, setShowEdit] = useState(false);
+
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersTotalPages, setUsersTotalPages] = useState(1);
+  const USERS_PAGE_SIZE = 10;
 
 
   /*
@@ -45,20 +48,20 @@ export default function UsersPage() {
   |--------------------------------------------------------------------------
   */
 
-  const loadUsers = async () => {
-    try {
-      setLoadingUsers(true);
+const loadUsers = async (page = usersPage) => {
+  try {
+    const data = await usersApi.getAll(
+      page,
+      USERS_PAGE_SIZE
+    );
 
-      const data = await usersApi.getAll();
-
-      setUsers(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Failed to load users:", err);
-      alert(err.message || "Failed to load users");
-    } finally {
-      setLoadingUsers(false);
-    }
-  };
+    setUsers(data.items);
+    setUsersPage(data.page);
+    setUsersTotalPages(data.totalPages);
+  } catch (err) {
+    console.error("Failed to load users:", err);
+  }
+};
 
   /*
   |--------------------------------------------------------------------------
@@ -106,7 +109,7 @@ export default function UsersPage() {
 
     loadUsers();
     loadRoles();
-  }, [canViewUsers]);
+  }, [canViewUsers]);  
 
   /*
   |--------------------------------------------------------------------------
@@ -407,7 +410,7 @@ const handleUpdateUser = async (e) => {
 
       {/* LOADING */}
 
-      {loadingUsers ? (
+      {users.length === 0 ? ( 
         <div className="py-8 text-center text-gray-500">
           Loading users...
         </div>
@@ -661,6 +664,12 @@ const handleUpdateUser = async (e) => {
 
         </div>
       )}
+
+      <Pagination
+        page={usersPage}
+        totalPages={usersTotalPages}
+        onPageChange={(page) => loadUsers(page)}
+      />
 
       {/* CREATE USER MODAL */}
 
