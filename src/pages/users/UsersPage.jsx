@@ -218,6 +218,12 @@ const handleRoleChange = async (id, newRole) => {
   }
 };
 
+const handleEditUser = (user) => {
+  setEditingUser(user);
+  setEditFullName(user.full_name || "");
+  setShowEdit(true);
+};
+
 const handleUpdateUser = async (e) => {
   e.preventDefault();
 
@@ -248,6 +254,7 @@ const handleUpdateUser = async (e) => {
     alert("Failed to update user");
   }
 };
+
 
   /*
   |--------------------------------------------------------------------------
@@ -569,7 +576,7 @@ const handleUpdateUser = async (e) => {
                       <div className="flex gap-2 flex-wrap">
 
                     <button
-                      onClick={() => handleUpdateUser(user)}
+                      onClick={() => handleEditUser(user)}  
                       className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
                     >
                       Edit
