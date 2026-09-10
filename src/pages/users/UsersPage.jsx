@@ -278,7 +278,7 @@ const handleUpdateUser = async (e) => {
     try {
       await usersApi.deactivateUser(userId);
 
-      await loadUsers();
+      await loadUsers(usersPage);
 
     } catch (err) {
       console.error(
@@ -302,7 +302,7 @@ const handleUpdateUser = async (e) => {
     try {
       await usersApi.reactivateUser(userId);
 
-      await loadUsers();
+      await loadUsers(usersPage);
 
     } catch (err) {
       console.error(
