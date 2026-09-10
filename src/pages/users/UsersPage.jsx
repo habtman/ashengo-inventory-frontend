@@ -37,7 +37,7 @@ export default function UsersPage() {
   const canDisableUsers = hasPermission("users.disable");
   const canEnableUsers = hasPermission("users.enable");
   const canDeleteUsers = hasPermission("users.delete");
-  const canEditUsers = hasPermission("users.edit"); 
+  //const canEditUsers = hasPermission("users.edit"); 
 
   /*
   |--------------------------------------------------------------------------
@@ -243,13 +243,8 @@ const handleUpdateUser = async (e) => {
     setEditFullName("");
 
     await loadUsers();
-
   } catch (err) {
-    console.error(
-      "Failed to update user:",
-      err
-    );
-
+    console.error("Failed to update user:", err);
     alert("Failed to update user");
   }
 };
