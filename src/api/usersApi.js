@@ -2,8 +2,8 @@ import { apiFetch } from "./api";
 
 const usersApi = {
 
-  getAll: () =>
-    apiFetch("/api/v1/users"),
+  getAll: (page = 1, limit = 10) =>
+  apiFetch(`/api/v1/users?page=${page}&limit=${limit}`),
 
   getRoles: () =>
     apiFetch("/api/v1/users/roles"),
