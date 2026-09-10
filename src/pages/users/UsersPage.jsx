@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import usersApi from "../../api/usersApi";
 import { useAuth } from "../../context/useAuth";
 import Pagination from "../../components/inventory/Pagination"; 
@@ -26,6 +26,9 @@ export default function UsersPage() {
   const [usersPage, setUsersPage] = useState(1);
   const [usersTotalPages, setUsersTotalPages] = useState(1);
   const USERS_PAGE_SIZE = 10;
+  const [usersTotal, setUsersTotal] = useState(0);  
+
+
 
 
   /*
@@ -48,20 +51,18 @@ export default function UsersPage() {
   |--------------------------------------------------------------------------
   */
 
-const loadUsers = async (page = 1) => {
+const loadUsers = useCallback(async (page = 1) => {
   try {
-    const data = await usersApi.getAll(
-      page,
-      USERS_PAGE_SIZE
-    );
+    const data = await usersApi.getAll(page, USERS_PAGE_SIZE);
 
     setUsers(data.items);
     setUsersPage(data.page);
     setUsersTotalPages(data.totalPages);
+    setUsersTotal(data.total);
   } catch (err) {
     console.error("Failed to load users:", err);
   }
-};
+}, []);
 
   /*
   |--------------------------------------------------------------------------
@@ -109,7 +110,7 @@ const loadUsers = async (page = 1) => {
 
     loadUsers();
     loadRoles();
-  }, [canViewUsers]);  
+  }, [canViewUsers, loadUsers]);  
 
   /*
   |--------------------------------------------------------------------------
@@ -664,6 +665,14 @@ const handleUpdateUser = async (e) => {
 
         </div>
       )}
+
+<div className="mt-4 text-sm text-gray-500 text-center">
+  Showing{" "}
+  {users.length ? (usersPage - 1) * USERS_PAGE_SIZE + 1 : 0}
+  {"–"}
+  {users.length ? (usersPage - 1) * USERS_PAGE_SIZE + users.length : 0}
+  {" "}of {usersTotal} users
+</div>
 
       <Pagination
         page={usersPage}
