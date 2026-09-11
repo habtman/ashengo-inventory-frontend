@@ -65,19 +65,12 @@ export async function apiFetch(endpoint, options = {}) {
   // Access token expired → single-flight refresh
   // -------------------------------------------------------
 
-  if (res.status === 401) {
+  if (!res.ok && res.status === 401) {
     const newToken = await getFreshAccessToken();
 
-    if (!newToken) {
-      clearAuthStorage();
-
-      window.location.href = "/login";
-
-      throw new Error("Session expired");
+    if (newToken) {
+      res = await makeRequest(newToken);
     }
-
-    // Retry with the NEW token
-    res = await makeRequest(newToken);
   }
 
   // -------------------------------------------------------
@@ -89,8 +82,24 @@ export async function apiFetch(endpoint, options = {}) {
 
     try {
       const errorData = await res.json();
+
+      // Account was deactivated/deleted while this session
+      // was still active.
+      if (res.status === 403 && errorData.error === "ACCOUNT_DEACTIVATED") {
+        clearAuthStorage();
+
+        window.location.href = "/login";
+
+        throw new Error("Account deactivated");
+      }
+
       errorMessage = errorData.error || errorMessage;
-    } catch {
+    } catch (err) {
+      // Preserve our intentional account-deactivated error.
+      if (err.message === "Account deactivated") {
+        throw err;
+      }
+
       errorMessage = res.statusText || errorMessage;
     }
 
