@@ -387,6 +387,28 @@ function decodeJwtPayload(token) {
     recordActivity,
   ]);
 
+  useEffect(() => {
+  const handleAccountDeactivated = () => {
+    console.log("🔒 Account deactivated. Ending session.");
+
+    clearSession();
+
+    window.location.replace("/login");
+  };
+
+  window.addEventListener(
+    "auth:account-deactivated",
+    handleAccountDeactivated
+  );
+
+  return () => {
+    window.removeEventListener(
+      "auth:account-deactivated",
+      handleAccountDeactivated
+    );
+  };
+}, [clearSession]);
+
 
   useEffect(() => {
   const handleTokenRefresh = (event) => {
