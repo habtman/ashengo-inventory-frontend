@@ -22,12 +22,12 @@ async function getFreshAccessToken() {
 // Auth storage cleanup
 // ---------------------------------------------------------
 
-function clearAuthStorage() {
+/*function clearAuthStorage() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("user");
   localStorage.removeItem("permissions");
   localStorage.removeItem("lastActivity");
-}
+}*/
 
 // ---------------------------------------------------------
 // API request
@@ -76,35 +76,34 @@ export async function apiFetch(endpoint, options = {}) {
   // -------------------------------------------------------
   // Handle API errors
   // -------------------------------------------------------
+if (!res.ok) {
+  let errorMessage = "API Error";
 
-  if (!res.ok) {
-    let errorMessage = "API Error";
+  try {
+    const errorData = await res.json();
 
-    try {
-      const errorData = await res.json();
+    if (
+      res.status === 403 &&
+      errorData.error === "ACCOUNT_DEACTIVATED"
+    ) {
+      window.dispatchEvent(
+        new CustomEvent("auth:account-deactivated")
+      );
 
-      // Account was deactivated/deleted while this session
-      // was still active.
-      if (res.status === 403 && errorData.error === "ACCOUNT_DEACTIVATED") {
-        clearAuthStorage();
-
-        window.location.href = "/login";
-
-        throw new Error("Account deactivated");
-      }
-
-      errorMessage = errorData.error || errorMessage;
-    } catch (err) {
-      // Preserve our intentional account-deactivated error.
-      if (err.message === "Account deactivated") {
-        throw err;
-      }
-
-      errorMessage = res.statusText || errorMessage;
+      throw new Error("Account deactivated");
     }
 
-    throw new Error(errorMessage);
+    errorMessage = errorData.error || errorMessage;
+  } catch (err) {
+    if (err.message === "Account deactivated") {
+      throw err;
+    }
+
+    errorMessage = res.statusText || errorMessage;
   }
+
+  throw new Error(errorMessage);
+}
 
   // -------------------------------------------------------
   // No content
