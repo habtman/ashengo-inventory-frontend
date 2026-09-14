@@ -84,7 +84,10 @@ if (!res.ok) {
 
     if (
       res.status === 403 &&
-      errorData.error === "ACCOUNT_DEACTIVATED"
+      (
+        errorData.code === "ACCOUNT_DEACTIVATED" ||
+        errorData.error === "Account is inactive"
+      )
     ) {
       window.dispatchEvent(
         new CustomEvent("auth:account-deactivated")

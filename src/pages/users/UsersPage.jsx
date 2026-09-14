@@ -323,6 +323,16 @@ const handleUpdateUser = async (e) => {
   */
 
 const handleDelete = async (userId) => {
+
+  if (
+  !window.confirm(
+    "This will retire the user account and prevent the user from logging in. " +
+    "The user's historical records will be preserved. " +
+    "Do you want to continue?"
+  )
+) {
+  return;
+}
   try {
     await usersApi.remove(userId);
 
