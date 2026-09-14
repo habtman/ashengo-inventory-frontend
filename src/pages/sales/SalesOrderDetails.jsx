@@ -112,11 +112,16 @@ const handleConfirm = async () => {
           : "-"}
       </p>
 
-      <p>  
+      <p>
+        <strong>Created By:</strong>{" "}
+        {so.created_by_name || "-"}
+      </p>
+
+      <p>
         <strong>Created:</strong>{" "}
-            {new Date(so.created_at).toLocaleString()
-            }  
-        </p> 
+        {new Date(so.created_at).toLocaleString()}
+      </p>
+      
     </div>  
     <div>  
         <p>
