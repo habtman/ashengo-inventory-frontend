@@ -291,6 +291,10 @@ const filteredOrders = orders.filter((order) => {
               </th>
 
               <th className="p-2 border">
+                Created By
+              </th>
+
+              <th className="p-2 border">
                 Status
               </th>
 
@@ -329,7 +333,7 @@ const filteredOrders = orders.filter((order) => {
               <tr>
 
                 <td
-                  colSpan="6"
+                  colSpan="7"
                   className="text-center p-6 text-gray-500"
                 >
                   No Sales Orders Found
@@ -352,6 +356,10 @@ const filteredOrders = orders.filter((order) => {
 
                 <td className="border p-2">
                   {order.customer_name}
+                </td>
+
+                <td className="border p-2">
+                  {order.created_by_name || "—"}
                 </td>
 
                 <td className="border p-2">
