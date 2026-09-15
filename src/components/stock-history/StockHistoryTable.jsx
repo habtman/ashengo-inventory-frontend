@@ -129,7 +129,7 @@ Stock Movement History
     <td className="p-3">{m.from_location_name || "-"}</td>
     <td className="p-3">{m.to_location_name || "-"}</td>
     <td className="p-3 font-medium">{m.quantity}</td>
-    <td className="p-3">{m.user_email}</td>
+    <td className="p-3">{m.created_by || "-"}</td>
 
     <td className="p-3">
       {new Date(m.created_at).toLocaleString()}
