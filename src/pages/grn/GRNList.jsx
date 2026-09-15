@@ -100,12 +100,14 @@ export default function GRNList() {
       { wch: 18 },
       { wch: 30 },
       { wch: 25 },
+      { wch: 24 },
       { wch: 22 },
+
     ];
 
     if (exportData.length > 0) {
       worksheet["!autofilter"] = {
-        ref: `A1:F${exportData.length + 1}`,
+        ref: `A1:G${exportData.length + 1}`,
       };
     }
 
@@ -217,7 +219,7 @@ const handlePrint = async () => {
 
           <th>Received By</th>
 
-          <th>Received</th>
+          <th>Received At</th>
 
           <th>Actions</th>
 
@@ -322,7 +324,7 @@ const handlePrint = async () => {
             <th className="border p-2">PO #</th>
             <th className="border p-2">Supplier</th>
             <th className="border p-2">Warehouse</th>
-            <th className="border p-2">Received</th>
+            <th className="border p-2">Received By</th>
           </tr>
         </thead>
 
@@ -346,6 +348,10 @@ const handlePrint = async () => {
           <td className="border p-2">
             {grn.warehouse}
           </td>
+
+          <td className="border p-2">
+            {grn.received_by_name || "-"}
+          </td> 
 
           <td className="border p-2">
             {grn.received_at

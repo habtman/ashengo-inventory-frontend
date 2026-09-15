@@ -149,6 +149,10 @@ const localTotal = Number(grn.total_amount || 0);
         </p>
 
         <p>
+          <b>Received By:</b> {grn.received_by_name || "-"}
+        </p>  
+
+        <p>
           <b>Received At:</b>{" "}
           {new Date(grn.received_at).toLocaleString()}
         </p>
