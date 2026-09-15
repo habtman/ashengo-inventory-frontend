@@ -86,6 +86,7 @@ export default function GRNList() {
       "Supplier Code": grn.supplier_code || "",
       "Supplier Name": grn.supplier_name || "",
       Warehouse: grn.warehouse || "",
+      "Received By": grn.received_by_name || "",
       Received: grn.received_at
         ? new Date(grn.received_at).toLocaleString()
         : "",
