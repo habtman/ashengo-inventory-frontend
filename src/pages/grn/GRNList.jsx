@@ -230,7 +230,7 @@ const handlePrint = async () => {
           <tr>
 
             <td
-              colSpan={6}
+              colSpan={7}
               className="text-center py-10 text-gray-500"
             >
               Loading Good Receipt Notes...
@@ -293,37 +293,37 @@ const handlePrint = async () => {
       </table>
 
 
-      <div className="hidden print:block">
-  <div className="mb-6">
-    <h1 className="text-2xl font-bold">
-      GOODS RECEIPT REPORT
-    </h1>
+    <div className="hidden print:block">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">
+          GOODS RECEIPT REPORT
+        </h1>
 
-    <p className="text-sm">
-      Generated: {new Date().toLocaleString()}
-    </p>
-  </div>
+        <p className="text-sm">
+          Generated: {new Date().toLocaleString()}
+        </p>
+      </div>
 
-  <div className="mb-6 text-sm">
-    <strong>Applied Filters</strong>
+      <div className="mb-6 text-sm">
+        <strong>Applied Filters</strong>
 
-    <p>Search: {search || "All"}</p>
-    <p>Supplier: {supplier || "All"}</p>
-    <p>Warehouse: {warehouse || "All"}</p>
-    <p>Date From: {dateFrom || "All"}</p>
-    <p>Date To: {dateTo || "All"}</p>
-  </div>
+        <p>Search: {search || "All"}</p>
+        <p>Supplier: {supplier || "All"}</p>
+        <p>Warehouse: {warehouse || "All"}</p>
+        <p>Date From: {dateFrom || "All"}</p>
+        <p>Date To: {dateTo || "All"}</p>
+      </div>
 
-  <table className="w-full border-collapse border">
-    <thead>
-      <tr>
-        <th className="border p-2">GRN #</th>
-        <th className="border p-2">PO #</th>
-        <th className="border p-2">Supplier</th>
-        <th className="border p-2">Warehouse</th>
-        <th className="border p-2">Received</th>
-      </tr>
-    </thead>
+      <table className="w-full border-collapse border">
+        <thead>
+          <tr>
+            <th className="border p-2">GRN #</th>
+            <th className="border p-2">PO #</th>
+            <th className="border p-2">Supplier</th>
+            <th className="border p-2">Warehouse</th>
+            <th className="border p-2">Received</th>
+          </tr>
+        </thead>
 
     <tbody>
       {printGrns.map((grn) => (
