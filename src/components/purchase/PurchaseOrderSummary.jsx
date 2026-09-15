@@ -11,23 +11,49 @@ export default function PurchaseOrderSummary({
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
 
-        {/* Supplier */}
-        <div>
-          <p className="text-sm text-gray-500">
-          <strong>Supplier:</strong>{" "}
-            {po.supplier_code} - {po.supplier_name}
-          </p>  
+          {/* Supplier / Workflow */}
+          <div>
+            <p className="text-sm text-gray-500">
+              <strong>Supplier:</strong>{" "}
+              {po.supplier_code} - {po.supplier_name}
+            </p>
 
-          <p className="text-sm text-gray-500">
-            <strong >Created By:</strong>{" "}
-            {po.created_by_name}
-          </p>
+            <p className="text-sm text-gray-500">
+              <strong>Created By:</strong>{" "}
+              {po.created_by_name || "-"}
+            </p>
 
-          <p className="text-sm text-gray-500">
-            <strong>Approved By:</strong>{" "}
-            {po.approved_by_name || "Not yet approved"}
-          </p>
-        </div>
+            <p className="text-sm text-gray-500">
+              <strong>Created At:</strong>{" "}
+              {po.created_at
+                ? new Date(po.created_at).toLocaleString()
+                : "-"}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              <strong>Approved By:</strong>{" "}
+              {po.approved_by_name || "-"}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              <strong>Approved At:</strong>{" "}
+              {po.approved_at
+                ? new Date(po.approved_at).toLocaleString()
+                : "-"}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              <strong>Rejected By:</strong>{" "}
+              {po.rejected_by_name || "-"}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              <strong>Rejected At:</strong>{" "}
+              {po.rejected_at
+                ? new Date(po.rejected_at).toLocaleString()
+                : "-"}
+            </p>
+</div>
 
         {/* Status */}
         <div>

@@ -298,6 +298,8 @@ const handlePrint = async () => {
             {order.approved_by_name || ""}
           </td>
 
+          
+
           <td className="border p-2">
             {order.currency || ""}
           </td>
