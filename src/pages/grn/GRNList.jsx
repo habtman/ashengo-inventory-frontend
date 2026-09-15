@@ -214,6 +214,8 @@ const handlePrint = async () => {
 
           <th>Warehouse</th>
 
+          <th>Received By</th>
+
           <th>Received</th>
 
           <th>Actions</th>
@@ -264,6 +266,10 @@ const handlePrint = async () => {
                 </td>
 
                 <td>{grn.warehouse}</td>
+
+                <td>
+                  {grn.received_by_name || "-"}
+                </td>
 
                 <td>
                   {new Date(grn.received_at).toLocaleString()}
