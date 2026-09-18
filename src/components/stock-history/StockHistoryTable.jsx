@@ -75,10 +75,11 @@ Stock Movement History
 
   className="border p-2 rounded"
 >
-  <option value="">All</option>
-  <option value="RESTOCK">Restock</option>
-  <option value="SALE">Sale</option>
-  <option value="TRANSFER">Transfer</option>
+    <option value="">All</option>
+    <option value="PURCHASE_RECEIPT">Purchase Receipt</option>
+    <option value="SALE">Sale</option>
+    <option value="TRANSFER">Transfer</option>
+    <option value="ADJUSTMENT">Adjustment</option>
 </select>
 
 </div>
@@ -111,14 +112,16 @@ Stock Movement History
     <td className="p-3">
       <span
         className={`px-2 py-1 text-xs rounded ${
-          m.movement_type === "RESTOCK"
+          m.movement_type === "PURCHASE_RECEIPT"  
             ? "bg-green-100 text-green-700"
             : m.movement_type === "TRANSFER"
             ? "bg-blue-100 text-blue-700"
             : m.movement_type === "SALE"
-            ? "bg-red-100 text-red-700"
-            : "bg-gray-100 text-gray-700"
+            ? "bg-red-100 text-red-700"  
             
+            : m.movement_type === "ADJUSTMENT"
+            ? "bg-yellow-100 text-yellow-700"
+            : "bg-gray-100 text-gray-700" 
 
         }`}
       >
