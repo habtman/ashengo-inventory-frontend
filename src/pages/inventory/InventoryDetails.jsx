@@ -925,6 +925,7 @@ const totalPurchaseCost = purchases.reduce(
             <th>Qty</th>
             <th>Unit Price</th>
             <th>Total</th>
+            <th>Created By</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -932,7 +933,7 @@ const totalPurchaseCost = purchases.reduce(
         <tbody>
           {filteredSales.length === 0 ? (
             <tr>
-              <td colSpan="7">
+              <td colSpan="8">
                 No sales found
               </td>
             </tr>
@@ -959,7 +960,10 @@ const totalPurchaseCost = purchases.reduce(
                   {formatCurrency(Number(sale.total_amount))} 
                 </td>
 
+                <td>{sale.created_by_name || "-"}</td>
+
                 <td>{sale.status}</td>
+
               </tr>
             ))
           )}
