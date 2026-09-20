@@ -158,6 +158,7 @@ const handleExport = async () => {
 
               <option value="CREATE_PURCHASE_ORDER">Create Purchase Order</option>
               <option value="UPDATE_PURCHASE_ORDER">Update Purchase Order</option>
+              <option value="STOCK_ADJUSTMENT">Stock Adjustment</option>
 
               <option value="CREATE_SALES_ORDER">Create Sales Order</option>
               <option value="CONFIRM_SALES_ORDER">Confirm Sales Order</option>
