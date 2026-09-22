@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   hasPermission,
   hasAnyPermission,
@@ -134,11 +134,11 @@ if (pathname.startsWith("/admin")) {
     {activeMenu === "admin" && (
       <div className="ml-4 mt-1 space-y-1">
 
-    {canViewAdminDashboard && (
-      <NavLink to="/admin" className={linkClass}>
-        Dashboard
-      </NavLink>
-    )}
+        {canViewAdminDashboard && (
+          <NavLink to="/admin" className={linkClass}>
+            Dashboard
+          </NavLink>
+        )}
 
         {canViewUsers && (
           <NavLink
@@ -166,9 +166,13 @@ if (pathname.startsWith("/admin")) {
             Company Settings
           </NavLink>
         )}
-        <Link to="/reset-password">
+
+        <NavLink
+          to="/reset-password"
+          className={linkClass}
+        >
           Reset Password
-        </Link>
+        </NavLink>
 
       </div>
     )}
