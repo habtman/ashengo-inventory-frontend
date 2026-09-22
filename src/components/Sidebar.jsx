@@ -166,6 +166,9 @@ if (pathname.startsWith("/admin")) {
             Company Settings
           </NavLink>
         )}
+        <Link to="/reset-password">
+          Reset Password
+        </Link>
 
       </div>
     )}
