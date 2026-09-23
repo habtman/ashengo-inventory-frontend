@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../context/useAuth";
 import { getDefaultRoute } from "../../utils/permissions";
@@ -142,6 +142,14 @@ export default function Login() {
             )}
 
           </button>
+                    <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
