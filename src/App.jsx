@@ -39,6 +39,7 @@ import InventoryDetails from "./pages/inventory/InventoryDetails";
 import AgingReport from "./pages/customers/reports/AgingReport";
 import CustomerCreditDashboard from "./pages/customers/CustomerCreditDashboard";   
 import ForgotPassword from "./pages/auth/ForgotPassword";  
+import ResetPassword from "./pages/auth/ResetPassword"; 
 
 
 
@@ -90,6 +91,7 @@ export default function App() {
           <Route path="/customers/credit-dashboard" element={<CustomerCreditDashboard />} />  
           <Route path="/inventory/:id" element={<InventoryDetails />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />  
+          <Route path="/reset-password" element={<ResetPassword />} />  
 
 
 
