@@ -167,13 +167,6 @@ if (pathname.startsWith("/admin")) {
           </NavLink>
         )}
 
-        <NavLink
-          to="/reset-password"
-          className={linkClass}
-        >
-          Reset Password
-        </NavLink>
-
       </div>
     )}
   </div>
