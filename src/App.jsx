@@ -53,7 +53,10 @@ export default function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
 
       {/* Public */}
+      {/* Public */}
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/forbidden" element={<Forbidden />} />
 
       {/* Authenticated */}
@@ -90,8 +93,7 @@ export default function App() {
           <Route path="/customers/aging" element={<AgingReport />} />
           <Route path="/customers/credit-dashboard" element={<CustomerCreditDashboard />} />  
           <Route path="/inventory/:id" element={<InventoryDetails />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />  
-          <Route path="/reset-password" element={<ResetPassword />} />  
+ 
 
 
 
