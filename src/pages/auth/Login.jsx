@@ -125,6 +125,15 @@ export default function Login() {
 
           </div>
 
+           <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading || !email || !password}
@@ -142,14 +151,7 @@ export default function Login() {
             )}
 
           </button>
-                    <div className="text-right">
-            <Link
-              to="/forgot-password"
-              className="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
-            >
-              Forgot Password?
-            </Link>
-          </div>
+
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
