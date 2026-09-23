@@ -63,7 +63,25 @@ export default function ResetPassword() {
         }
       );
 
-      const data = await response.json();
+      const contentType = response.headers.get("content-type") || "";
+
+      let data;
+
+      if (contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+
+        console.error("Non-JSON response:", {
+          status: response.status,
+          contentType,
+          body: text,
+        });
+
+        throw new Error(
+          `Server returned an unexpected response (${response.status}).`
+        );
+      }
 
       if (!response.ok) {
         throw new Error(
