@@ -12,7 +12,7 @@ import InventoryTable from "../../components/inventory/InventoryTable";
 import InventoryCreate from "./InventoryCreate";
 import InventoryEdit from "./InventoryEdit";
 import Toast from "../../components/Toast";
-import InventoryFilters from "../../components/InventoryFilters";
+import InventoryFilters from "../../components/inventory/InventoryFilters";
 import useDebounce from "../../hooks/useDebounce";
 import Pagination from "../../components/inventory/Pagination"; 
 import StockTransferModal from "../../components/stock/StockTransferModal";
