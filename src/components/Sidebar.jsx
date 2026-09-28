@@ -297,17 +297,17 @@ if (pathname.startsWith("/admin")) {
   "reports.sales"
 ) && (
   <div>
-    <button
-      onClick={() => toggle("sales")}
-      className={menuButton}
-      onClick={handleNavClick}  
-    >
-      <span>Sales</span>
+  <button
+    type="button"
+    onClick={() => toggle("sales")}
+    className={menuButton}
+  >
+    <span>Sales</span>
 
-      <span>
-        {activeMenu === "sales" ? "−" : "+"}
-      </span>
-    </button>
+    <span>
+      {activeMenu === "sales" ? "−" : "+"}
+    </span>
+  </button>
 
     {activeMenu === "sales" && (
       <div className="ml-4 mt-1 space-y-1">
