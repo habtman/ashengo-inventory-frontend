@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { hasPermission } from '../../utils/permissions';  
 
 export default function SuppliersPage() {
-    const canViewsuppliers = hasPermission("suppliers.edit");
+    const canViewSuppliers = hasPermission("suppliers.view");
     const canEditSuppliers = hasPermission("suppliers.edit");
-    const canDeletesuppliers = hasPermission("suppliers.delete");
+    const canDeleteSuppliers = hasPermission("suppliers.delete");
+    const canDeactivateSuppliers = hasPermission("suppliers.deactivate");
    
 
     const [suppliers, setSuppliers] = useState([]);
@@ -249,57 +250,60 @@ const totalPages = Math.ceil(
                 </td>
                 
                 <td className="border p-2">
-                <div className="flex gap-2">
-            {canViewsuppliers && (
-                  <button
-                    onClick={() =>
-                      navigate(`/suppliers/${supplier.id}`)
-                    }
-                    className="px-3 py-1 bg-indigo-600 text-white rounded"
-                  >
-                    View
-                  </button>
-            )}
+                  <div className="flex gap-2">
 
-            {canEditSuppliers && (
-                    <button
-                    onClick={() => handleEditSupplier(supplier)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded"
-                    >
-                    Edit
-                    </button>
-            )}
-            {canDeletesuppliers && (
-
-                    <button
-                        onClick={() => handleDeleteSupplier(supplier.id)}
-                        className="px-3 py-1 bg-gray-700 text-white rounded"
-                        >
-                        Delete
-                    </button>
-            )}
-
-                    {supplier.is_active ? (
-                    <button
+                    {canViewSuppliers && (
+                      <button
                         onClick={() =>
-                        handleDeactivateSupplier(supplier.id)
+                          navigate(`/suppliers/${supplier.id}`)
                         }
-                        className="px-3 py-1 bg-red-600 text-white rounded"
-                    >
-                        Deactivate
-                    </button>
-                    ) : (
-                    <button
-                        onClick={() =>
-                        handleReactivateSupplier(supplier.id)
-                        }
-                        className="px-3 py-1 bg-green-600 text-white rounded"
-                    >
-                        Reactivate
-                    </button>
+                        className="px-3 py-1 bg-indigo-600 text-white rounded"
+                      >
+                        View
+                      </button>
                     )}
 
-                </div>
+                    {canEditSuppliers && (
+                      <button
+                        onClick={() => handleEditSupplier(supplier)}
+                        className="px-3 py-1 bg-blue-600 text-white rounded"
+                      >
+                        Edit
+                      </button>
+                    )}
+
+                    {canDeleteSuppliers && (
+                      <button
+                        onClick={() => handleDeleteSupplier(supplier.id)}
+                        className="px-3 py-1 bg-gray-700 text-white rounded"
+                      >
+                        Delete
+                      </button>
+                    )}
+
+                    {canDeactivateSuppliers && (
+                      supplier.is_active ? (
+                        <button
+                          onClick={() =>
+                            handleDeactivateSupplier(supplier.id)
+                          }
+                          className="px-3 py-1 bg-red-600 text-white rounded"
+                        >
+                          Deactivate
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handleReactivateSupplier(supplier.id)
+                          }
+                          className="px-3 py-1 bg-green-600 text-white rounded"
+                        >
+                          Reactivate
+                        </button>
+                      )
+                    )}
+
+                  </div>
                 </td>
 
                 </tr>
