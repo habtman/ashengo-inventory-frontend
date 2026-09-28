@@ -218,24 +218,30 @@ selectedItems.every(item => Number(item.total_stock) === 0);
 
 
 return (
-  <div className="p-6 space-y-6">
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-bold">Inventory</h1>
-        <p className="text-sm text-slate-500">
-          Manage products and stock levels
-        </p>
-      </div>
+<div className="sticky top-[57px] z-40 bg-gray-50 pb-3">
 
-      <div className="flex flex-wrap gap-2">
-          {canCreate && (
-            <button
-              onClick={() => setShowCreate(true)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded"
-            >
-              New Item
-            </button>
-          )}
+  {/* Inventory header */}
+  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 className="text-2xl font-bold">
+        Inventory
+      </h1>
+
+      <p className="text-sm text-slate-500">
+        Manage products and stock levels
+      </p>
+    </div>
+
+    <div className="flex flex-wrap gap-2">
+
+      {canCreate && (
+        <button
+          onClick={() => setShowCreate(true)}
+          className="bg-indigo-600 text-white px-4 py-2 rounded"
+        >
+          New Item
+        </button>
+      )}
 
       {canAddStock && (
         <button
@@ -247,9 +253,6 @@ return (
           Add Stock
         </button>
       )}
-
-
-
 
       {canTransfer && (
         <button
@@ -266,20 +269,20 @@ return (
         </button>
       )}
 
-      
-
-        </div>
-      </div>
-    <div className="bg-white border rounded-lg p-4">
-      <InventoryFilters
-        search={search}
-        setSearch={setSearch}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        lowStockOnly={lowStockOnly}
-        setLowStockOnly={setLowStockOnly}
-      />
     </div>
+  </div>
+
+  {/* Filters */}
+  <div className="bg-white border rounded-lg p-4 mt-4">
+    <InventoryFilters
+      search={search}
+      setSearch={setSearch}
+      statusFilter={statusFilter}
+      setStatusFilter={setStatusFilter}
+      lowStockOnly={lowStockOnly}
+      setLowStockOnly={setLowStockOnly}
+    />
+  </div>
 
     <div className="bg-white border rounded-lg overflow-hidden">
     <div className="flex items-center gap-6 px-4 py-3 bg-white border-b text-xs uppercase tracking-wide text-slate-500">
