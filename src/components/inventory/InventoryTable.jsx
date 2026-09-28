@@ -38,9 +38,9 @@ export default function InventoryTable({
     selectedIds.length === items.length;
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+  <div className="w-full overflow-x-auto rounded-xl border border-slate-200 bg-white">
 
-      <table className="min-w-full">
+    <table className="min-w-[1100px] w-full">
 
         <thead className="bg-slate-50">
 
