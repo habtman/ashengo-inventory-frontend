@@ -40,7 +40,7 @@ export default function InventoryTable({
   return (
   <div className="w-full overflow-x-auto rounded-xl border border-slate-200 bg-white">
 
-    <table className="min-w-[1100px] w-full">
+    <table className="w-full min-w-[1000px]">
 
         <thead className="bg-slate-50">
 
