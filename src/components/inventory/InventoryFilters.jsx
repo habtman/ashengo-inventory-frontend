@@ -15,14 +15,14 @@ export default function InventoryFilters({
     placeholder="Search by name or SKU..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
-    className="w-64 border rounded px-3 py-2 text-sm"
+    className="w-full sm:w-64 border rounded px-3 py-2 text-sm"
   />
 
   {/* Status filter */}
   <select
     value={statusFilter}
     onChange={(e) => setStatusFilter(e.target.value)}
-    className="border rounded px-3 py-2 text-sm"
+    className="w-full sm:w-40 border rounded px-3 py-2 text-sm"
   >
     <option value="all">All</option>
     <option value="IN">In Stock</option>
