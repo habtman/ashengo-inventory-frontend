@@ -218,6 +218,7 @@ selectedItems.every(item => Number(item.total_stock) === 0);
 
 
 return (
+  <div className="p-6 space-y-6">
 <div className="sticky top-[57px] z-40 bg-gray-50 pb-3">
 
   {/* Inventory header */}
@@ -283,6 +284,8 @@ return (
       setLowStockOnly={setLowStockOnly}
     />
   </div>
+
+</div>
 
     <div className="bg-white border rounded-lg overflow-hidden">
     <div className="flex items-center gap-6 px-4 py-3 bg-white border-b text-xs uppercase tracking-wide text-slate-500">
