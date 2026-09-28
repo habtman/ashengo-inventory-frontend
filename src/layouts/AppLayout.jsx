@@ -55,7 +55,7 @@ export default function AppLayout() {
       </header>
 
       {/* 🔽 BODY */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1">
 
         {/* SIDEBAR */}
         <Sidebar
@@ -66,7 +66,7 @@ export default function AppLayout() {
         />
 
         {/* CONTENT */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 bg-gray-50 overflow-y-auto">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 bg-gray-50">
 
           <Outlet />
 
