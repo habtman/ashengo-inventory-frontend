@@ -5,7 +5,7 @@ import {
   hasAnyPermission,
 } from "../utils/permissions";
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen, onClose }) {
   const location = useLocation();
 
   const canViewUsers = hasPermission("users.view");
@@ -90,6 +90,12 @@ if (pathname.startsWith("/admin")) {
     );
   };
 
+  const handleNavClick = () => {
+  if (onClose) {
+    onClose();
+  }
+};
+
   const linkClass = ({ isActive }) =>
     `block px-4 py-2 text-sm rounded transition ${
       isActive
@@ -101,19 +107,65 @@ if (pathname.startsWith("/admin")) {
     "w-full flex items-center justify-between px-4 py-2 font-semibold hover:bg-gray-100 rounded transition";
 
   return (
-    <aside
-      className="
-        w-64
-        bg-white
-        border-r
-        p-4
-        space-y-2
-        h-screen
-        sticky
-        top-0
-        overflow-y-auto
-      "
-    >
+ <>
+  {/* Mobile backdrop */}
+  {mobileOpen && (
+    <div
+      className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+      onClick={onClose}
+    />
+  )}
+
+  <aside
+    className={`
+      w-64
+      bg-white
+      border-r
+      p-4
+      space-y-2
+      overflow-y-auto
+
+      fixed
+      inset-y-0
+      left-0
+      z-50
+
+      transform
+      transition-transform
+      duration-200
+      ease-in-out
+
+      ${
+        mobileOpen
+          ? "translate-x-0"
+          : "-translate-x-full"
+      }
+
+    lg:translate-x-0
+    lg:h-screen
+    lg:sticky
+    lg:top-0
+    `}
+  >
+
+
+    {/* Mobile sidebar header */}
+    <div className="flex items-center justify-between mb-4 lg:hidden">
+      <span className="font-bold text-lg">
+        Menu
+      </span>
+
+      <button
+        type="button"
+        onClick={onClose}
+        className="p-2 rounded hover:bg-gray-100 text-xl"
+        aria-label="Close navigation menu"
+      >
+        ×
+      </button>
+    </div>
+
+
       {/* Dashboard */}
      {/* Administration */}
 {canAccessAdministration && (
@@ -135,7 +187,11 @@ if (pathname.startsWith("/admin")) {
       <div className="ml-4 mt-1 space-y-1">
 
         {canViewAdminDashboard && (
-          <NavLink to="/admin" className={linkClass}>
+          <NavLink to="/admin" 
+          className={linkClass}
+          onClick={handleNavClick}
+          >
+           
             Dashboard
           </NavLink>
         )}
@@ -144,6 +200,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/admin/users"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Users
           </NavLink>
@@ -153,6 +210,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/admin/audit-logs"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Audit Logs
           </NavLink>
@@ -162,6 +220,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/admin/settings"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Company Settings
           </NavLink>
@@ -195,18 +254,20 @@ if (pathname.startsWith("/admin")) {
         {activeMenu === "inventory" && (
           <div className="ml-4 mt-1 space-y-1">
             {canViewInventory && (
-              <NavLink
-                to="/inventory"
-                className={linkClass}
-              >
-                Products
-              </NavLink>
+            <NavLink
+              to="/inventory"
+              className={linkClass}
+              onClick={handleNavClick}
+            >
+              Products
+            </NavLink>
             )}
 
             {canViewInventory && (
               <NavLink
                 to="/stock-history"
                 className={linkClass}
+                onClick={handleNavClick}
               >
                 Stock History
               </NavLink>
@@ -216,6 +277,7 @@ if (pathname.startsWith("/admin")) {
               <NavLink
                 to="/locations"
                 className={linkClass}
+                onClick={handleNavClick}  
               >
                 Warehouses
               </NavLink>
@@ -235,6 +297,7 @@ if (pathname.startsWith("/admin")) {
     <button
       onClick={() => toggle("sales")}
       className={menuButton}
+      onClick={handleNavClick}  
     >
       <span>Sales</span>
 
@@ -247,7 +310,11 @@ if (pathname.startsWith("/admin")) {
       <div className="ml-4 mt-1 space-y-1">
 
         {canViewSalesOrders && (
-          <NavLink to="/sales-orders" className={linkClass}>
+          <NavLink to="/sales-orders" 
+          className={linkClass}
+          onClick={handleNavClick}
+          >
+           
             Sales Orders
           </NavLink>
         )}
@@ -256,6 +323,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/customers/credit-dashboard"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Credit Dashboard
           </NavLink>
@@ -265,6 +333,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/customers"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Customers
           </NavLink>
@@ -274,6 +343,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/customers/aging"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Aging Report
           </NavLink>
@@ -283,6 +353,7 @@ if (pathname.startsWith("/admin")) {
           <NavLink
             to="/invoices"
             className={linkClass}
+            onClick={handleNavClick}  
           >
             Invoices
           </NavLink>
@@ -317,7 +388,8 @@ if (pathname.startsWith("/admin")) {
         <div className="ml-4 mt-1 space-y-1">
 
           {canViewSuppliers && (
-            <NavLink to="/suppliers" className={linkClass}>
+            <NavLink to="/suppliers" className={linkClass} 
+            onClick={handleNavClick}>
               Suppliers
             </NavLink>
           )}
@@ -326,6 +398,7 @@ if (pathname.startsWith("/admin")) {
             <NavLink
               to="/purchase-orders"
               className={linkClass}
+              onClick={handleNavClick}  
             >
               Purchase Orders
             </NavLink>
@@ -335,21 +408,25 @@ if (pathname.startsWith("/admin")) {
             <NavLink
               to="/purchase-orders/new"
               className={linkClass}
+              onClick={handleNavClick}  
             >
               Create Purchase Order
             </NavLink>
           )}
 
           {canViewGoodsReceipts && (
-            <NavLink to="/grn" className={linkClass}>
+            <NavLink to="/grn" 
+            className={linkClass}
+            onClick={handleNavClick}>
               Goods Receipt Notes
             </NavLink>
           )}
 
         </div>
       )}
-    </div>
-    )}
+        </div>
+      )}
     </aside>
+    </>
   );
 }
