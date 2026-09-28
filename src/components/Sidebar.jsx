@@ -44,9 +44,11 @@ const getMenuFromPath = (pathname) => {
   if (pathname.startsWith("/invoices")) {
     return "invoices";
   }
-  
 
-  if (pathname.startsWith("/sales")) {
+  if (
+    pathname === "/sales" ||
+    pathname.startsWith("/sales/")
+  ) {
     return "sales";
   }
 
@@ -242,6 +244,7 @@ if (pathname.startsWith("/admin")) {
         <button
           onClick={() => toggle("inventory")}
           className={menuButton}
+
         >
           <span className="flex items-center gap-2">
             Inventory
