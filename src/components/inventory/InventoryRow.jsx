@@ -93,7 +93,7 @@ export default function InventoryRow({
       <tr className="hover:bg-slate-50 transition">
 
         {/* Checkbox */}
-        <td className="px-6 py-4">
+        <td className="px-3 py-3">
           <input
             type="checkbox"
             checked={selected}
@@ -104,32 +104,32 @@ export default function InventoryRow({
         </td>
 
         {/* Name */}
-        <td className="px-6 py-4 font-medium text-slate-900">
+        <td className="px-3 py-3 font-medium text-sm text-slate-900">
           {item.name}
         </td>
 
         {/* SKU */}
-        <td className="px-6 py-4 text-slate-500">
+        <td className="px-3 py-3 text-sm text-slate-500">
           {item.sku}
         </td>
 
         {/* Selling Price */}
-        <td className="px-6 py-4 text-right
-                       tabular-nums text-slate-700">
+        <td className="px-3 py-3 text-right
+               tabular-nums text-sm text-slate-700">
           {formatCurrency(sellingPrice)}
         </td>
 
         {/* Cost */}
-        <td className="px-6 py-4 text-right
-                       tabular-nums text-slate-500">
+        <td className="px-3 py-3 text-right
+               tabular-nums text-sm text-slate-500">
           {formatCurrency(costPrice)}
         </td>
 
         {/* ================================= */}
         {/* Markup */}
         {/* ================================= */}
-        <td className="px-6 py-4 text-right
-                       tabular-nums">
+        <td className="px-3 py-3 text-right
+               tabular-nums text-sm">
 
           <span className="font-semibold text-emerald-600">
             {markupPercent.toFixed(2)}%
@@ -140,8 +140,8 @@ export default function InventoryRow({
         {/* ================================= */}
         {/* Profit Margin */}
         {/* ================================= */}
-        <td className="px-6 py-4 text-right
-                       tabular-nums">
+        <td className="px-3 py-3 text-right
+               tabular-nums text-sm">
 
           <span className="font-semibold text-emerald-600">
             {profitMargin.toFixed(2)}%
@@ -150,13 +150,13 @@ export default function InventoryRow({
         </td>
 
         {/* Total Stock */}
-        <td className="px-6 py-4 text-right
-                       tabular-nums font-semibold">
+        <td className="px-3 py-3 text-right
+               tabular-nums text-sm font-semibold">
           {totalStock}
         </td>
 
         {/* Status */}
-        <td className="px-6 py-4">
+        <td className="px-3 py-3">
 
           <span
             className={`px-2.5 py-1 text-xs
@@ -169,10 +169,10 @@ export default function InventoryRow({
         </td>
 
         {/* Actions */}
-        <td className="px-6 py-4">
+        <td className="px-3 py-3">
 
-          <div className="flex items-center gap-4
-                          text-xs font-medium">
+          <div className="flex items-center gap-2
+                text-xs font-medium whitespace-nowrap">
 
             <button
               onClick={toggle}
