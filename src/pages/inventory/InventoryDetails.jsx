@@ -322,7 +322,7 @@ const totalPurchaseCost = purchases.reduce(
 
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 min-w-0">
 
       {/* Header */}
       <div>
@@ -345,7 +345,7 @@ const totalPurchaseCost = purchases.reduce(
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-2 sm:gap-3">
 
       {canAdjust && (
         <button
@@ -353,7 +353,7 @@ const totalPurchaseCost = purchases.reduce(
           className="
             bg-yellow-600
             text-white
-            px-4 py-2
+            px-3 sm:px-4 py-2
             rounded
             hover:bg-yellow-700
           "
@@ -370,7 +370,7 @@ const totalPurchaseCost = purchases.reduce(
           className="
             bg-green-600
             text-white
-            px-4 py-2
+            px-3 sm:px-4 py-2
             rounded
             hover:bg-green-700
           "
@@ -385,7 +385,7 @@ const totalPurchaseCost = purchases.reduce(
           className="
             bg-blue-600
             text-white
-            px-4 py-2
+            px-3 sm:px-4 py-2 
             rounded
             hover:bg-blue-700
           "
@@ -397,11 +397,11 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
       {/*Add Tab buttons*/}
-      <div className="flex gap-2 border-b pb-2 mb-4">
+      <div className="flex flex-wrap gap-2 border-b pb-2 mb-4">
         {canViewInventoryOverview &&
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-3 py-2 rounded ${
+          className={`px-3 py-2 rounded text-sm sm:text-base ${
             activeTab === "overview"
               ? "bg-blue-600 text-white"
               : "bg-slate-100"
@@ -413,7 +413,7 @@ const totalPurchaseCost = purchases.reduce(
 
         <button
           onClick={() => setActiveTab("locations")}
-          className={`px-3 py-2 rounded ${
+          className={`px-3 py-2 rounded text-sm sm:text-base ${ 
             activeTab === "locations"
               ? "bg-blue-600 text-white"
               : "bg-slate-100"
@@ -424,7 +424,7 @@ const totalPurchaseCost = purchases.reduce(
 
         <button
           onClick={() => setActiveTab("movements")}
-          className={`px-3 py-2 rounded ${
+          className={`px-3 py-2 rounded text-sm sm:text-base ${
             activeTab === "movements"
               ? "bg-blue-600 text-white"
               : "bg-slate-100"
@@ -435,7 +435,7 @@ const totalPurchaseCost = purchases.reduce(
     {canViewPurchaseReport && (
         <button
           onClick={() => setActiveTab("purchases")}
-          className={`px-3 py-2 rounded ${
+          className={`px-3 py-2 rounded text-sm sm:text-base ${
             activeTab === "purchases"
               ? "bg-blue-600 text-white"
               : "bg-slate-100"
@@ -448,7 +448,7 @@ const totalPurchaseCost = purchases.reduce(
       {canViewSalesReport && (
         <button
           onClick={() => setActiveTab("sales")}
-          className={`px-3 py-2 rounded ${
+          className={`px-3 py-2 rounded text-sm sm:text-base ${
             activeTab === "sales"
               ? "bg-blue-600 text-white"
               : "bg-slate-100"
@@ -462,7 +462,7 @@ const totalPurchaseCost = purchases.reduce(
       {/* Summary Cards */}
       {canViewInventoryOverview && activeTab === "overview" && (
         <>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 
         <div className="border rounded p-4">
           <div className="text-sm text-gray-500">
@@ -546,7 +546,7 @@ const totalPurchaseCost = purchases.reduce(
     </h3>
   </div>
 
-  <div className="grid grid-cols-2 gap-4 mb-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
 
   <SummaryCard
     title="Locations"
@@ -672,7 +672,8 @@ const totalPurchaseCost = purchases.reduce(
 
       </div>
 
-        <table className="w-full">
+        <div className="w-full overflow-x-auto">
+  <table className="min-w-[800px] w-full text-sm">
 
           <thead>
             <tr className="border-b">
@@ -741,6 +742,7 @@ const totalPurchaseCost = purchases.reduce(
           </tbody>
 
         </table>
+      </div>  
 
       <div className="flex items-center justify-between mt-4">
 
