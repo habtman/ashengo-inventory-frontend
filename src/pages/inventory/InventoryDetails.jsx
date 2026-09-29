@@ -326,7 +326,7 @@ const totalPurchaseCost = purchases.reduce(
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-2xl sm:text-3xl font-bold break-words">
           {product.name}
         </h1>
       </div>
@@ -511,7 +511,7 @@ const totalPurchaseCost = purchases.reduce(
 
       {/* Summary Cards*/}
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <SummaryCard
           title="Purchased"
           value={totalPurchased}
@@ -529,7 +529,7 @@ const totalPurchaseCost = purchases.reduce(
 
         <SummaryCard
           title="Purchase Cost"
-          value={formatCurrency(totalPurchaseCost)} 
+          value={formatCurrency(totalPurchaseCost)}
         />
       </div>
         </>
@@ -567,7 +567,8 @@ const totalPurchaseCost = purchases.reduce(
 
 </div>
 
-  <table className="w-full text-sm">
+  <div className="w-full overflow-x-auto">
+  <table className="min-w-[650px] w-full text-sm">
 
     <thead className="bg-slate-50">
       <tr>
@@ -642,6 +643,7 @@ const totalPurchaseCost = purchases.reduce(
     </tbody>
 
   </table>
+  </div>
 
 </div>
         </>
@@ -673,7 +675,7 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
         <div className="w-full overflow-x-auto">
-  <table className="min-w-[800px] w-full text-sm">
+          <table className="min-w-[800px] w-full text-sm">
 
           <thead>
             <tr className="border-b">
@@ -744,7 +746,7 @@ const totalPurchaseCost = purchases.reduce(
         </table>
       </div>  
 
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
 
         <button
           onClick={() =>
@@ -798,10 +800,11 @@ const totalPurchaseCost = purchases.reduce(
           onChange={(e)=>
             setPurchaseSearch(e.target.value)
           }
-          className="border rounded px-3 py-2 w-72"
+          className="border rounded px-3 py-2 w-full sm:w-72"
         />
 
-      <table className="w-full">
+      <div className="w-full overflow-x-auto">
+      <table className="min-w-[800px] w-full text-sm">
         <thead>
           <tr className="border-b">
             <th>Date</th>
@@ -850,8 +853,9 @@ const totalPurchaseCost = purchases.reduce(
           )}
         </tbody>
       </table>
+      </div>
 
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
 
         <button
           onClick={() =>
@@ -915,10 +919,11 @@ const totalPurchaseCost = purchases.reduce(
         onChange={(e)=>
           setSalesSearch(e.target.value)
         }
-        className="border rounded px-3 py-2 w-72"
+        className="border rounded px-3 py-2 w-full sm:w-72"
       />
 
-      <table className="w-full">
+      <div className="w-full overflow-x-auto">
+        <table className="min-w-[850px] w-full text-sm">
         <thead>
           <tr className="border-b">
             <th>Date</th>
@@ -971,7 +976,9 @@ const totalPurchaseCost = purchases.reduce(
           )}
         </tbody>
       </table>
-      <div className="flex items-center justify-between mt-4">
+      </div>  
+      
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
 
         <button
           onClick={() =>
