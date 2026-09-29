@@ -288,7 +288,8 @@ return (
 </div>
 
     <div className="bg-white border rounded-lg overflow-hidden">
-    <div className="flex items-center gap-6 px-4 py-3 bg-white border-b text-xs uppercase tracking-wide text-slate-500">
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 
+     py-3 bg-white border-b text-xs uppercase tracking-wide text-slate-500">
     <div className="flex items-center gap-2">
       <span className="w-3 h-3 rounded bg-red-200"></span>
       <span>Out of stock</span>
