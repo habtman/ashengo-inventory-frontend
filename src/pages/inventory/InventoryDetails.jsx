@@ -844,53 +844,97 @@ const totalPurchaseCost = purchases.reduce(
         />
 
       <div className="w-full overflow-x-auto">
-      <table className="min-w-[800px] w-full text-sm">
-        <thead>
+        <table className="min-w-[800px] w-full text-sm">
+        <thead className="bg-slate-50">
           <tr className="border-b">
-            <th>Date</th>
-            <th>GRN</th>
-            <th>Qty</th>
-            <th>Cost Price</th>
-            <th>Total Cost</th>
-            <th>Location</th>
-            <th>Received By</th>
+
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Date
+            </th>
+
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              GRN
+            </th>
+
+            <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Qty
+            </th>
+
+            <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Cost Price
+            </th>
+
+            <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Total Cost
+            </th>
+
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Location
+            </th>
+
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Received By
+            </th>
+
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="divide-y divide-slate-100">
+
           {filteredPurchases.length === 0 ? (
             <tr>
-              <td colSpan="7">
+              <td
+                colSpan="7"
+                className="px-3 py-4 text-center text-sm text-slate-500"
+              >
                 No purchases found
               </td>
             </tr>
           ) : (
-            paginatedPurchases.map((purchase,index) => (
-              <tr key={index}>
-                <td>
+            paginatedPurchases.map((purchase, index) => (
+              <tr
+                key={index}
+                className="hover:bg-slate-50 transition"
+              >
+
+                <td className="px-3 py-2.5 text-left whitespace-nowrap">
                   {new Date(
                     purchase.received_at
                   ).toLocaleDateString()}
                 </td>
 
-                <td>{purchase.grn_number}</td>
-
-                <td>{purchase.quantity}</td>
-
-                <td>
-                  {formatCurrency(Number(purchase.cost_price))}
+                <td className="px-3 py-2.5 text-left whitespace-nowrap">
+                  {purchase.grn_number}
                 </td>
 
-                <td>
-                  {formatCurrency(Number(purchase.total_cost))}
+                <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
+                  {purchase.quantity}
                 </td>
 
-                <td>{purchase.location_name}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
+                  {formatCurrency(
+                    Number(purchase.cost_price)
+                  )}
+                </td>
 
-                <td>{purchase.received_by}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
+                  {formatCurrency(
+                    Number(purchase.total_cost)
+                  )}
+                </td>
+
+                <td className="px-3 py-2.5 text-left">
+                  {purchase.location_name}
+                </td>
+
+                <td className="px-3 py-2.5 text-left whitespace-nowrap">
+                  {purchase.received_by}
+                </td>
+
               </tr>
             ))
           )}
+
         </tbody>
       </table>
       </div>
