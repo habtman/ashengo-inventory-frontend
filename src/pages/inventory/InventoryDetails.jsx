@@ -688,39 +688,39 @@ const totalPurchaseCost = purchases.reduce(
         <div className="w-full overflow-x-auto">
           <table className="min-w-[800px] w-full text-sm">
 
-          <thead className="bg-slate-50">
-            <tr className="border-b">
+<thead className="bg-slate-50">
+  <tr className="border-b">
 
-              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
-                Date
-              </th>
+    <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+      Date
+    </th>
 
-              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
-                Type
-              </th>
+    <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+      Type
+    </th>
 
-              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
-                From
-              </th>
+    <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+      From
+    </th>
 
-              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
-                To
-              </th>
+    <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+      To
+    </th>
 
-              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
-                User
-              </th>
+    <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+      User
+    </th>
 
-              <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
-                Quantity
-              </th>
+    <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+      Quantity
+    </th>
 
-              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
-                Details
-              </th>
+    <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+      Details
+    </th>
 
-            </tr>
-          </thead>
+  </tr>
+</thead>
 
           <tbody>
             {filteredMovements.length === 0 ? (
@@ -734,28 +734,35 @@ const totalPurchaseCost = purchases.reduce(
             paginatedMovements.map(movement => (
               <tr
                 key={movement.id}
-                className="border-b"
+                className="border-b hover:bg-slate-50 transition"
               >
-                <td className="py-2">
+                <td className="px-3 py-2.5 text-left whitespace-nowrap">
                   {new Date(
                     movement.created_at
                   ).toLocaleDateString()}
                 </td>
-                <td className="py-2">
+
+                <td className="px-3 py-2.5 text-left whitespace-nowrap">
                   {movement.movement_type}
                 </td>
 
-                <td>{movement.from_location || "-"}</td>
+                <td className="px-3 py-2.5 text-center">
+                  {movement.from_location || "-"}
+                </td>
 
-                <td>{movement.to_location || "-"}</td>
+                <td className="px-3 py-2.5 text-center">
+                  {movement.to_location || "-"}
+                </td>
 
-                <td>{movement.created_by || "-"}</td>
+                <td className="px-3 py-2.5 text-center whitespace-nowrap">
+                  {movement.created_by || "-"}
+                </td>
 
-                <td className="py-2">
+                <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
                   {movement.quantity}
                 </td>
 
-                <td className="py-2">
+                <td className="px-3 py-2.5 text-left">
                   {movement.details || "-"}
                 </td>
               </tr>
