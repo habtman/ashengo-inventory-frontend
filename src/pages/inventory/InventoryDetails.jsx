@@ -688,29 +688,37 @@ const totalPurchaseCost = purchases.reduce(
         <div className="w-full overflow-x-auto">
           <table className="min-w-[800px] w-full text-sm">
 
-          <thead>
+          <thead className="bg-slate-50">
             <tr className="border-b">
-              <th className="text-left py-2">
+
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
                 Date
               </th>
 
-              <th className="text-left py-2">
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
                 Type
               </th>
 
-              <th>From</th>
+              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+                From
+              </th>
 
-              <th>To</th>
+              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+                To
+              </th>
 
-              <th>User</th>
+              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+                User
+              </th>
 
-              <th className="text-left py-2">
+              <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
                 Quantity
               </th>
 
-              <th className="text-left py-2">
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
                 Details
               </th>
+
             </tr>
           </thead>
 
