@@ -743,7 +743,21 @@ const totalPurchaseCost = purchases.reduce(
                 </td>
 
                 <td className="px-3 py-2.5 text-left whitespace-nowrap">
-                  {movement.movement_type}
+                  <span
+                    className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                      movement.movement_type === "SALE"
+                        ? "bg-green-100 text-green-700"
+                        : movement.movement_type === "PURCHASE_RECEIPT"
+                        ? "bg-blue-100 text-blue-700"
+                        : movement.movement_type === "TRANSFER"
+                        ? "bg-indigo-100 text-indigo-700"
+                        : movement.movement_type === "ADJUSTMENT"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-slate-100 text-slate-700"
+                    }`}
+                  >
+                    {movement.movement_type}
+                  </span>
                 </td>
 
                 <td className="px-3 py-2.5 text-center">
