@@ -1008,58 +1008,118 @@ const totalPurchaseCost = purchases.reduce(
 
       <div className="w-full overflow-x-auto">
         <table className="min-w-[850px] w-full text-sm">
-        <thead>
-          <tr className="border-b">
-            <th>Date</th>
-            <th>SO Number</th>
-            <th>Customer</th>
-            <th>Qty</th>
-            <th>Unit Price</th>
-            <th>Total</th>
-            <th>Created By</th>
-            <th>Status</th>
-          </tr>
-        </thead>
+          <thead className="bg-slate-50">
+            <tr className="border-b">
 
-        <tbody>
-          {filteredSales.length === 0 ? (
-            <tr>
-              <td colSpan="8">
-                No sales found
-              </td>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Date
+              </th>
+
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+                SO Number
+              </th>
+
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Customer
+              </th>
+
+              <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Qty
+              </th>
+
+              <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Unit Price
+              </th>
+
+              <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Total
+              </th>
+
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Created By
+              </th>
+
+              <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Status
+              </th>
+
             </tr>
-          ) : (
-            paginatedSales.map((sale,index) => (
-              <tr key={index}>
-                <td>
-                  {new Date(
-                    sale.created_at
-                  ).toLocaleDateString()}
+          </thead>
+
+          <tbody className="divide-y divide-slate-100">
+
+            {filteredSales.length === 0 ? (
+              <tr>
+                <td
+                  colSpan="8"
+                  className="px-3 py-4 text-center text-sm text-slate-500"
+                >
+                  No sales found
                 </td>
-
-                <td>{sale.so_number}</td>
-
-                <td>{sale.customer_name}</td>
-
-                <td>{sale.quantity}</td>
-
-                <td>
-                  {formatCurrency(Number(sale.unit_price))}
-                </td>
-
-                <td>
-                  {formatCurrency(Number(sale.total_amount))} 
-                </td>
-
-                <td>{sale.created_by_name || "-"}</td>
-
-                <td>{sale.status}</td>
-
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              paginatedSales.map((sale, index) => (
+                <tr
+                  key={index}
+                  className="hover:bg-slate-50 transition"
+                >
+
+                  <td className="px-3 py-2.5 text-left whitespace-nowrap">
+                    {new Date(
+                      sale.created_at
+                    ).toLocaleDateString()}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-left whitespace-nowrap">
+                    {sale.so_number}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-left">
+                    {sale.customer_name}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
+                    {sale.quantity}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
+                    {formatCurrency(
+                      Number(sale.unit_price)
+                    )}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-right tabular-nums whitespace-nowrap">
+                    {formatCurrency(
+                      Number(sale.total_amount)
+                    )}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-left whitespace-nowrap">
+                    {sale.created_by_name || "-"}
+                  </td>
+
+                  <td className="px-3 py-2.5 text-center whitespace-nowrap">
+                    <span
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                        sale.status === "COMPLETED"
+                          ? "bg-green-100 text-green-700"
+                          : sale.status === "CANCELLED"
+                          ? "bg-red-100 text-red-700"
+                          : sale.status === "DRAFT"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {sale.status}
+                    </span>
+                  </td>
+
+                </tr>
+              ))
+            )}
+
+          </tbody>
+        </table>
       </div>  
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
