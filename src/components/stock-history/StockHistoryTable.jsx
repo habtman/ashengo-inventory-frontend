@@ -106,37 +106,35 @@ Stock Movement History
 
 <tbody>
 {Array.isArray(movements) &&
-  movements.map((m) => (
+  movements.map((movement) => (
 
-  <tr key={m.id} className="border-t hover:bg-slate-50">
+  <tr key={movement.id} className="border-t hover:bg-slate-50">
     <td className="p-3">
-      <span
-        className={`px-2 py-1 text-xs rounded ${
-          m.movement_type === "PURCHASE_RECEIPT"  
-            ? "bg-green-100 text-green-700"
-            : m.movement_type === "TRANSFER"
-            ? "bg-blue-100 text-blue-700"
-            : m.movement_type === "SALE"
-            ? "bg-red-100 text-red-700"  
-            
-            : m.movement_type === "ADJUSTMENT"
-            ? "bg-yellow-100 text-yellow-700"
-            : "bg-gray-100 text-gray-700" 
-
-        }`}
-      >
-        {m.movement_type}
-      </span>
+                  <span
+                    className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                      movement.movement_type === "SALE"
+                        ? "bg-green-100 text-green-700"
+                        : movement.movement_type === "PURCHASE_RECEIPT"
+                        ? "bg-blue-100 text-blue-700"
+                        : movement.movement_type === "TRANSFER"
+                        ? "bg-indigo-100 text-indigo-700"
+                        : movement.movement_type === "ADJUSTMENT"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-slate-100 text-slate-700"
+                    }`}
+                  >
+                    {movement.movement_type}
+                  </span>
     </td>
 
-    <td className="p-3">{m.inventory_name}</td>
-    <td className="p-3">{m.from_location_name || "-"}</td>
-    <td className="p-3">{m.to_location_name || "-"}</td>
-    <td className="p-3 font-medium">{m.quantity}</td>
-    <td className="p-3">{m.created_by}</td>
+    <td className="p-3">{movement.inventory_name}</td>
+    <td className="p-3">{movement.from_location_name || "-"}</td>
+    <td className="p-3">{movement.to_location_name || "-"}</td>
+    <td className="p-3 font-medium">{movement.quantity}</td>
+    <td className="p-3">{movement.created_by}</td>
 
     <td className="p-3">
-      {new Date(m.created_at).toLocaleString()}
+      {new Date(movement.created_at).toLocaleString()}
     </td>
   </tr>
 ))}
