@@ -42,88 +42,80 @@ export default function InventoryTable({
 
     <table className="w-full min-w-[1000px] lg:min-w-0 text-sm">
 
-        <thead className="bg-slate-50">
+      <thead className="bg-slate-50">
+        <tr>
 
-          <tr>
+          {/* Select */}
+          <th className="px-2 py-2.5 text-left">
+            <input
+              type="checkbox"
+              className="h-4 w-4 rounded border-slate-300
+                        text-indigo-600 focus:ring-indigo-500"
+              checked={allSelected}
+              onChange={() =>
+                allSelected
+                  ? onSelectAll([])
+                  : onSelectAll(items.map((i) => i.id))
+              }
+            />
+          </th>
 
-            {/* Select */}
-            <th className="px-6 py-4 text-left">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-slate-300
-                           text-indigo-600 focus:ring-indigo-500"
-                checked={allSelected}
-                onChange={() =>
-                  allSelected
-                    ? onSelectAll([])
-                    : onSelectAll(items.map((i) => i.id))
-                }
-              />
-            </th>
-
-            {/* Name */}
-          <th className="px-3 py-3 text-left text-xs font-semibold
-           text-slate-600 whitespace-nowrap">
+          {/* Name */}
+          <th className="px-3 py-2.5 text-left text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
             Product Name
           </th>
 
-            {/* SKU */}
-            <th className="px-6 py-4 text-left text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              SKU
-            </th>
+          {/* SKU */}
+          <th className="px-3 py-2.5 text-left text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            SKU
+          </th>
 
-            {/* Price */}
-            <th className="px-3 py-3 text-right text-xs font-semibold
-             text-slate-600 whitespace-nowrap">
-              Price
-            </th>
+          {/* Price */}
+          <th className="px-3 py-2.5 text-right text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Price
+          </th>
 
-            {/* Cost */}
-            <th className="px-3 py-3 text-right text-xs font-semibold
-             text-slate-600 whitespace-nowrap">
-              Cost Price
-            </th>
+          {/* Cost */}
+          <th className="px-3 py-2.5 text-right text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Cost Price
+          </th>
 
-            {/* Markup */}
-            <th className="px-6 py-4 text-right text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              Markup
-            </th>
+          {/* Markup */}
+          <th className="px-3 py-2.5 text-right text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Markup
+          </th>
 
-            {/* Profit Margin */}
-            <th className="px-6 py-4 text-right text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              Profit Margin
-            </th>
+          {/* Profit Margin */}
+          <th className="px-3 py-2.5 text-right text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Profit Margin
+          </th>
 
-            {/* Stock */}
-            <th className="px-6 py-4 text-right text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              Total Stock
-            </th>
+          {/* Stock */}
+          <th className="px-3 py-2.5 text-right text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Total Stock
+          </th>
 
-            {/* Status */}
-            <th className="px-6 py-4 text-left text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              Status
-            </th>
+          {/* Status */}
+          <th className="px-3 py-2.5 text-left text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Status
+          </th>
 
-            {/* Actions */}
-            <th className="px-6 py-4 text-left text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              Actions
-            </th>
+          {/* Actions */}
+          <th className="px-3 py-2.5 text-left text-xs font-semibold
+                        text-slate-600 whitespace-nowrap">
+            Actions
+          </th>
 
-          </tr>
-
-        </thead>
+        </tr>
+      </thead>
 
         <tbody className="divide-y divide-slate-100">
 
