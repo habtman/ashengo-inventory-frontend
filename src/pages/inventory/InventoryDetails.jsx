@@ -397,66 +397,77 @@ const totalPurchaseCost = purchases.reduce(
       </div>
 
       {/*Add Tab buttons*/}
-      <div className="flex flex-wrap gap-2 border-b pb-2 mb-4">
-        {canViewInventoryOverview &&
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`px-3 py-2 rounded text-sm sm:text-base ${
-            activeTab === "overview"
-              ? "bg-blue-600 text-white"
-              : "bg-slate-100"
-          }`}
-        >
-          Overview
-        </button>
-        }
+      {/* Tabs */}
+      <div className="border-b border-slate-200 mb-4">
+        <div className="flex flex-wrap gap-1 sm:gap-2">
 
-        <button
-          onClick={() => setActiveTab("locations")}
-          className={`px-3 py-2 rounded text-sm sm:text-base ${ 
-            activeTab === "locations"
-              ? "bg-blue-600 text-white"
-              : "bg-slate-100"
-          }`}
-        >
-          Locations
-        </button>
+          {canViewInventoryOverview && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("overview")}
+              className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-t-lg transition ${
+                activeTab === "overview"
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              Overview
+            </button>
+          )}
 
-        <button
-          onClick={() => setActiveTab("movements")}
-          className={`px-3 py-2 rounded text-sm sm:text-base ${
-            activeTab === "movements"
-              ? "bg-blue-600 text-white"
-              : "bg-slate-100"
-          }`}
-        >
-          Movements
-        </button>
-    {canViewPurchaseReport && (
-        <button
-          onClick={() => setActiveTab("purchases")}
-          className={`px-3 py-2 rounded text-sm sm:text-base ${
-            activeTab === "purchases"
-              ? "bg-blue-600 text-white"
-              : "bg-slate-100"
-          }`}
-        >
-          Purchases
-        </button>
-    )}
+          <button
+            type="button"
+            onClick={() => setActiveTab("locations")}
+            className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-t-lg transition ${
+              activeTab === "locations"
+                ? "bg-blue-600 text-white"
+                : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            Locations
+          </button>
 
-      {canViewSalesReport && (
-        <button
-          onClick={() => setActiveTab("sales")}
-          className={`px-3 py-2 rounded text-sm sm:text-base ${
-            activeTab === "sales"
-              ? "bg-blue-600 text-white"
-              : "bg-slate-100"
-          }`}
-        >
-          Sales
-        </button>
-    )}
+          <button
+            type="button"
+            onClick={() => setActiveTab("movements")}
+            className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-t-lg transition ${
+              activeTab === "movements"
+                ? "bg-blue-600 text-white"
+                : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            Movements
+          </button>
+
+          {canViewPurchaseReport && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("purchases")}
+              className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-t-lg transition ${
+                activeTab === "purchases"
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              Purchases
+            </button>
+          )}
+
+          {canViewSalesReport && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("sales")}
+              className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-t-lg transition ${
+                activeTab === "sales"
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              Sales
+            </button>
+          )}
+
+        </div>
       </div>
 
       {/* Summary Cards */}
