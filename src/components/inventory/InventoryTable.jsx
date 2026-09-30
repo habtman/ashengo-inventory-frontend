@@ -62,11 +62,10 @@ export default function InventoryTable({
             </th>
 
             {/* Name */}
-            <th className="px-6 py-4 text-left text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
-              Product Name
-            </th>
+          <th className="px-3 py-3 text-left text-xs font-semibold
+           text-slate-600 whitespace-nowrap">
+            Product Name
+          </th>
 
             {/* SKU */}
             <th className="px-6 py-4 text-left text-xs
@@ -76,16 +75,14 @@ export default function InventoryTable({
             </th>
 
             {/* Price */}
-            <th className="px-6 py-4 text-right text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
+            <th className="px-3 py-3 text-right text-xs font-semibold
+             text-slate-600 whitespace-nowrap">
               Price
             </th>
 
             {/* Cost */}
-            <th className="px-6 py-4 text-right text-xs
-                           font-semibold uppercase tracking-wider
-                           text-slate-500">
+            <th className="px-3 py-3 text-right text-xs font-semibold
+             text-slate-600 whitespace-nowrap">
               Cost Price
             </th>
 
