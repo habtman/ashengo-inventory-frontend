@@ -104,14 +104,14 @@ export default function InventoryRow({
         </td>
 
         {/* Name */}
-        <td className="px-3 py-2.5 font-medium text-sm text-slate-900 max-w-[200px]">
+        <td className="px-3 py-2.5 font-medium text-sm text-slate-900 max-w-[190px]">
           <div className="break-words">
             {item.name}
           </div>
         </td>
 
         {/* SKU */}
-        <td className="px-3 py-2.5 text-sm text-slate-500 max-w-[110px]">
+        <td className="px-3 py-2.5 text-sm text-slate-500 max-w-[90px]">
           <div className="break-words">
             {item.sku}
           </div>
@@ -119,21 +119,21 @@ export default function InventoryRow({
 
         {/* Selling Price */}
         <td className="px-3 py-2.5 text-right
-                      tabular-nums text-sm text-slate-700
+                      tabular-nums text-sm text-slate-700 max-w-[100px]
                       whitespace-nowrap">
           {formatCurrency(sellingPrice)}
         </td>
 
         {/* Cost */}
         <td className="px-3 py-2.5 text-right
-                      tabular-nums text-sm text-slate-500
+                      tabular-nums text-sm text-slate-500 max-w-[105px]
                       whitespace-nowrap">
           {formatCurrency(costPrice)}
         </td>
 
         {/* Markup */}
         <td className="px-3 py-2.5 text-right
-                      tabular-nums text-sm whitespace-nowrap">
+                      tabular-nums text-sm whitespace-nowrap max-w-[95px]">
 
           <span className="font-semibold text-emerald-600">
             {markupPercent.toFixed(2)}%
@@ -143,7 +143,7 @@ export default function InventoryRow({
 
         {/* Profit Margin */}
         <td className="px-3 py-2.5 text-right
-                      tabular-nums text-sm whitespace-nowrap">
+                      tabular-nums text-sm whitespace-nowrap max-w-[115px]">
 
           <span className="font-semibold text-emerald-600">
             {profitMargin.toFixed(2)}%
@@ -154,17 +154,17 @@ export default function InventoryRow({
         {/* Total Stock */}
         <td className="px-3 py-2.5 text-right
                       tabular-nums text-sm font-semibold
-                      whitespace-nowrap">
+                      whitespace-nowrap max-w-[95px]">
           {totalStock}
         </td>
 
         {/* Status */}
-        <td className="px-3 py-2.5 whitespace-nowrap">
+        <td className="px-3 py-2.5 whitespace-nowrap max-w-[105px]">
 
           <span
             className={`px-2 py-1 text-xs
                         font-medium rounded-full
-                        whitespace-nowrap
+                        whitespace-nowrap 
                         ${statusColor}`}
           >
             {statusLabel}
@@ -173,7 +173,7 @@ export default function InventoryRow({
         </td>
 
         {/* Actions */}
-        <td className="px-3 py-2.5 whitespace-nowrap">
+        <td className="px-3 py-2.5 whitespace-nowrap max-w-[210px]">
 
           <div className="flex items-center gap-2
                           text-xs font-medium">
