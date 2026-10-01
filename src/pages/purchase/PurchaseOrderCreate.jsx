@@ -354,7 +354,7 @@ return (
         ONLY THIS AREA SCROLLS
     ====================================================== */}
 
-    <div className="flex flex-col flex-1 min-h-0 mt-3">
+    <div className="flex flex-col mt-3">
 
       <div className="flex items-center justify-between mb-2 shrink-0">
         <h3 className="text-base font-semibold text-slate-800">
