@@ -153,17 +153,23 @@ const handlePrint = async () => {
 
     <div className="p-4 sm:p-6 bg-white rounded-lg shadow">
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 shrink-0">
         <h2 className="text-2xl font-bold">
           Purchase Orders
         </h2>
 
         <div className="flex flex-wrap gap-2 print:hidden">
-
           <button
             onClick={handleExportExcel}
-            className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded text-sm"
+            className="
+              bg-green-600
+              hover:bg-green-700
+              text-white
+              px-3
+              py-2
+              rounded
+              text-sm
+            "
           >
             Export Excel
           </button>
@@ -171,20 +177,35 @@ const handlePrint = async () => {
           <button
             onClick={handlePrint}
             disabled={printing}
-            className="bg-gray-700 hover:bg-gray-800 text-white px-3 sm:px-4 py-2 rounded text-sm disabled:opacity-50"
+            className="
+              bg-gray-700
+              hover:bg-gray-800
+              text-white
+              px-3
+              py-2
+              rounded
+              text-sm
+              disabled:opacity-50
+            "
           >
             {printing ? "Preparing..." : "Print"}
           </button>
 
           <button
             onClick={() => navigate("/purchase-orders/new")}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded text-sm"
+            className="
+              bg-indigo-600
+              hover:bg-indigo-700
+              text-white
+              px-3
+              py-2
+              rounded
+              text-sm
+            "
           >
             New Purchase Order
           </button>
-
         </div>
-
       </div>
 <div className="print:hidden">
       <PurchaseOrderFilters
