@@ -180,65 +180,194 @@ const filteredOrders = orders.filter((order) => {
     );
   }
 
-  return (
-    <div className="p-6">
+return (
+  <div
+    className="
+      p-4 sm:p-5
+      h-[calc(100dvh-80px)]
+      min-h-0
+      flex
+      flex-col
+    "
+  >
 
-      {/* HEADER */}
+    {/* =====================================================
+        HEADER
+    ====================================================== */}
 
-      <div className="flex justify-between items-center mb-6">
-
-        <h1 className="text-2xl font-bold">
+    <div
+      className="
+        flex
+        flex-col
+        sm:flex-row
+        sm:items-center
+        sm:justify-between
+        gap-3
+        mb-3
+        shrink-0
+      "
+    >
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">
           Sales Orders
         </h1>
 
-        <Link
-          to="/sales-orders/new"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Create Sales Order
-        </Link>
-
+        <p className="text-sm text-slate-500">
+          Manage sales orders
+        </p>
       </div>
 
-      {/* SEARCH + FILTERS */}
+      <Link
+        to="/sales-orders/new"
+        className="
+          w-full
+          sm:w-auto
+          inline-flex
+          items-center
+          justify-center
+          bg-blue-600
+          hover:bg-blue-700
+          text-white
+          px-4
+          py-2
+          rounded-lg
+          text-sm
+          font-medium
+          transition
+        "
+      >
+        Create Sales Order
+      </Link>
+    </div>
 
-      <div className="flex flex-wrap gap-3 mb-6">
 
+    {/* =====================================================
+        SEARCH + FILTERS
+    ====================================================== */}
+
+    <div
+      className="
+        shrink-0
+        mb-3
+        rounded-xl
+        border
+        border-slate-200
+        bg-white
+        p-3
+      "
+    >
+      <div
+        className="
+          flex
+          flex-col
+          sm:flex-row
+          sm:flex-wrap
+          gap-2
+        "
+      >
+
+        {/* Search */}
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search SO number or customer..."
-          className="border rounded px-3 py-2 w-72"
+          className="
+            w-full
+            sm:flex-1
+            sm:min-w-[240px]
+            border
+            border-slate-300
+            rounded-lg
+            px-3
+            py-2
+            text-sm
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-blue-500
+          "
         />
 
+
+        {/* Status */}
         <select
           value={statusFilter}
           onChange={(e) =>
             setStatusFilter(e.target.value)
           }
-          className="border rounded px-3 py-2"
+          className="
+            w-full
+            sm:w-auto
+            border
+            border-slate-300
+            rounded-lg
+            px-3
+            py-2
+            text-sm
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-blue-500
+          "
         >
           <option value="ALL">All Statuses</option>
           <option value="DRAFT">Draft</option>
           <option value="CONFIRMED">Confirmed</option>
         </select>
 
+
+        {/* Start Date */}
         <input
           type="date"
           value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="border rounded px-3 py-2"
+          onChange={(e) =>
+            setStartDate(e.target.value)
+          }
+          className="
+            w-full
+            sm:w-auto
+            border
+            border-slate-300
+            rounded-lg
+            px-3
+            py-2
+            text-sm
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-blue-500
+          "
         />
 
+
+        {/* End Date */}
         <input
           type="date"
           value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="border rounded px-3 py-2"
+          onChange={(e) =>
+            setEndDate(e.target.value)
+          }
+          className="
+            w-full
+            sm:w-auto
+            border
+            border-slate-300
+            rounded-lg
+            px-3
+            py-2
+            text-sm
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-blue-500
+          "
         />
 
+
+        {/* Clear */}
         <button
+          type="button"
           onClick={() => {
             setSearch("");
             setStatusFilter("ALL");
@@ -246,32 +375,97 @@ const filteredOrders = orders.filter((order) => {
             setEndDate("");
             setPage(1);
           }}
-          className="border px-3 py-2 rounded hover:bg-gray-100"
+          className="
+            w-full
+            sm:w-auto
+            border
+            border-slate-300
+            px-3
+            py-2
+            rounded-lg
+            text-sm
+            hover:bg-slate-100
+            transition
+          "
         >
           Clear
         </button>
 
       </div>
+    </div>
 
-      {/* SUMMARY */}
 
-      <div className="mb-4 text-sm text-gray-600">
-        Showing {paginatedOrders.length} of{" "}
-        {sortedOrders.length} sales orders
+    {/* =====================================================
+        CONTENT AREA
+    ====================================================== */}
+
+    <div className="flex flex-col flex-1 min-h-0">
+
+
+      {/* ===================================================
+          SUMMARY
+      ==================================================== */}
+
+      <div
+        className="
+          shrink-0
+          mb-2
+          text-sm
+          text-slate-500
+        "
+      >
+        Showing{" "}
+        <span className="font-medium text-slate-700">
+          {paginatedOrders.length}
+        </span>{" "}
+        of{" "}
+        <span className="font-medium text-slate-700">
+          {sortedOrders.length}
+        </span>{" "}
+        sales orders
       </div>
 
-      {/* TABLE */}
 
-      <div className="overflow-x-auto">
+      {/* ===================================================
+          TABLE
+      ==================================================== */}
 
-        <table className="w-full border">
+      <div
+        className="
+          flex-1
+          min-h-0
+          overflow-auto
+          rounded-xl
+          border
+          border-slate-200
+          bg-white
+        "
+      >
 
-          <thead className="bg-gray-100">
+        <table
+          className="
+            min-w-[950px]
+            lg:min-w-0
+            w-full
+            text-sm
+          "
+        >
 
-            <tr>
+          <thead className="bg-slate-50 sticky top-0 z-10">
+
+            <tr className="border-b border-slate-200">
 
               <th
-                className="p-2 border text-left cursor-pointer"
+                className="
+                  px-3
+                  py-2.5
+                  text-left
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                  cursor-pointer
+                "
                 onClick={() =>
                   handleSort("so_number")
                 }
@@ -280,8 +474,18 @@ const filteredOrders = orders.filter((order) => {
                 {sortIndicator("so_number")}
               </th>
 
+
               <th
-                className="p-2 border text-left cursor-pointer"
+                className="
+                  px-3
+                  py-2.5
+                  text-left
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                  cursor-pointer
+                "
                 onClick={() =>
                   handleSort("customer_name")
                 }
@@ -290,16 +494,48 @@ const filteredOrders = orders.filter((order) => {
                 {sortIndicator("customer_name")}
               </th>
 
-              <th className="p-2 border">
+
+              <th
+                className="
+                  px-3
+                  py-2.5
+                  text-left
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                "
+              >
                 Created By
               </th>
 
-              <th className="p-2 border">
+
+              <th
+                className="
+                  px-3
+                  py-2.5
+                  text-center
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                "
+              >
                 Status
               </th>
 
+
               <th
-                className="p-2 border text-right cursor-pointer"
+                className="
+                  px-3
+                  py-2.5
+                  text-right
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                  cursor-pointer
+                "
                 onClick={() =>
                   handleSort("total_amount")
                 }
@@ -308,8 +544,18 @@ const filteredOrders = orders.filter((order) => {
                 {sortIndicator("total_amount")}
               </th>
 
+
               <th
-                className="p-2 border cursor-pointer"
+                className="
+                  px-3
+                  py-2.5
+                  text-left
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                  cursor-pointer
+                "
                 onClick={() =>
                   handleSort("created_at")
                 }
@@ -318,7 +564,18 @@ const filteredOrders = orders.filter((order) => {
                 {sortIndicator("created_at")}
               </th>
 
-              <th className="p-2 border">
+
+              <th
+                className="
+                  px-3
+                  py-2.5
+                  text-center
+                  text-xs
+                  font-semibold
+                  text-slate-600
+                  whitespace-nowrap
+                "
+              >
                 Actions
               </th>
 
@@ -326,7 +583,8 @@ const filteredOrders = orders.filter((order) => {
 
           </thead>
 
-          <tbody>
+
+          <tbody className="divide-y divide-slate-100">
 
             {paginatedOrders.length === 0 && (
 
@@ -334,7 +592,13 @@ const filteredOrders = orders.filter((order) => {
 
                 <td
                   colSpan="7"
-                  className="text-center p-6 text-gray-500"
+                  className="
+                    px-3
+                    py-8
+                    text-center
+                    text-sm
+                    text-slate-500
+                  "
                 >
                   No Sales Orders Found
                 </td>
@@ -343,29 +607,64 @@ const filteredOrders = orders.filter((order) => {
 
             )}
 
+
             {paginatedOrders.map((order) => (
 
               <tr
                 key={order.id}
-                className="hover:bg-gray-50"
+                className="hover:bg-slate-50 transition"
               >
 
-                <td className="border p-2">
+                {/* SO NUMBER */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    font-medium
+                    text-slate-900
+                    whitespace-nowrap
+                  "
+                >
                   {order.so_number}
                 </td>
 
-                <td className="border p-2">
+
+                {/* CUSTOMER */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    text-slate-700
+                  "
+                >
                   {order.customer_name}
                 </td>
 
-                <td className="border p-2">
+
+                {/* CREATED BY */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    text-slate-600
+                    whitespace-nowrap
+                  "
+                >
                   {order.created_by_name || "—"}
                 </td>
 
-                <td className="border p-2">
 
+                {/* STATUS */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    text-center
+                    whitespace-nowrap
+                  "
+                >
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
+                    className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                       order.status === "CONFIRMED"
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
@@ -373,49 +672,95 @@ const filteredOrders = orders.filter((order) => {
                   >
                     {order.status}
                   </span>
-
                 </td>
 
-                <td className="border p-2 text-right">
 
+                {/* TOTAL */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    text-right
+                    font-semibold
+                    tabular-nums
+                    whitespace-nowrap
+                  "
+                >
                   {formatCurrency(
                     Number(order.total_amount || 0)
                   )}
-
                 </td>
 
-                <td className="border p-2">
 
+                {/* DATE */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    text-left
+                    whitespace-nowrap
+                  "
+                >
                   {new Date(
                     order.created_at
                   ).toLocaleDateString()}
-
                 </td>
 
-                <td className="border p-2">
 
-                  <div className="flex gap-2">
+                {/* ACTIONS */}
+                <td
+                  className="
+                    px-3
+                    py-2.5
+                    whitespace-nowrap
+                  "
+                >
+
+                  <div className="flex items-center justify-center gap-2">
 
                     <button
+                      type="button"
                       onClick={() =>
                         navigate(
                           `/sales-orders/${order.id}`
                         )
                       }
-                      className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
+                      className="
+                        px-3
+                        py-1.5
+                        rounded-lg
+                        bg-blue-600
+                        text-white
+                        hover:bg-blue-700
+                        text-xs
+                        font-medium
+                        transition
+                      "
                     >
                       View
                     </button>
 
+
                     {order.status === "DRAFT" && (
 
                       <button
+                        type="button"
                         onClick={() =>
                           navigate(
                             `/sales-orders/edit/${order.id}`
                           )
                         }
-                        className="px-3 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
+                        className="
+                          px-3
+                          py-1.5
+                          rounded-lg
+                          bg-amber-500
+                          text-white
+                          hover:bg-amber-600
+                          text-xs
+                          font-medium
+                          transition
+                        "
                       >
                         Edit
                       </button>
@@ -436,57 +781,64 @@ const filteredOrders = orders.filter((order) => {
 
       </div>
 
-      {/* PAGINATION */}
 
-      {totalPages > 1 && (
+      {/* ===================================================
+          PAGINATION
+      ==================================================== */}
 
-        <div className="flex justify-center items-center gap-2 mt-6">
+{totalPages > 1 && (
+  <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-3 mt-6">
 
-          <button
-            disabled={page === 1}
-            onClick={() =>
-              setPage((p) => p - 1)
-            }
-            className="px-3 py-1 border rounded disabled:opacity-40"
-          >
-            Previous
-          </button>
+    {/* Previous */}
+    <button
+      disabled={page <= 1}
+      onClick={() => setPage(page - 1)}
+      className={`
+        px-3 sm:px-4
+        py-2
+        rounded
+        border
+        text-sm
+        ${
+          page <= 1
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "hover:bg-gray-100"
+        }
+      `}
+    >
+      Previous
+    </button>
 
-          {Array.from(
-            { length: totalPages },
-            (_, i) => i + 1
-          ).map((pageNumber) => (
+    {/* Page indicator */}
+    <span className="font-medium text-sm text-center">
+      Page {page} of {totalPages}
+    </span>
 
-            <button
-              key={pageNumber}
-              onClick={() =>
-                setPage(pageNumber)
-              }
-              className={`px-3 py-1 border rounded ${
-                page === pageNumber
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              {pageNumber}
-            </button>
+    {/* Next */}
+    <button
+      disabled={page >= totalPages}
+      onClick={() => setPage(page + 1)}
+      className={`
+        px-3 sm:px-4
+        py-2
+        rounded
+        border
+        text-sm
+        ${
+          page >= totalPages
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "hover:bg-gray-100"
+        }
+      `}
+    >
+      Next
+    </button>
 
-          ))}
-
-          <button
-            disabled={page === totalPages}
-            onClick={() =>
-              setPage((p) => p + 1)
-            }
-            className="px-3 py-1 border rounded disabled:opacity-40"
-          >
-            Next
-          </button>
-
-        </div>
-
-      )}
+  </div>
+)}
 
     </div>
-  );
+
+  </div>
+);
 }
