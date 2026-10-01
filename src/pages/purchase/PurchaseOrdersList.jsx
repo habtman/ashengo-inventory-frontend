@@ -217,30 +217,36 @@ const handlePrint = async () => {
           </button>
         </div>
       </div>
-<div className="print:hidden">
-      <PurchaseOrderFilters
-        search={search}
-        setSearch={setSearch}
-        status={status}
-        setStatus={setStatus}
-        setPage={setPage}
-      />
+<div className="print:hidden shrink-0">
+  <PurchaseOrderFilters
+    search={search}
+    setSearch={setSearch}
+    status={status}
+    setStatus={setStatus}
+    setPage={setPage}
+  />
+</div>
+
+<div className="flex flex-col flex-1 min-h-0 print:hidden">
+
+  {/* Table gets available vertical space */}
+  <div className="flex-1 min-h-0 overflow-auto">
+    <PurchaseOrderTable
+      orders={orders}
+      loading={loading}
+    />
   </div>
 
-    <div className="print:hidden">
+  {/* Pagination stays visible */}
+  <div className="shrink-0">
+    <PurchaseOrderPagination
+      page={page}
+      totalPages={totalPages}
+      setPage={setPage}
+    />
+  </div>
 
-      <PurchaseOrderTable
-        orders={orders}
-        loading={loading}
-      />
-
-      <PurchaseOrderPagination
-        page={page}
-        totalPages={totalPages}
-        setPage={setPage}
-      />
-
-    </div>
+</div>
 
 <div className="hidden print:block">
 
