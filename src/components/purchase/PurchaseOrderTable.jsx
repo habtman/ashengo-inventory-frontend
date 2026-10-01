@@ -19,29 +19,43 @@ export default function PurchaseOrderTable({
     <div className="w-full overflow-x-auto rounded-lg border border-slate-200">
       <table className="min-w-[1000px] lg:min-w-0 w-full text-sm">
 
-      <thead className="bg-gray-100">
+        <thead className="bg-slate-50">
+          <tr className="border-b">
 
-        <tr>
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              PO #
+            </th>
 
-          <th className="p-3 text-left">PO #</th>
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Supplier
+            </th>
 
-          <th className="p-3 text-left">Supplier</th>
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Created By
+            </th>
 
-          <th className="p-3 text-left">Created By</th>
+            <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Approved By
+            </th>
 
-          <th className="p-3 text-left">Approved By</th>
+            <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Total
+            </th>
 
-          <th className="p-3 text-right">Total</th>
+            <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Status
+            </th>
 
-          <th className="p-3 text-center">Status</th>
+            <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Created
+            </th>
 
-          <th className="p-3 text-center">Created</th>
+            <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Actions
+            </th>
 
-          <th className="p-3 text-center">Actions</th>
-
-        </tr>
-
-      </thead>
+          </tr>
+        </thead>
 
       <tbody>
 
@@ -77,24 +91,26 @@ export default function PurchaseOrderTable({
 
             <tr
               key={po.id}
-              className="border-t hover:bg-gray-50"
+              className="hover:bg-slate-50 transition"
             >
 
-              <td className="p-3 font-medium">
+              <td className="px-3 py-2.5 font-medium text-sm text-slate-900 whitespace-nowrap">
                 {po.po_number}
               </td>
 
-              <td>
+              <td className="px-3 py-2.5 text-sm text-slate-700">
                 {po.supplier_code} - {po.supplier_name}
               </td>
 
-              <td>{po.created_by_name}</td>
-
-              <td>
-                  {po.approved_by_name || "Pending"}
+              <td className="px-3 py-2.5 text-sm text-slate-600 whitespace-nowrap">
+                {po.created_by_name}
               </td>
 
-              <td className="p-3 text-right font-semibold">
+              <td className="px-3 py-2.5 text-sm text-slate-600 whitespace-nowrap">
+                {po.approved_by_name || "Pending"}
+              </td>
+
+              <td className="px-3 py-2.5 text-right font-semibold text-sm tabular-nums whitespace-nowrap">
                 ETB{" "}
                 {Number(po.total_amount).toLocaleString(
                   undefined,
@@ -105,33 +121,29 @@ export default function PurchaseOrderTable({
                 )}
               </td>
 
-              <td className="p-3 text-center">
-
+              <td className="px-3 py-2.5 text-center whitespace-nowrap">
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyle[po.status]}`}
+                  className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                    statusStyle[po.status]
+                  }`}
                 >
                   {po.status.replaceAll("_", " ")}
                 </span>
-
               </td>
 
-              <td className="p-3 text-center">
-
+              <td className="px-3 py-2.5 text-center text-sm whitespace-nowrap">
                 {new Date(po.created_at).toLocaleDateString()}
-
               </td>
 
-              <td className="p-3 text-center">
-
+              <td className="px-3 py-2.5 text-center whitespace-nowrap">
                 <button
                   onClick={() =>
                     navigate(`/purchase-orders/${po.id}`)
                   }
-                  className="text-indigo-600 hover:text-indigo-800 font-medium"
+                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
                 >
                   View
                 </button>
-
               </td>
 
             </tr>
