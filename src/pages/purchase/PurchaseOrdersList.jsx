@@ -157,10 +157,11 @@ const handlePrint = async () => {
     bg-white
     rounded-lg
     shadow
-    h-full
+    h-[calc(100dvh-112px)]
     min-h-0
     flex
     flex-col
+    overflow-hidden
   "
 >
 

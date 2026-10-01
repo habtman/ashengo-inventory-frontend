@@ -6,7 +6,7 @@ export default function PurchaseOrderFilters({
   setPage,
 }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-3 mb-4">
+    <div className="flex flex-col sm:flex-row gap-3 mb-3">
 
       <input
         type="text"
