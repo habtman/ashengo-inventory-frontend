@@ -8,7 +8,16 @@ export default function PurchaseOrderItemsTable({ items = [] }) {
         Purchase Order Items
       </h3>
 
-      <div className="w-full overflow-x-auto">
+      <div
+  className="
+    w-full
+    overflow-auto
+    rounded-lg
+    border
+    border-slate-200
+    max-h-[260px]
+  "
+>
         <table className="min-w-[850px] lg:min-w-0 w-full text-sm border-collapse">
 
         <thead className="bg-slate-50">

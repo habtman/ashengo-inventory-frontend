@@ -354,7 +354,7 @@ return (
         ONLY THIS AREA SCROLLS
     ====================================================== */}
 
-    <div className="flex flex-col flex-1 min-h-0 mt-4">
+    <div className="flex flex-col flex-1 min-h-0 mt-3">
 
       <div className="flex items-center justify-between mb-2 shrink-0">
         <h3 className="text-base font-semibold text-slate-800">
@@ -375,7 +375,7 @@ return (
           rounded-lg
           border
           border-slate-200
-          max-h-[320px]
+          max-h-[260px]
         "
       >
 
@@ -722,85 +722,79 @@ return (
       </div>
 
 
-      {/* =====================================================
-          PURCHASE SUMMARY
-      ====================================================== */}
+        {/* =====================================================
+            PURCHASE SUMMARY
+        ====================================================== */}
 
-      <div
-        className="
-          mt-3
-          border
-          border-slate-200
-          rounded-lg
-          p-3 sm:p-4
-          bg-slate-50
-          shrink-0
-        "
-      >
+        <div
+          className="
+            mt-3
+            border
+            border-slate-200
+            rounded-lg
+            p-3
+            bg-slate-50
+            shrink-0
+          "
+        >
+          <h3 className="font-semibold text-slate-800 mb-2">
+            Purchase Summary
+          </h3>
 
-        <h3 className="font-semibold text-slate-800 mb-2">
-          Purchase Summary
-        </h3>
+          <div className="space-y-1 text-sm">
 
+            <div className="flex justify-between gap-4">
+              <span className="text-slate-600">
+                Supplier Total ({currency})
+              </span>
 
-        <div className="space-y-1.5 text-sm">
+              <span className="font-medium tabular-nums">
+                {foreignTotalAmount.toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}
+              </span>
+            </div>
 
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-600">
-              Supplier Total ({currency})
-            </span>
+            <div className="flex justify-between gap-4">
+              <span className="text-slate-600">
+                Exchange Rate
+              </span>
 
-            <span className="font-medium tabular-nums">
-              {foreignTotalAmount.toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }
-              )}
-            </span>
+              <span className="font-medium tabular-nums">
+                {Number(exchangeRate).toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 4,
+                  }
+                )}
+              </span>
+            </div>
+
+            <div className="border-t border-slate-200 my-2" />
+
+            <div className="flex justify-between gap-4 text-base font-bold">
+              <span>
+                Total (ETB)
+              </span>
+
+              <span className="tabular-nums">
+                {localTotalAmount.toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}
+              </span>
+            </div>
+
           </div>
-
-
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-600">
-              Exchange Rate
-            </span>
-
-            <span className="font-medium tabular-nums">
-              {Number(exchangeRate).toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 4,
-                }
-              )}
-            </span>
-          </div>
-
-
-          <div className="border-t border-slate-200 my-2" />
-
-
-          <div className="flex justify-between gap-4 text-base font-bold">
-            <span>
-              Total (ETB)
-            </span>
-
-            <span className="tabular-nums">
-              {localTotalAmount.toLocaleString(
-                undefined,
-                {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }
-              )}
-            </span>
-          </div>
-
         </div>
-
-      </div>
 
 
       {/* =====================================================
