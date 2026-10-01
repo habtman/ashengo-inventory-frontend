@@ -288,20 +288,34 @@ const localTotalAmount =
 
      <div className="w-full overflow-x-auto mb-4">
       <table className="min-w-[800px] lg:min-w-0 w-full text-sm border-collapse">
-        <thead>
+        <thead className="bg-slate-50">
           <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Unit Price ({currency})</th>
-            <th>Line Total ({currency})</th>
-            <th></th>
+            <th className="border px-3 py-2.5 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Item
+            </th>
+
+            <th className="border px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Qty
+            </th>
+
+            <th className="border px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Unit Price ({currency})
+            </th>
+
+            <th className="border px-3 py-2.5 text-right text-xs font-semibold text-slate-600 whitespace-nowrap">
+              Line Total ({currency})
+            </th>
+
+            <th className="border px-3 py-2.5 text-center text-xs font-semibold text-slate-600">
+              Action
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {items.map((item, i) => (
             <tr key={i}>
-              <td>
+              <td className="border px-3 py-2.5">
                 <select
                   value={item.inventoryId}
                   onChange={(e) => {
@@ -335,6 +349,8 @@ const localTotalAmount =
 
                     setItems(updated);
                   }}
+                  className="w-full min-w-[220px] border border-slate-300 rounded-lg px-3 py-2 text-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select</option>
                   {inventoryList.map(inv => (
@@ -345,29 +361,35 @@ const localTotalAmount =
                 </select>
               </td>
 
-              <td>
-                <input
-                  type="number"
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateItem(i, "quantity", Number(e.target.value))
-                  }
-                />
+              <td className="border px-3 py-2.5 text-right">
+              <input
+                type="number"
+                value={item.quantity}
+                onChange={(e) =>
+                  updateItem(i, "quantity", Number(e.target.value))
+                }
+                className="w-24 border border-slate-300 rounded-lg px-3 py-2 text-sm text-right
+                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
               </td>
 
-              <td>
+              <td className="border px-3 py-2.5 text-right">
                 <input
                   type="number"
                   value={item.costPrice}
                   onChange={(e) =>
                     updateItem(i, "costPrice", Number(e.target.value))
                   }
+                  className="w-24 border border-slate-300 rounded-lg px-3 py-2 text-sm text-right
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </td>
 
-              <td>{item.quantity * item.costPrice}</td>
+              <td className="border px-3 py-2.5 text-right">  
+                {item.quantity * item.costPrice}
+                </td>
 
-              <td>
+              <td className="border px-3 py-2.5">
                 <button onClick={() => removeItem(i)}>X</button>
               </td>
             </tr>
