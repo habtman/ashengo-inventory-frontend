@@ -151,7 +151,17 @@ const handlePrint = async () => {
 
   return (
 
-    <div className="p-4 sm:p-6 bg-white rounded-lg shadow">
+    <div
+  className="
+    p-4 sm:p-5
+    bg-white
+    rounded-lg
+    shadow
+    min-h-[calc(100vh-80px)]
+    flex
+    flex-col
+  "
+>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 shrink-0">
         <h2 className="text-2xl font-bold">
