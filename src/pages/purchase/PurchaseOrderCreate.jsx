@@ -390,7 +390,14 @@ const localTotalAmount =
                 </td>
 
               <td className="border px-3 py-2.5">
-                <button onClick={() => removeItem(i)}>X</button>
+                <button
+                  type="button"
+                  onClick={() => removeItem(i)}
+                  className="px-2.5 py-1.5 rounded-lg text-sm font-medium
+                            text-red-600 hover:bg-red-50"
+                >
+                  Remove
+                </button>
               </td>
             </tr>
           ))}
@@ -398,29 +405,30 @@ const localTotalAmount =
       </table>
       </div>  
 
-       <button onClick={addItem}>+ Add Item</button>
+      <button
+        type="button"
+        onClick={addItem}
+        className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200
+                  text-sm font-medium text-slate-700"
+      >
+        + Add Item
+      </button>
 
-      <div className="mt-6 border rounded-lg p-4 bg-gray-50">
+     <div className="mt-6 border border-slate-200 rounded-lg p-4 bg-slate-50">
 
     <h3 className="font-semibold mb-3">
         Purchase Summary
     </h3>
 
-    <div className="flex justify-between py-1">
+    <div className="flex justify-between gap-4 text-lg font-bold">
+      <span>Total (ETB)</span>
 
-        <span>
-            Supplier Total ({currency})
-        </span>
-
-        <span className="font-medium">
-
-            {foreignTotalAmount.toLocaleString(undefined,{
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
-            })}
-
-        </span>
-
+      <span className="text-right tabular-nums">
+        {localTotalAmount.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}
+      </span>
     </div>
 
     <div className="flex justify-between py-1">
@@ -456,16 +464,16 @@ const localTotalAmount =
 
       </div>
 
-  </div>
+  </div>  
 
-     
-
-      <button
-        onClick={handleSubmit}
-        className="bg-blue-600 text-white px-4 py-2 mt-4 rounded"
-      >
-        Create PO
-      </button>
+    <button
+      type="button"
+      onClick={handleSubmit}
+      className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white
+                px-5 py-2.5 mt-4 rounded-lg text-sm font-medium"
+    >
+      Create PO
+    </button>
 
     </div>
   );
