@@ -6,7 +6,7 @@ export default function PurchaseOrderFilters({
   setPage,
 }) {
   return (
-    <div className="flex gap-3 mb-4">
+    <div className="flex flex-col sm:flex-row gap-3 mb-4">
 
       <input
         type="text"
@@ -16,7 +16,8 @@ export default function PurchaseOrderFilters({
           setPage(1);
           setSearch(e.target.value);
         }}
-        className="border px-3 py-2 rounded flex-1"
+        className="w-full sm:flex-1 border border-slate-300 px-3 py-2 rounded-lg text-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       />
 
       <select
@@ -25,7 +26,8 @@ export default function PurchaseOrderFilters({
           setPage(1);
           setStatus(e.target.value);
         }}
-        className="border px-3 py-2 rounded"
+        className="w-full sm:w-auto border border-slate-300 px-3 py-2 rounded-lg text-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       >
         <option value="">All Statuses</option>
         <option value="DRAFT">Draft</option>
