@@ -183,7 +183,7 @@ const localTotalAmount =
 
 
   return (
-    <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 bg-white rounded-lg shadow max-w-4xl mx-auto">
 
       <h2 className="text-xl font-bold mb-4">Create Purchase Order</h2>
 
@@ -194,7 +194,8 @@ const localTotalAmount =
       </label>
 
       <select
-          className="w-full border rounded px-3 py-2" 
+          className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           value={selectedSupplier?.id || ""}
           
           onChange={(e) => {
@@ -248,7 +249,8 @@ const localTotalAmount =
             }}
 
        
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
             <option value="ETB">ETB</option>
             <option value="USD">USD</option>
@@ -274,16 +276,18 @@ const localTotalAmount =
               setExchangeRate(Number(e.target.value))
           }
           disabled={currency === "ETB"}
-          className={`w-full border rounded px-3 py-2 ${
+          className={`w-full border border-slate-300 rounded-lg px-3 py-2 text-sm
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               currency === "ETB"
-                  ? "bg-gray-100"
-                  : ""
-          }`}
+                ? "bg-gray-100"
+                : ""
+            }`}
       />
 
   </div>
 
-      <table className="w-full border mb-4">
+     <div className="w-full overflow-x-auto mb-4">
+      <table className="min-w-[800px] lg:min-w-0 w-full text-sm border-collapse">
         <thead>
           <tr>
             <th>Item</th>
@@ -370,6 +374,7 @@ const localTotalAmount =
           ))}
         </tbody>
       </table>
+      </div>  
 
        <button onClick={addItem}>+ Add Item</button>
 
