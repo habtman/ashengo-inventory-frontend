@@ -46,7 +46,7 @@ export default function InventoryTable({
         <tr>
 
           {/* Select */}
-          <th className="px-2 py-2.5 text-left">
+          <th className="px-2 py-2 text-left">
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-slate-300
@@ -61,55 +61,55 @@ export default function InventoryTable({
           </th>
 
           {/* Name */}
-          <th className="px-3 py-2.5 text-left text-xs font-semibold
+          <th className="px-3 py-2 text-left text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Product Name
           </th>
 
           {/* SKU */}
-          <th className="px-3 py-2.5 text-left text-xs font-semibold
+          <th className="px-3 py-2 text-left text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             SKU
           </th>
 
           {/* Price */}
-          <th className="px-3 py-2.5 text-right text-xs font-semibold
+          <th className="px-3 py-2 text-right text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Price
           </th>
 
           {/* Cost */}
-          <th className="px-3 py-2.5 text-right text-xs font-semibold
+          <th className="px-3 py-2 text-right text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Cost Price
           </th>
 
           {/* Markup */}
-          <th className="px-3 py-2.5 text-right text-xs font-semibold
+          <th className="px-3 py-2 text-right text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Markup
           </th>
 
           {/* Profit Margin */}
-          <th className="px-3 py-2.5 text-right text-xs font-semibold
+          <th className="px-3 py-2 text-right text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Profit Margin
           </th>
 
           {/* Stock */}
-          <th className="px-3 py-2.5 text-right text-xs font-semibold
+          <th className="px-3 py-2 text-right text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Total Stock
           </th>
 
           {/* Status */}
-          <th className="px-3 py-2.5 text-left text-xs font-semibold
+          <th className="px-3 py-2 text-left text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Status
           </th>
 
           {/* Actions */}
-          <th className="px-3 py-2.5 text-left text-xs font-semibold
+          <th className="px-3 py-2 text-left text-xs font-semibold
                         text-slate-600 whitespace-nowrap">
             Actions
           </th>

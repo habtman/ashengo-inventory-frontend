@@ -296,12 +296,13 @@ return (
 <div
   className="
     shrink-0
-    mb-3
+    mb-2
     rounded-xl
     border
     border-slate-200
     bg-white
-    p-4
+    px-4
+    py-2.5
   "
 >
   <InventoryFilters
@@ -317,7 +318,7 @@ return (
 </div>
 
     <div className="flex flex-col flex-1 min-h-0">
-    <div
+<div
   className="
     flex
     flex-wrap
@@ -325,7 +326,7 @@ return (
     gap-x-6
     gap-y-2
     px-4
-    py-3
+    py-2
     bg-white
     border-b
     text-xs
