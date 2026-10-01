@@ -218,11 +218,30 @@ selectedItems.every(item => Number(item.total_stock) === 0);
 
 
 return (
-  <div className="p-6 space-y-6">
+<div
+  className="
+    p-4 sm:p-5
+    h-[calc(100dvh-112px)]
+    min-h-0
+    flex
+    flex-col
+  "
+>
 <div className="sticky top-[57px] z-40 bg-gray-50 pb-3">
 
   {/* Inventory header */}
-  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div
+  className="
+    flex
+    flex-col
+    sm:flex-row
+    sm:items-center
+    sm:justify-between
+    gap-3
+    mb-3
+    shrink-0
+  "
+>
     <div>
       <h1 className="text-2xl font-bold">
         Inventory
@@ -274,22 +293,48 @@ return (
   </div>
 
   {/* Filters */}
-  <div className="bg-white border rounded-lg p-4 mt-4">
-    <InventoryFilters
-      search={search}
-      setSearch={setSearch}
-      statusFilter={statusFilter}
-      setStatusFilter={setStatusFilter}
-      lowStockOnly={lowStockOnly}
-      setLowStockOnly={setLowStockOnly}
-    />
-  </div>
+<div
+  className="
+    shrink-0
+    mb-3
+    rounded-xl
+    border
+    border-slate-200
+    bg-white
+    p-4
+  "
+>
+  <InventoryFilters
+    search={search}
+    setSearch={setSearch}
+    statusFilter={statusFilter}
+    setStatusFilter={setStatusFilter}
+    lowStockOnly={lowStockOnly}
+    setLowStockOnly={setLowStockOnly}
+  />
+</div>
 
 </div>
 
-    <div className="bg-white border rounded-lg overflow-hidden">
-    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 
-     py-3 bg-white border-b text-xs uppercase tracking-wide text-slate-500">
+    <div className="flex flex-col flex-1 min-h-0">
+    <div
+  className="
+    flex
+    flex-wrap
+    items-center
+    gap-x-6
+    gap-y-2
+    px-4
+    py-3
+    bg-white
+    border-b
+    text-xs
+    uppercase
+    tracking-wide
+    text-slate-500
+    shrink-0
+  "
+>
     <div className="flex items-center gap-2">
       <span className="w-3 h-3 rounded bg-red-200"></span>
       <span>Out of stock</span>
@@ -307,30 +352,34 @@ return (
   </div>
     
 
-        <InventoryTable
-          items={items}
-          loading={loading}
-          selectedIds={selectedIds}
-          onSelect={(id) =>
-            setSelectedIds(prev =>
-              prev.includes(id)
-                ? prev.filter(i => i !== id)
-                : [...prev, id]
-            )
-          }
-          onView={handleView}
-          onSelectAll={(ids) => setSelectedIds(ids)}
-          onEdit={setEditItem}
-          onDelete={handleDelete}
-          onBulkDelete={handleBulkDelete}
-          onUndo={handleUndo}
-          canEdit={canEdit}
-          canDelete={canDelete}
-          canView ={canView}
-        />
+<div className="flex-1 min-h-0 overflow-auto">
+
+  <InventoryTable
+    items={items}
+    loading={loading}
+    selectedIds={selectedIds}
+    onSelect={(id) =>
+      setSelectedIds(prev =>
+        prev.includes(id)
+          ? prev.filter(i => i !== id)
+          : [...prev, id]
+      )
+    }
+    onView={handleView}
+    onSelectAll={(ids) => setSelectedIds(ids)}
+    onEdit={setEditItem}
+    onDelete={handleDelete}
+    onBulkDelete={handleBulkDelete}
+    onUndo={handleUndo}
+    canEdit={canEdit}
+    canDelete={canDelete}
+    canView={canView}
+  />
+
+</div>
       
       {canDelete && selectedIds.length > 0 && (
-        <div className="flex items-center justify-between bg-slate-100 border rounded-lg p-3">
+        <div className="shrink-0 flex items-center justify-between bg-slate-100 border rounded-lg p-3">
           <span className="text-sm">
             {selectedIds.length} items selected
           </span>
@@ -344,7 +393,7 @@ return (
         </div>
       )}
 
-    <div className="flex justify-center">
+    <div className="shrink-0 flex justify-center py-2">
     <Pagination
       page={pagination.page}
       totalPages={pagination.totalPages}
