@@ -354,33 +354,51 @@ const handleSubmit = async () => {
 
 
   return (
-    <div className="border rounded p-4 mb-5 bg-gray-50">
 
-      <h2 className="text-xl font-bold mb-4">Create Sales Order</h2>
+  <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 mb-5">
 
-    {/* Customer Dropdown */}
-        <select
-          value={customerId}
-          onChange={(e) =>
-            setCustomerId(
-              Number(e.target.value)
-            )
-          }
-          className="border p-2 mb-4 w-full"
-        >
-          <option value="">
-            Select Customer
+    <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-5">
+      Create Sales Order
+    </h2>
+
+    {/* Customer */}
+    <div>
+      <label className="block text-sm font-medium text-slate-700 mb-1.5">
+        Customer
+      </label>
+
+      <select
+        value={customerId}
+        onChange={(e) =>
+          setCustomerId(Number(e.target.value))
+        }
+        className="
+          border border-slate-300
+          rounded-lg
+          p-2.5
+          w-full
+          text-sm
+          bg-white
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500
+          focus:border-blue-500
+        "
+      >
+        <option value="">
+          Select Customer
+        </option>
+
+        {customers.map((customer) => (
+          <option
+            key={customer.id}
+            value={customer.id}
+          >
+            {customer.name}
           </option>
-
-          {customers.map(customer => (
-            <option
-              key={customer.id}
-              value={customer.id}
-            >
-              {customer.name}
-            </option>
-          ))}
-        </select>
+        ))}
+      </select>
+    </div>
 
         {creditSummary && paymentMethod === "CREDIT" && (
 
@@ -454,91 +472,166 @@ const handleSubmit = async () => {
 </div>
         )}
 
-{/* Location Dropddown */}
-          <select
-            value={locationId}
-            onChange={(e) =>
-              setLocationId(Number(e.target.value))
-            }
-            className="border p-2 mb-4 w-full"
-          >
-            <option value="">
-              Select Warehouse / Location
-            </option>
+{/* Warehouse and Payment Method */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
 
-            {locations.map((location) => (
-              <option
-                key={location.id}
-                value={location.id}
-              >
-                {location.name}
-              </option>
-            ))}
-          </select>
+  {/* Warehouse / Location */}
+  <div>
+    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+      Warehouse / Location
+    </label>
 
-          <h3 className="font-semibold mt-6">
-            Payment Method
-          </h3>
+    <select
+      value={locationId}
+      onChange={(e) =>
+        setLocationId(Number(e.target.value))
+      }
+      className="
+        border border-slate-300
+        rounded-lg
+        p-2.5
+        w-full
+        text-sm
+        bg-white
+        focus:outline-none
+        focus:ring-2
+        focus:ring-blue-500
+        focus:border-blue-500
+      "
+    >
+      <option value="">
+        Select Warehouse / Location
+      </option>
 
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="border rounded p-2"
-          >
-            <option value="CASH">Cash</option>
-            <option value="CREDIT">Credit</option>
-          </select>
+      {locations.map((location) => (
+        <option
+          key={location.id}
+          value={location.id}
+        >
+          {location.name}
+        </option>
+      ))}
+    </select>
+  </div>
 
-          {paymentMethod === "CREDIT" && (
-            <div className="mt-4">
+  {/* Payment Method */}
+  <div>
+    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+      Payment Method
+    </label>
 
-              <label>Credit Days</label>
+    <select
+      value={paymentMethod}
+      onChange={(e) => setPaymentMethod(e.target.value)}
+      className="
+        border border-slate-300
+        rounded-lg
+        p-2.5
+        w-full
+        text-sm
+        bg-white
+        focus:outline-none
+        focus:ring-2
+        focus:ring-blue-500
+        focus:border-blue-500
+      "
+    >
+      <option value="CASH">Cash</option>
+      <option value="CREDIT">Credit</option>
+    </select>
+  </div>
 
-              <select
-                value={creditDays}
-                onChange={(e) =>
-                  setCreditDays(Number(e.target.value))
-                }
-                className="border rounded p-2"
-              >
-                <option value={7}>7 Days</option>
-                <option value={15}>15 Days</option>
-                <option value={30}>30 Days</option>
-                <option value={60}>60 Days</option>
-                <option value={90}>90 Days</option>
-              </select>
-
-                <p className="mt-2 text-sm text-gray-600">
-
-                Due Date:
-                <span className="font-semibold ml-2">
-
-                {dueDate?.toLocaleDateString()}
-
-                </span>
-
-                </p>
-
-
-            </div>
-          )}
+</div>
 
 
+{paymentMethod === "CREDIT" && (
+  <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
 
-      <h3 className="font-semibold mb-2">
-       Products
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      {/* Credit Days */}
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+          Credit Days
+        </label>
+
+        <select
+          value={creditDays}
+          onChange={(e) =>
+            setCreditDays(Number(e.target.value))
+          }
+          className="
+            border border-slate-300
+            rounded-lg
+            p-2.5
+            w-full
+            text-sm
+            bg-white
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-blue-500
+          "
+        >
+          <option value={7}>7 Days</option>
+          <option value={15}>15 Days</option>
+          <option value={30}>30 Days</option>
+          <option value={60}>60 Days</option>
+          <option value={90}>90 Days</option>
+        </select>
+      </div>
+
+      {/* Due Date */}
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+          Due Date
+        </label>
+
+        <div className="flex items-center min-h-[42px] rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700">
+          {dueDate?.toLocaleDateString() || "—"}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+<div className="mt-6 rounded-xl border border-slate-200 bg-white overflow-hidden">
+
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-4 py-3 border-b border-slate-200">
+    <div>
+      <h3 className="text-lg font-semibold text-slate-800">
+        Products
       </h3>
+      <p className="text-sm text-slate-500">
+        Select products and enter the quantities for this order.
+      </p>
+    </div>
+  </div>
 
-      <table className="w-full border mb-4">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Unit Price</th>
-            <th>Total</th>
-            <th></th>
-          </tr>
-        </thead>
+  <div className="w-full overflow-x-auto">
+
+<table className="min-w-[850px] w-full text-sm border-collapse">
+  <thead className="bg-slate-50 text-slate-600">
+    <tr>
+      <th className="border-b border-slate-200 px-3 py-3 text-left font-semibold">
+        Item
+      </th>
+      <th className="border-b border-slate-200 px-3 py-3 text-left font-semibold w-28">
+        Qty
+      </th>
+      <th className="border-b border-slate-200 px-3 py-3 text-right font-semibold w-36">
+        Unit Price
+      </th>
+      <th className="border-b border-slate-200 px-3 py-3 text-right font-semibold w-36">
+        Total
+      </th>
+      <th className="border-b border-slate-200 px-3 py-3 text-center font-semibold w-16">
+        Action
+      </th>
+    </tr>
+  </thead>
 
         <tbody>
           {items.map((item, i) => {
@@ -557,7 +650,10 @@ const handleSubmit = async () => {
             const hasEnoughStock =
               shortage === 0;
             return (
-              <tr key={i}>
+              <tr
+                key={i}
+                className="hover:bg-slate-50 transition-colors"
+              >
 
         
 
@@ -694,86 +790,135 @@ const handleSubmit = async () => {
         />
         </td>
 
-              <td>
-                {formatCurrency(
-                  Number(item.quantity) * Number(item.unitPrice)
-                )}
-              </td>
+            <td className="border-b border-slate-100 px-3 py-3 text-right font-medium text-slate-700 whitespace-nowrap tabular-nums">
+              {formatCurrency(
+                Number(item.quantity) * Number(item.unitPrice)
+              )}
+            </td>
 
-              <td>
-                <button
-                  onClick={() => removeItem(i)}
-                >
-                  X
-                </button>
-              </td>
+            <td className="border-b border-slate-100 px-3 py-3 text-center">
+              <button
+                type="button"
+                onClick={() => removeItem(i)}
+                className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                title="Remove product"
+                aria-label={`Remove product row ${i + 1}`}
+              >
+                ✕
+              </button>
+            </td>
 
-            </tr>
-            
-            
+            </tr>   
             
           );
         })}   
         </tbody>
       </table>
-
-      <button onClick={addItem}>+ Add Item</button>
-
-      <div className="text-right font-bold mt-4">
-        Total: {formatCurrency(total)}
       </div>
+    </div>
 
+    <div className="px-4 py-3 border-t border-slate-200 bg-slate-50">
       <button
-        onClick={handleSubmit}
-        disabled={
-          (paymentMethod === "CREDIT" && exceedsLimit) ||
-          hasStockIssues
-        }
-        className={`
-          mt-4 px-4 py-2 rounded text-white transition-colors
-
-          ${
-            (paymentMethod === "CREDIT" && exceedsLimit) ||
-            hasStockIssues
-              ? "bg-gray-400 cursor-not-allowed"
-              : isEditing
-              ? "bg-amber-600 hover:bg-amber-700"
-              : "bg-blue-600 hover:bg-blue-700"
-          }
-        `}
+        type="button"
+        onClick={addItem}
+        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors"
       >
-        {isEditing ? "Save Draft" : "Create Sales Order"}
+        <span className="text-lg leading-none">+</span>
+        Add Item
       </button>
+    </div>
 
 
-    {paymentMethod === "CREDIT" && exceedsLimit && (
-      <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
-        <p className="font-semibold text-red-700">
-          Credit limit exceeded
-        </p>
+      {/* Order Total */}
+      <div className="flex justify-end mt-5">
+        <div className="w-full sm:w-auto sm:min-w-[280px] rounded-xl border border-slate-200 bg-white p-4">
+          <div className="flex items-center justify-between gap-6">
+            <span className="text-sm font-medium text-slate-500">
+              Order Total
+            </span>
 
-        <p className="text-sm text-red-600 mt-1">
-          This order exceeds the customer's available credit by{" "}
-          {formatCurrency(Math.abs(remainingCredit))}
-        </p>
+            <span className="text-xl sm:text-2xl font-bold text-slate-800 tabular-nums">
+              {formatCurrency(total)}
+            </span>
+          </div>
+        </div>
       </div>
-    )}
 
-    {showStockWarning && (
-      <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4">
-        <p className="font-semibold text-red-700">
-          Stock Warning
-        </p>
 
-        <p className="text-sm text-red-600 mt-1">
-          One or more products exceed the available warehouse stock.
-          Reduce the requested quantity or replenish inventory.
+        {/* Submit Order */}
+        <div className="flex flex-col sm:flex-row sm:justify-end mt-4">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={
+              (paymentMethod === "CREDIT" && exceedsLimit) ||
+              hasStockIssues
+            }
+            className={`
+              w-full sm:w-auto
+              min-w-[180px]
+              px-5 py-3
+              rounded-lg
+              text-sm font-semibold text-white
+              shadow-sm
+              transition-colors
+              ${
+                (paymentMethod === "CREDIT" && exceedsLimit) ||
+                hasStockIssues
+                  ? "bg-slate-400 cursor-not-allowed"
+                  : isEditing
+                  ? "bg-amber-600 hover:bg-amber-700"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }
+            `}
+          >
+            {isEditing ? "Save Draft" : "Create Sales Order"}
+          </button>
+        </div>
 
-        </p>
-      </div>
-      
-    )}  
 
+        {paymentMethod === "CREDIT" && exceedsLimit && (
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-red-600 text-lg" aria-hidden="true">
+                ⚠
+              </span>
+
+              <div>
+                <p className="font-semibold text-red-800">
+                  Credit limit exceeded
+                </p>
+
+                <p className="text-sm text-red-700 mt-1">
+                  This order exceeds the customer's available credit by{" "}
+                  {formatCurrency(Math.abs(remainingCredit))}.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+        {showStockWarning && (
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-red-600 text-lg" aria-hidden="true">
+                ⚠
+              </span>
+
+              <div>
+                <p className="font-semibold text-red-800">
+                  Stock Warning
+                </p>
+
+                <p className="text-sm text-red-700 mt-1">
+                  One or more products exceed the available warehouse stock.
+                  Reduce the requested quantity or replenish inventory.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
     </div>
   );
