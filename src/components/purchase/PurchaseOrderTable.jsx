@@ -16,7 +16,8 @@ export default function PurchaseOrderTable({
   };
 
   return (
-    <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+    <div className="w-full overflow-x-auto rounded-lg border border-slate-200">
+      <table className="min-w-[1000px] lg:min-w-0 w-full text-sm">
 
       <thead className="bg-gray-100">
 
@@ -142,5 +143,6 @@ export default function PurchaseOrderTable({
       </tbody>
 
     </table>
+    </div>  
   );
 }
