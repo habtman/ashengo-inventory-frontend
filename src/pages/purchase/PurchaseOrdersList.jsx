@@ -151,13 +151,14 @@ const handlePrint = async () => {
 
   return (
 
-    <div
+<div
   className="
     p-4 sm:p-5
     bg-white
     rounded-lg
     shadow
-    min-h-[calc(100vh-80px)]
+    h-full
+    min-h-0
     flex
     flex-col
   "
@@ -229,7 +230,6 @@ const handlePrint = async () => {
 
 <div className="flex flex-col flex-1 min-h-0 print:hidden">
 
-  {/* Table gets available vertical space */}
   <div className="flex-1 min-h-0 overflow-auto">
     <PurchaseOrderTable
       orders={orders}
@@ -237,8 +237,7 @@ const handlePrint = async () => {
     />
   </div>
 
-  {/* Pagination stays visible */}
-  <div className="shrink-0">
+  <div className="shrink-0 border-t border-slate-100">
     <PurchaseOrderPagination
       page={page}
       totalPages={totalPages}

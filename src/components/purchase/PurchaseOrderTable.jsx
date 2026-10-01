@@ -89,64 +89,73 @@ export default function PurchaseOrderTable({
 
           orders.map((po) => (
 
-            <tr
-              key={po.id}
-              className="hover:bg-slate-50 transition"
-            >
+    <tr
+  key={po.id}
+  className="hover:bg-slate-50 transition"
+>
+  <td className="px-3 py-2 font-medium text-sm text-slate-900 whitespace-nowrap">
+    {po.po_number}
+  </td>
 
-              <td className="px-3 py-2.5 font-medium text-sm text-slate-900 whitespace-nowrap">
-                {po.po_number}
-              </td>
+  <td className="px-3 py-2 text-sm text-slate-700">
+    {po.supplier_code} - {po.supplier_name}
+  </td>
 
-              <td className="px-3 py-2.5 text-sm text-slate-700">
-                {po.supplier_code} - {po.supplier_name}
-              </td>
+  <td className="px-3 py-2 text-sm text-slate-600 whitespace-nowrap">
+    {po.created_by_name}
+  </td>
 
-              <td className="px-3 py-2.5 text-sm text-slate-600 whitespace-nowrap">
-                {po.created_by_name}
-              </td>
+  <td className="px-3 py-2 text-sm text-slate-600 whitespace-nowrap">
+    {po.approved_by_name || "Pending"}
+  </td>
 
-              <td className="px-3 py-2.5 text-sm text-slate-600 whitespace-nowrap">
-                {po.approved_by_name || "Pending"}
-              </td>
+  <td className="px-3 py-2 text-right font-semibold text-sm tabular-nums whitespace-nowrap">
+    ETB{" "}
+    {Number(po.total_amount).toLocaleString(
+      undefined,
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}
+  </td>
 
-              <td className="px-3 py-2.5 text-right font-semibold text-sm tabular-nums whitespace-nowrap">
-                ETB{" "}
-                {Number(po.total_amount).toLocaleString(
-                  undefined,
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }
-                )}
-              </td>
+  <td className="px-3 py-2 text-center whitespace-nowrap">
+    <span
+      className={`
+        inline-flex
+        px-2
+        py-1
+        rounded-full
+        text-xs
+        font-medium
+        ${statusStyle[po.status]}
+      `}
+    >
+      {po.status.replaceAll("_", " ")}
+    </span>
+  </td>
 
-              <td className="px-3 py-2.5 text-center whitespace-nowrap">
-                <span
-                  className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                    statusStyle[po.status]
-                  }`}
-                >
-                  {po.status.replaceAll("_", " ")}
-                </span>
-              </td>
+  <td className="px-3 py-2 text-center text-sm whitespace-nowrap">
+    {new Date(po.created_at).toLocaleDateString()}
+  </td>
 
-              <td className="px-3 py-2.5 text-center text-sm whitespace-nowrap">
-                {new Date(po.created_at).toLocaleDateString()}
-              </td>
-
-              <td className="px-3 py-2.5 text-center whitespace-nowrap">
-                <button
-                  onClick={() =>
-                    navigate(`/purchase-orders/${po.id}`)
-                  }
-                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
-                >
-                  View
-                </button>
-              </td>
-
-            </tr>
+  <td className="px-3 py-2 text-center whitespace-nowrap">
+    <button
+      onClick={() =>
+        navigate(`/purchase-orders/${po.id}`)
+      }
+      className="
+        text-indigo-600
+        hover:text-indigo-800
+        font-medium
+        text-sm
+      "
+    >
+      View
+    </button>
+  </td>
+</tr>
 
           ))
 
