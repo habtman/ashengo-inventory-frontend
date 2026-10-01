@@ -221,7 +221,7 @@ return (
 <div
   className="
     p-4 sm:p-5
-    h-[calc(100dvh-112px)]
+    h-[calc(100dvh-80px)]
     min-h-0
     flex
     flex-col
@@ -238,7 +238,7 @@ return (
     sm:items-center
     sm:justify-between
     gap-3
-    mb-3
+    mb-2
     shrink-0
   "
 >
