@@ -605,8 +605,8 @@ return (
 <div className="mt-2 rounded-xl border border-slate-200
  bg-white overflow-hidden flex flex-col flex-1 min-h-0">
 
-  <div className="flex flex-col sm:flex-row sm:items-center
-   sm:justify-between gap-2 px-4 py-3 border-b border-slate-200">
+<div className="flex flex-col sm:flex-row sm:items-center
+   sm:justify-between gap-1 px-4 py-2 border-b border-slate-200">
     <div>
 
       <h3 className="text-lg font-semibold text-slate-800">
@@ -667,7 +667,7 @@ return (
 
         
 
-      <td className="border p-2 align-top">
+      <td className="border p-1.5 align-top">
 
         <select
           className="border rounded px-2 py-1 w-full"
@@ -767,7 +767,7 @@ return (
             }
           />
 
-          <div className="mt-2 text-xs">
+          <div className="mt-1 text-xs leading-5">
 
             <div
               className={
