@@ -75,7 +75,6 @@ useEffect(() => {
 
 }, [customerId]);
 
-
 const loadDraft = useCallback(async () => {
   try {
     const order = await salesOrderApi.getById(id);
@@ -88,46 +87,26 @@ const loadDraft = useCallback(async () => {
       order.due_date ? new Date(order.due_date) : null
     );
 
-    const loadedItems = await Promise.all(
-      (order.items || []).map(async (item) => {
-        let stock = [];
+    const loadedItems = [];
 
-        try {
-          stock = await inventoryApi.getStockByLocation(
-            item.inventory_id
-          );
-        } catch (stockError) {
-          console.error(
-            `Failed to load stock for product ${item.inventory_id}:`,
-            stockError
-          );
-        }
+    for (const item of order.items) {
+      const stock = await inventoryApi.getStockByLocation(
+        item.inventory_id
+      );
 
-        return {
-          inventoryId: Number(item.inventory_id),
-          quantity: Number(item.quantity),
-          unitPrice: Number(item.unit_price),
-          stockByLocation: Array.isArray(stock) ? stock : [],
-        };
-      })
-    );
+      loadedItems.push({
+        inventoryId: item.inventory_id,
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unit_price),
+        stockByLocation: stock,
+      });
+    }
 
-    setItems(
-      loadedItems.length > 0
-        ? loadedItems
-        : [{
-            inventoryId: "",
-            quantity: 1,
-            unitPrice: 0,
-            stockByLocation: [],
-          }]
-    );
+    setItems(loadedItems);
   } catch (err) {
-    console.error("Failed to load sales order draft:", err);
+    console.error(err);
   }
 }, [id]);
-
-
 
 useEffect(() => {
   if (!isEditing) return;
