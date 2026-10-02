@@ -354,8 +354,11 @@ const handleSubmit = async () => {
 
 
 return (
-  <div className="h-[calc(100dvh-64px)] min-h-0 overflow-y-auto overflow-x-hidden p-3 sm:p-4">
-    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 mb-5">
+ <div className="h-[calc(100dvh-64px)] min-h-0 overflow-hidden p-3 sm:p-4">
+  <div className="h-full min-h-0 rounded-xl border border-slate-200
+   bg-white p-3 sm:p-4 flex flex-col">
+
+    <div className="shrink-0">
 
     <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-5">
       Create Sales Order
@@ -597,20 +600,27 @@ return (
   </div>
 )}
 
-<div className="mt-6 rounded-xl border border-slate-200 bg-white overflow-hidden">
+</div>
 
-  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-4 py-3 border-b border-slate-200">
+<div className="mt-3 rounded-xl border border-slate-200
+ bg-white overflow-hidden flex flex-col flex-1 min-h-[160px]">
+
+  <div className="flex flex-col sm:flex-row sm:items-center
+   sm:justify-between gap-2 px-4 py-3 border-b border-slate-200">
     <div>
+
       <h3 className="text-lg font-semibold text-slate-800">
         Products
       </h3>
+
       <p className="text-sm text-slate-500">
         Select products and enter the quantities for this order.
       </p>
+
     </div>
   </div>
 
-  <div className="w-full overflow-x-auto">
+<div className="flex-1 min-h-0 w-full overflow-auto">
 
 <table className="min-w-[850px] w-full text-sm border-collapse">
   <thead className="bg-slate-50 text-slate-600">
@@ -830,7 +840,7 @@ return (
     </div>
 
 {/* Order Summary and Actions */}
-<div className="mt-5 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+<div className="shrink-0 mt-2 rounded-xl border border-slate-200 bg-white p-3">
 
   {/* Order Total */}
   <div className="flex items-center justify-between gap-4">
@@ -872,7 +882,7 @@ return (
   )}
 
   {/* Submit Button */}
-  <div className="flex justify-end mt-4">
+  <div className="flex justify-end mt-2">
     <button
       type="button"
       onClick={handleSubmit}
