@@ -702,7 +702,7 @@ return (
 
         {item.stockByLocation?.length > 0 && (
 
-          <div className="mt-2 rounded bg-gray-50 border p-2 max-h-28 overflow-y-auto">
+          <div className="mt-0.5 rounded bg-gray-50 border p-2 max-h-28 overflow-y-auto">
 
             <p className="font-semibold text-xs mb-2">
               Warehouse Stock
@@ -712,7 +712,7 @@ return (
 
               <div
                 key={stock.location_id}
-                className="flex justify-between text-xs py-1"
+                className="flex justify-between items-center gap-2 text-xs py-0.5"
               >
 
                 <span>
@@ -751,45 +751,43 @@ return (
 
       </td>
 
-        <td className="border p-2">
+<td className="border p-2 align-top">
+  <input
+    className="border rounded px-2 py-1 w-full"
+    type="number"
+    min="1"
+    value={item.quantity}
+    onChange={(e) =>
+      updateItem(
+        i,
+        "quantity",
+        Number(e.target.value)
+      )
+    }
+  />
 
-          <input
-            className="border rounded px-2 py-1 w-full"
-            type="number"
-            min="1"
-            value={item.quantity}
-            onChange={(e) =>
-              updateItem(
-                i,
-                "quantity",
-                Number(e.target.value)
-              )
-            }
-          />
+  <div className="mt-0.5 text-xs leading-5">
+    <div
+      className={
+        hasEnoughStock
+          ? "text-green-600 font-semibold"
+          : "text-red-600 font-semibold"
+      }
+    >
+      Available: {availableStock}
+    </div>
 
-          <div className="mt-1 text-xs leading-5">
+    <div>Requested: {item.quantity}</div>
 
-            <div
-              className={
-                hasEnoughStock
-                  ? "text-green-600 font-semibold"
-                  : "text-red-600 font-semibold"
-              }
-            >
-              Available: {availableStock}
-            </div>
+    {!hasEnoughStock && (
+      <div className="text-red-600 font-medium">
+        Missing: {shortage}
+      </div>
+    )}
+  </div>
+</td>
 
-            {!hasEnoughStock && (
-              <div className="mt-1">
-                Requested: {item.quantity}
-                <br />
-                Missing: {shortage}
-              </div>
-            )}
 
-          </div>
-
-        </td>
 
         <td className="border p-2">
         <input
@@ -827,7 +825,7 @@ return (
       </div>
     
 
-<div className="shrink-0 px-3 py-1.5 border-t border-slate-200 bg-slate-50">
+<div className="shrink-0 px-3 py-0.5 border-t border-slate-200 bg-slate-50">
   <button
     type="button"
     onClick={addItem}
@@ -842,7 +840,7 @@ return (
     </div>
 
 {/* Order Summary and Actions */}
-<div className="shrink-0 mt-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+<div className="shrink-0 mt-1 rounded-xl border border-slate-200 bg-white px-3 py-2">
 
   {/* Order Total */}
   <div className="flex items-center justify-between gap-4">
