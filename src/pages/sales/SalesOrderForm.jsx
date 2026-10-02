@@ -353,9 +353,9 @@ const handleSubmit = async () => {
 };
 
 
-  return (
-
-  <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 mb-5">
+return (
+  <div className="h-[calc(100dvh-64px)] min-h-0 overflow-y-auto overflow-x-hidden p-3 sm:p-4">
+    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 mb-5">
 
     <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-5">
       Create Sales Order
@@ -829,97 +829,79 @@ const handleSubmit = async () => {
     </div>
     </div>
 
+{/* Order Summary and Actions */}
+<div className="mt-5 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
 
-      {/* Order Total */}
-      <div className="flex justify-end mt-5">
-        <div className="w-full sm:w-auto sm:min-w-[280px] rounded-xl border border-slate-200 bg-white p-4">
-          <div className="flex items-center justify-between gap-6">
-            <span className="text-sm font-medium text-slate-500">
-              Order Total
-            </span>
+  {/* Order Total */}
+  <div className="flex items-center justify-between gap-4">
+    <span className="text-sm font-medium text-slate-500">
+      Order Total
+    </span>
 
-            <span className="text-xl sm:text-2xl font-bold text-slate-800 tabular-nums">
-              {formatCurrency(total)}
-            </span>
-          </div>
-        </div>
-      </div>
+    <span className="text-xl sm:text-2xl font-bold text-slate-800 tabular-nums">
+      {formatCurrency(total)}
+    </span>
+  </div>
 
+  {/* Credit Limit Warning */}
+  {paymentMethod === "CREDIT" && exceedsLimit && (
+    <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3">
+      <p className="font-semibold text-red-800">
+        ⚠ Credit limit exceeded
+      </p>
 
-        {/* Submit Order */}
-        <div className="flex flex-col sm:flex-row sm:justify-end mt-4">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={
-              (paymentMethod === "CREDIT" && exceedsLimit) ||
-              hasStockIssues
-            }
-            className={`
-              w-full sm:w-auto
-              min-w-[180px]
-              px-5 py-3
-              rounded-lg
-              text-sm font-semibold text-white
-              shadow-sm
-              transition-colors
-              ${
-                (paymentMethod === "CREDIT" && exceedsLimit) ||
-                hasStockIssues
-                  ? "bg-slate-400 cursor-not-allowed"
-                  : isEditing
-                  ? "bg-amber-600 hover:bg-amber-700"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }
-            `}
-          >
-            {isEditing ? "Save Draft" : "Create Sales Order"}
-          </button>
-        </div>
+      <p className="text-sm text-red-700 mt-1">
+        This order exceeds the customer's available credit by{" "}
+        {formatCurrency(Math.abs(remainingCredit))}.
+      </p>
+    </div>
+  )}
 
+  {/* Stock Warning */}
+  {showStockWarning && (
+    <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3">
+      <p className="font-semibold text-red-800">
+        ⚠ Stock Warning
+      </p>
 
-        {paymentMethod === "CREDIT" && exceedsLimit && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4">
-            <div className="flex items-start gap-3">
-              <span className="text-red-600 text-lg" aria-hidden="true">
-                ⚠
-              </span>
+      <p className="text-sm text-red-700 mt-1">
+        One or more products exceed the available warehouse stock.
+        Reduce the requested quantity or replenish inventory.
+      </p>
+    </div>
+  )}
 
-              <div>
-                <p className="font-semibold text-red-800">
-                  Credit limit exceeded
-                </p>
+  {/* Submit Button */}
+  <div className="flex justify-end mt-4">
+    <button
+      type="button"
+      onClick={handleSubmit}
+      disabled={
+        (paymentMethod === "CREDIT" && exceedsLimit) ||
+        hasStockIssues
+      }
+      className={`
+        w-full sm:w-auto min-w-[200px]
+        px-5 py-3 rounded-lg
+        text-sm font-semibold text-white
+        shadow-sm transition-colors
+        ${
+          (paymentMethod === "CREDIT" && exceedsLimit) ||
+          hasStockIssues
+            ? "bg-slate-400 cursor-not-allowed"
+            : isEditing
+            ? "bg-amber-600 hover:bg-amber-700"
+            : "bg-blue-600 hover:bg-blue-700"
+        }
+      `}
+    >
+      {isEditing ? "Save Draft" : "Create Sales Order"}
+    </button>
+  </div>
 
-                <p className="text-sm text-red-700 mt-1">
-                  This order exceeds the customer's available credit by{" "}
-                  {formatCurrency(Math.abs(remainingCredit))}.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+</div>
 
-
-        {showStockWarning && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4">
-            <div className="flex items-start gap-3">
-              <span className="text-red-600 text-lg" aria-hidden="true">
-                ⚠
-              </span>
-
-              <div>
-                <p className="font-semibold text-red-800">
-                  Stock Warning
-                </p>
-
-                <p className="text-sm text-red-700 mt-1">
-                  One or more products exceed the available warehouse stock.
-                  Reduce the requested quantity or replenish inventory.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+</div>
 
     </div>
   );
