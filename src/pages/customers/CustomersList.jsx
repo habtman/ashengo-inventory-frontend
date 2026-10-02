@@ -55,157 +55,156 @@ export default function CustomersList() {
     page * PAGE_SIZE
   );
 
-  return (
-    <div className="p-6">
+return (
+  <div className="h-[calc(100dvh-64px)] min-h-0 flex flex-col p-3 sm:p-4">
 
-      <div className="flex justify-between mb-4">
-
-        <h1 className="text-2xl font-bold">
+    {/* Header */}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 shrink-0">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-800">
           Customers
         </h1>
-
-        {canCreateCustomer && (
-          <Link
-            to="/customers/new"
-            className="
-              bg-blue-600
-              text-white
-              px-4
-              py-2
-              rounded
-            "
-          >
-            New Customer
-          </Link>
-        )}
-
+        <p className="text-sm text-slate-500 mt-1">
+          Manage customers and their credit limits.
+        </p>
       </div>
 
-      <div className="p-6">
+      {canCreateCustomer && (
+        <Link
+          to="/customers/new"
+          className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+        >
+          + New Customer
+        </Link>
+      )}
+    </div>
 
-        <table className="w-full border">
+    {/* Customers Table */}
+    <div className="flex-1 min-h-0 flex flex-col rounded-xl 
+      border border-slate-200 bg-white overflow-hidden">
 
-          <thead>
+      <div className="flex-1 min-h-0 overflow-auto">
+        <table className="w-full min-w-[700px] text-sm">
+
+          <thead className="sticky top-0 z-10 bg-slate-50 text-slate-600">
             <tr>
-
-              <th className="border p-2">
+              <th className="border-b border-slate-200 px-3 py-2 text-left font-semibold">
                 Code
               </th>
 
-              <th className="border p-2">
+              <th className="border-b border-slate-200 px-3 py-2 text-left font-semibold">
                 Name
               </th>
 
-              <th className="border p-2">
+              <th className="border-b border-slate-200 px-3 py-2 text-left font-semibold">
                 Phone
               </th>
 
-              <th className="border p-2">
+              <th className="border-b border-slate-200 px-3 py-2 text-right font-semibold">
                 Credit Limit
               </th>
 
-              <th className="border p-2">
+              <th className="border-b border-slate-200 px-3 py-2 text-center font-semibold">
                 Actions
               </th>
-
             </tr>
           </thead>
 
-          <tbody>
-
+          <tbody className="divide-y divide-slate-100">
             {paginatedCustomers.length === 0 ? (
               <tr>
                 <td
                   colSpan={5}
-                  className="border p-6 text-center text-gray-500"
+                  className="px-3 py-10 text-center text-slate-500"
                 >
                   No customers found.
                 </td>
               </tr>
             ) : (
               paginatedCustomers.map((customer) => (
-
-                <tr key={customer.id}>
-
-                  <td className="border p-2">
+                <tr
+                  key={customer.id}
+                  className="hover:bg-slate-50 transition-colors"
+                >
+                  <td className="px-3 py-1.5 text-slate-600 whitespace-nowrap">
                     {customer.customer_code}
                   </td>
 
-                  <td className="border p-2">
+                  <td className="px-3 py-1.5 font-medium text-slate-800">
                     {customer.name}
                   </td>
 
-                  <td className="border p-2">
-                    {customer.phone}
+                  <td className="px-3 py-1.5 text-slate-600 whitespace-nowrap">
+                    {customer.phone || "—"}
                   </td>
 
-                  <td className="border p-2">
-
-                    <div className="flex items-center justify-between">
-
-                      <span>
+                  <td className="px-3 py-1.5 text-right whitespace-nowrap">
+                    <div className="flex items-center justify-end gap-3">
+                      <span className="font-medium text-slate-700 tabular-nums">
                         {formatCurrency(customer.credit_limit)}
                       </span>
 
                       {canEditCustomerCreditLimit && (
                         <button
+                          type="button"
                           onClick={() => {
                             setSelectedCustomer(customer);
                             setShowLimitModal(true);
                           }}
-                          className="text-blue-600 hover:text-blue-800"
+                          className="inline-flex items-center justify-center h-7 w-7 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
+                          title="Edit credit limit"
+                          aria-label={`Edit credit limit for ${customer.name}`}
                         >
                           ✏️
                         </button>
                       )}
-
                     </div>
-
                   </td>
 
-                  <td className="border p-2">
-
+                  <td className="px-3 py-1.5 text-center whitespace-nowrap">
                     <Link
                       to={`/customers/${customer.id}`}
-                      className="text-blue-600"
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
                     >
                       View
                     </Link>
-
                   </td>
-
                 </tr>
-
               ))
             )}
-
           </tbody>
 
         </table>
+      </div>
 
-        {totalPages > 1 && (
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="shrink-0 border-t border-slate-200 px-3 py-2">
           <Pagination
             page={page}
             totalPages={totalPages}
             onPageChange={setPage}
           />
-        )}
-
-      </div>
-
-      {canEditCustomerCreditLimit &&
-        showLimitModal &&
-        selectedCustomer && (
-          <EditCreditLimitModal
-            customer={selectedCustomer}
-            onClose={() => {
-              setShowLimitModal(false);
-              setSelectedCustomer(null);
-            }}
-            onSuccess={loadCustomers}
-          />
-        )}
-
+        </div>
+      )}
     </div>
-  );
+
+    {/* Edit Credit Limit Modal */}
+    {canEditCustomerCreditLimit &&
+      showLimitModal &&
+      selectedCustomer && (
+        <EditCreditLimitModal
+          customer={selectedCustomer}
+          onClose={() => {
+            setShowLimitModal(false);
+            setSelectedCustomer(null);
+          }}
+          onSuccess={loadCustomers}
+        />
+      )}
+
+  </div>
+);
+
+
 }
