@@ -692,7 +692,7 @@ const handleSubmit = async () => {
 
         {item.stockByLocation?.length > 0 && (
 
-          <div className="mt-2 rounded bg-gray-50 border p-2">
+          <div className="mt-2 rounded bg-gray-50 border p-2 max-h-28 overflow-y-auto">
 
             <p className="font-semibold text-xs mb-2">
               Warehouse Stock
@@ -815,7 +815,7 @@ const handleSubmit = async () => {
         </tbody>
       </table>
       </div>
-    </div>
+    
 
     <div className="px-4 py-3 border-t border-slate-200 bg-slate-50">
       <button
@@ -826,6 +826,7 @@ const handleSubmit = async () => {
         <span className="text-lg leading-none">+</span>
         Add Item
       </button>
+    </div>
     </div>
 
 
