@@ -56,10 +56,11 @@ export default function CustomersList() {
   );
 
 return (
-  <div className="h-[calc(100dvh-64px)] min-h-0 flex flex-col p-3 sm:p-4">
+  <div className="h-[calc(100dvh-64px)] min-h-0 flex flex-col p-3 sm:p-4 
+  overflow-hidden">
 
     {/* Header */}
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 shrink-0">
+<div className="flex items-center justify-between gap-3 mb-3 shrink-0">
       <div>
         <h1 className="text-2xl font-bold text-slate-800">
           Customers
@@ -84,27 +85,27 @@ return (
       border border-slate-200 bg-white overflow-hidden">
 
       <div className="flex-1 min-h-0 overflow-auto">
-        <table className="w-full min-w-[700px] text-sm">
+        <table className="w-full border-collapse text-sm">
 
           <thead className="sticky top-0 z-10 bg-slate-50 text-slate-600">
             <tr>
-              <th className="border-b border-slate-200 px-3 py-2 text-left font-semibold">
+              <th className="border-b border-slate-200 px-3 py-1.5 text-left font-semibold">
                 Code
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-2 text-left font-semibold">
+              <th className="border-b border-slate-200 px-3 py-1.5 text-left font-semibold">
                 Name
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-2 text-left font-semibold">
+              <th className="border-b border-slate-200 px-3 py-1.5 text-left font-semibold">
                 Phone
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-2 text-right font-semibold">
+              <th className="border-b border-slate-200 px-3 py-1.5 text-right font-semibold">
                 Credit Limit
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-2 text-center font-semibold">
+              <th className="border-b border-slate-200 px-3 py-1.5 text-center font-semibold">
                 Actions
               </th>
             </tr>
