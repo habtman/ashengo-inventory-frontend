@@ -356,11 +356,11 @@ const handleSubmit = async () => {
 return (
  <div className="h-[calc(100dvh-64px)] min-h-0 overflow-hidden p-3 sm:p-4">
   <div className="h-full min-h-0 rounded-xl border border-slate-200
-   bg-white p-3 sm:p-4 flex flex-col">
+   bg-white p-2 sm:p-3 flex flex-col">
 
     <div className="shrink-0">
 
-    <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-5">
+    <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
       Create Sales Order
     </h2>
 
@@ -550,7 +550,7 @@ return (
 {paymentMethod === "CREDIT" && (
   <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
 
       {/* Credit Days */}
       <div>
@@ -602,8 +602,8 @@ return (
 
 </div>
 
-<div className="mt-3 rounded-xl border border-slate-200
- bg-white overflow-hidden flex flex-col flex-1 min-h-[160px]">
+<div className="mt-2 rounded-xl border border-slate-200
+ bg-white overflow-hidden flex flex-col flex-1 min-h-0">
 
   <div className="flex flex-col sm:flex-row sm:items-center
    sm:justify-between gap-2 px-4 py-3 border-b border-slate-200">
@@ -840,7 +840,7 @@ return (
     </div>
 
 {/* Order Summary and Actions */}
-<div className="shrink-0 mt-2 rounded-xl border border-slate-200 bg-white p-3">
+<div className="shrink-0 mt-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
 
   {/* Order Total */}
   <div className="flex items-center justify-between gap-4">
@@ -882,7 +882,7 @@ return (
   )}
 
   {/* Submit Button */}
-  <div className="flex justify-end mt-2">
+  <div className="flex justify-end mt-1">
     <button
       type="button"
       onClick={handleSubmit}
