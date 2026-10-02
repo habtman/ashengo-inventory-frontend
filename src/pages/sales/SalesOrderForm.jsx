@@ -620,7 +620,7 @@ return (
     </div>
   </div>
 
-<div className="flex-1 min-h-0 w-full overflow-auto">
+<div className="w-full flex-1 min-h-[120px] overflow-auto">
 
 <table className="min-w-[850px] w-full text-sm border-collapse">
   <thead className="bg-slate-50 text-slate-600">
@@ -827,16 +827,18 @@ return (
       </div>
     
 
-    <div className="px-4 py-3 border-t border-slate-200 bg-slate-50">
-      <button
-        type="button"
-        onClick={addItem}
-        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors"
-      >
-        <span className="text-lg leading-none">+</span>
-        Add Item
-      </button>
-    </div>
+<div className="shrink-0 px-3 py-1.5 border-t border-slate-200 bg-slate-50">
+  <button
+    type="button"
+    onClick={addItem}
+    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors"
+  >
+    <span className="text-base leading-none">+</span>
+    Add Item
+  </button>
+</div>
+
+
     </div>
 
 {/* Order Summary and Actions */}
