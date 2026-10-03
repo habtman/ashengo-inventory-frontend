@@ -84,7 +84,7 @@ export default function InvoicesList() {
       cancelled = true;
     };
   }, [
-    search,
+    
     debouncedSearch,
     startDate,
     endDate,
@@ -99,7 +99,7 @@ export default function InvoicesList() {
     sortField,
     sortDirection,
     statusFilter,
-    search,
+    debouncedSearch,
     startDate,
     endDate,
   ]);
