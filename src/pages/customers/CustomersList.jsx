@@ -55,12 +55,12 @@ export default function CustomersList() {
     page * PAGE_SIZE
   );
 
+
 return (
-  <div className="h-[calc(100dvh-64px)] min-h-0 flex flex-col p-3 sm:p-4 
-  overflow-hidden">
+  <div className="h-[calc(100dvh-64px)] min-h-0 flex flex-col p-3 sm:p-4">
 
     {/* Header */}
-<div className="flex items-center justify-between gap-3 mb-3 shrink-0">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 shrink-0">
       <div>
         <h1 className="text-2xl font-bold text-slate-800">
           Customers
@@ -81,31 +81,30 @@ return (
     </div>
 
     {/* Customers Table */}
-    <div className="flex-1 min-h-0 flex flex-col rounded-xl 
-      border border-slate-200 bg-white overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col rounded-xl border border-slate-200 bg-white overflow-hidden">
 
       <div className="flex-1 min-h-0 overflow-auto">
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full min-w-[700px] text-sm">
 
           <thead className="sticky top-0 z-10 bg-slate-50 text-slate-600">
             <tr>
-              <th className="border-b border-slate-200 px-3 py-1.5 text-left font-semibold">
+              <th className="border-b border-slate-200 px-4 py-3 text-left font-semibold">
                 Code
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-1.5 text-left font-semibold">
+              <th className="border-b border-slate-200 px-4 py-3 text-left font-semibold">
                 Name
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-1.5 text-left font-semibold">
+              <th className="border-b border-slate-200 px-4 py-3 text-left font-semibold">
                 Phone
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-1.5 text-right font-semibold">
+              <th className="border-b border-slate-200 px-4 py-3 text-right font-semibold">
                 Credit Limit
               </th>
 
-              <th className="border-b border-slate-200 px-3 py-1.5 text-center font-semibold">
+              <th className="border-b border-slate-200 px-4 py-3 text-center font-semibold">
                 Actions
               </th>
             </tr>
@@ -116,7 +115,7 @@ return (
               <tr>
                 <td
                   colSpan={5}
-                  className="px-3 py-10 text-center text-slate-500"
+                  className="px-4 py-10 text-center text-slate-500"
                 >
                   No customers found.
                 </td>
@@ -127,19 +126,19 @@ return (
                   key={customer.id}
                   className="hover:bg-slate-50 transition-colors"
                 >
-                  <td className="px-3 py-1.5 text-slate-600 whitespace-nowrap">
+                  <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                     {customer.customer_code}
                   </td>
 
-                  <td className="px-3 py-1.5 font-medium text-slate-800">
+                  <td className="px-4 py-3 font-medium text-slate-800">
                     {customer.name}
                   </td>
 
-                  <td className="px-3 py-1.5 text-slate-600 whitespace-nowrap">
+                  <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                     {customer.phone || "—"}
                   </td>
 
-                  <td className="px-3 py-1.5 text-right whitespace-nowrap">
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-3">
                       <span className="font-medium text-slate-700 tabular-nums">
                         {formatCurrency(customer.credit_limit)}
@@ -152,7 +151,7 @@ return (
                             setSelectedCustomer(customer);
                             setShowLimitModal(true);
                           }}
-                          className="inline-flex items-center justify-center h-7 w-7 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
                           title="Edit credit limit"
                           aria-label={`Edit credit limit for ${customer.name}`}
                         >
@@ -162,7 +161,7 @@ return (
                     </div>
                   </td>
 
-                  <td className="px-3 py-1.5 text-center whitespace-nowrap">
+                  <td className="px-4 py-3 text-center whitespace-nowrap">
                     <Link
                       to={`/customers/${customer.id}`}
                       className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
@@ -206,6 +205,7 @@ return (
 
   </div>
 );
+
 
 
 }
