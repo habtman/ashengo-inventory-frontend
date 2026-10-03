@@ -234,13 +234,11 @@ export default function InvoicesList() {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="p-6 text-center text-sm text-slate-500">
-        Loading invoices...
-      </div>
-    );
-  }
+  {loading && (
+  <p className="text-xs text-slate-500" role="status">
+    Updating invoices...
+  </p>
+)}
 
   if (error) {
     return (
