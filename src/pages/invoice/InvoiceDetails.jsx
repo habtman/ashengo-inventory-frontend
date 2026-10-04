@@ -28,7 +28,7 @@ export default function InvoiceDetails() {
   const navigate = useNavigate();
 
   const canViewInvoices = hasPermission("invoices.view");
-  const canReceivePayments = hasPermission("invoices.receive_payments");
+  const canReceivePayments = hasPermission("payments.receive");
   const canViewPayments = hasPermission("payments.view");
 
   const [invoice, setInvoice] = useState(null);
@@ -336,6 +336,14 @@ export default function InvoiceDetails() {
     statusClasses[String(displayStatus).toUpperCase()] ||
     "bg-slate-100 text-slate-700";
 
+  console.log("Payment button debug:", {
+  canReceivePayments,
+  balanceDue,
+  invoiceBalanceDue: invoice?.balance_due,
+  invoiceAmountPaid: invoice?.amount_paid,
+  invoiceTotal: invoice?.total_amount,
+});
+
   return (
     <div className="mx-auto w-full max-w-7xl rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4 lg:p-5">
       {/* Header */}
@@ -366,15 +374,15 @@ export default function InvoiceDetails() {
             Print Invoice
           </button>
 
-          {canReceivePayments && balanceDue > 0 && (
-            <button
-              type="button"
-              onClick={openPaymentModal}
-              className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Record Payment
-            </button>
-          )}
+      {canReceivePayments && Number(invoice?.balance_due) > 0 && (
+        <button
+          type="button"
+          onClick={openPaymentModal}
+          className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+        >
+          Record Payment
+        </button>
+      )}
         </div>
       </div>
 
