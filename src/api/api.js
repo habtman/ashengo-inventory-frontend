@@ -22,32 +22,39 @@ async function getFreshAccessToken() {
 // Auth storage cleanup
 // ---------------------------------------------------------
 
-/*function clearAuthStorage() {
+/*
+function clearAuthStorage() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("user");
   localStorage.removeItem("permissions");
   localStorage.removeItem("lastActivity");
-}*/
+}
+*/
 
 // ---------------------------------------------------------
 // API request
 // ---------------------------------------------------------
 
 export async function apiFetch(endpoint, options = {}) {
+  const {
+    rawResponse = false,
+    ...fetchOptions
+  } = options;
+
   const makeRequest = async (token) => {
     const headers = {
       ...(token && {
         Authorization: `Bearer ${token}`,
       }),
-      ...options.headers,
+      ...fetchOptions.headers,
     };
 
-    if (!(options.body instanceof FormData)) {
+    if (!(fetchOptions.body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
     }
 
     return fetch(`${API_BASE}${endpoint}`, {
-      ...options,
+      ...fetchOptions,
       headers,
       credentials: "include",
     });
@@ -76,37 +83,46 @@ export async function apiFetch(endpoint, options = {}) {
   // -------------------------------------------------------
   // Handle API errors
   // -------------------------------------------------------
-if (!res.ok) {
-  let errorMessage = "API Error";
 
-  try {
-    const errorData = await res.json();
+  if (!res.ok) {
+    let errorMessage = "API Error";
 
-    if (
-      res.status === 403 &&
-      (
-        errorData.code === "ACCOUNT_DEACTIVATED" ||
-        errorData.error === "Account is inactive"
-      )
-    ) {
-      window.dispatchEvent(
-        new CustomEvent("auth:account-deactivated")
-      );
+    try {
+      const errorData = await res.json();
 
-      throw new Error("Account deactivated");
+      if (
+        res.status === 403 &&
+        (
+          errorData.code === "ACCOUNT_DEACTIVATED" ||
+          errorData.error === "Account is inactive"
+        )
+      ) {
+        window.dispatchEvent(
+          new CustomEvent("auth:account-deactivated")
+        );
+
+        throw new Error("Account deactivated");
+      }
+
+      errorMessage = errorData.error || errorMessage;
+    } catch (err) {
+      if (err.message === "Account deactivated") {
+        throw err;
+      }
+
+      errorMessage = res.statusText || errorMessage;
     }
 
-    errorMessage = errorData.error || errorMessage;
-  } catch (err) {
-    if (err.message === "Account deactivated") {
-      throw err;
-    }
-
-    errorMessage = res.statusText || errorMessage;
+    throw new Error(errorMessage);
   }
 
-  throw new Error(errorMessage);
-}
+  // -------------------------------------------------------
+  // Return raw Response when requested
+  // -------------------------------------------------------
+
+  if (rawResponse) {
+    return res;
+  }
 
   // -------------------------------------------------------
   // No content
