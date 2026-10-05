@@ -233,15 +233,21 @@ export default function AuditLogsPage() {
       );
     }
 
-    if (
-      actionName === "RECEIVE_PAYMENT"
-    ) {
-      return (
-        <span className="inline-flex rounded-full bg-teal-100 px-2.5 py-1 text-xs font-medium text-teal-700">
-          Receive Payment
-        </span>
-      );
-    }
+if (actionName === "INVOICE_PAYMENT") {
+  return (
+    <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+      Invoice Payment
+    </span>
+  );
+}
+
+if (actionName === "RECEIVE_PAYMENT") {
+  return (
+    <span className="inline-flex rounded-full bg-teal-100 px-2.5 py-1 text-xs font-medium text-teal-700">
+      Receive Payment
+    </span>
+  );
+}
 
     return (
       <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
@@ -389,6 +395,10 @@ export default function AuditLogsPage() {
 
               <option value="CREATE_INVOICE">
                 Create Invoice
+              </option>
+
+              <option value="INVOICE_PAYMENT">
+                Invoice Payment
               </option>
 
               <option value="RECEIVE_PAYMENT">
