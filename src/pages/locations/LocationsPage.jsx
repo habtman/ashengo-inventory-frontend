@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import  locationsApi  from "../../api/locationsApi";
+import { useCallback, useEffect, useState } from "react";
+import locationsApi from "../../api/locationsApi";
 import LocationsTable from "../../components/locations/LocationsTable";
 import CreateLocationModal from "../../components/locations/CreateLocationModal";
 import Toast from "../../components/Toast";
@@ -11,69 +11,86 @@ export default function LocationsPage() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
-
-  useEffect(() => {
-  let mounted = true;
-
-  const load = async () => {
+  const loadLocations = useCallback(async () => {
     try {
+      setLoading(true);
+
       const data = await locationsApi.getLocations();
 
-      if (mounted) {
-        setLocations(data);
-      }
+      // Support either:
+      //   [...]
+      // or:
+      //   { items: [...] }
+      const list = Array.isArray(data) ? data : data?.items;
+
+      setLocations(list || []);
     } catch (err) {
-      if (mounted) {
-        setToast({ type: "error", message: "Failed to load locations",err });
-      }
+      console.error("Failed to load locations:", err);
+
+      setToast({
+        type: "error",
+        message: err?.message || "Failed to load locations",
+      });
     } finally {
-      if (mounted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  };
+  }, []);
 
-  load();
+  useEffect(() => {
+    loadLocations();
+  }, [loadLocations]);
 
-  return () => {
-    mounted = false;
+  const handleCreateSuccess = async () => {
+    setShowCreate(false);
+
+    await loadLocations();
+
+    setToast({
+      type: "success",
+      message: "Location created successfully",
+    });
   };
-}, []);
 
   return (
     <div className="p-6 space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold">Locations</h1>
-        <p className="text-sm text-slate-500">
-          Warehouses and storage locations
-        </p>
+      {/* Page header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">
+            Locations
+          </h1>
+
+          <p className="text-sm text-slate-500 mt-1">
+            Warehouses and storage locations
+          </p>
+        </div>
+
         <button
+          type="button"
           onClick={() => setShowCreate(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
         >
           Add Location
-</button>
-
+        </button>
       </div>
 
+      {/* Locations table */}
       <div className="bg-white border rounded-lg overflow-hidden">
-        <LocationsTable locations={locations} loading={loading} />
+        <LocationsTable
+          locations={locations}
+          loading={loading}
+        />
       </div>
 
+      {/* Create location modal */}
       {showCreate && (
-        
-          <CreateLocationModal
-            onClose={() => setShowCreate(false)}
-            onSuccess={() => {
-              setToast({ type: "success", message: "Location created" });
-              // reload locations
-              locationsApi.getLocations().then(setLocations);
-            }}
-          />
-      
+        <CreateLocationModal
+          onClose={() => setShowCreate(false)}
+          onSuccess={handleCreateSuccess}
+        />
       )}
 
-
+      {/* Toast */}
       {toast && (
         <Toast
           type={toast.type}
