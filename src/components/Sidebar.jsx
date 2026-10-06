@@ -27,7 +27,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
   const canViewInventory = hasPermission("inventory.view");
   const canViewLocations = hasAnyPermission(
   "inventory.view",
-  "locations.view"
+  "locations.view",
 )
 
   const canViewSalesOrders = hasPermission("sales_orders.view");
