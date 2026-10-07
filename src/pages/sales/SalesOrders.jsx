@@ -715,9 +715,9 @@ return (
                     whitespace-nowrap
                   "
                 >
+                  <div className="grid grid-cols-[64px_64px] justify-center gap-2">
 
-                  <div className="flex items-center justify-center gap-2">
-
+                    {/* VIEW */}
                     <button
                       type="button"
                       onClick={() =>
@@ -726,6 +726,7 @@ return (
                         )
                       }
                       className="
+                        w-full
                         px-3
                         py-1.5
                         rounded-lg
@@ -740,9 +741,8 @@ return (
                       View
                     </button>
 
-
-                    {order.status === "DRAFT" && (
-
+                    {/* EDIT */}
+                    {order.status === "DRAFT" ? (
                       <button
                         type="button"
                         onClick={() =>
@@ -751,6 +751,7 @@ return (
                           )
                         }
                         className="
+                          w-full
                           px-3
                           py-1.5
                           rounded-lg
@@ -764,11 +765,11 @@ return (
                       >
                         Edit
                       </button>
-
+                    ) : (
+                      <div aria-hidden="true" />
                     )}
 
                   </div>
-
                 </td>
 
               </tr>

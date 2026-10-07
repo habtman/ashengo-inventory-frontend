@@ -83,29 +83,29 @@ export default function LocationsTable({
               </td>
 
               {canEdit && (
-                <td className="px-3 py-2.5 whitespace-nowrap">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onEdit(loc)}
-                      className="px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded hover:bg-indigo-100 transition"
-                    >
-                      Edit
-                    </button>
+              <td className="px-3 py-2.5 whitespace-nowrap">
+                <div className="grid grid-cols-[64px_104px] justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onEdit(loc)}
+                    className="w-full px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded hover:bg-indigo-100 transition"
+                  >
+                    Edit
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={() => onToggleActive(loc)}
-                      className={`px-3 py-1.5 text-xs font-medium rounded transition ${
-                        loc.is_active
-                          ? "text-red-700 bg-red-50 hover:bg-red-100"
-                          : "text-green-700 bg-green-50 hover:bg-green-100"
-                      }`}
-                    >
-                      {loc.is_active ? "Deactivate" : "Activate"}
-                    </button>
-                  </div>
-                </td>
+                  <button
+                    type="button"
+                    onClick={() => onToggleActive(loc)}
+                    className={`w-full px-3 py-1.5 text-xs font-medium rounded transition ${
+                      loc.is_active
+                        ? "text-red-700 bg-red-50 hover:bg-red-100"
+                        : "text-green-700 bg-green-50 hover:bg-green-100"
+                    }`}
+                  >
+                    {loc.is_active ? "Deactivate" : "Activate"}
+                  </button>
+                </div>
+              </td>
               )}
             </tr>
           ))}
