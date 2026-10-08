@@ -380,7 +380,7 @@ export default function CustomerCreditTable({
       <div className="mt-5">
 
         <Pagination
-          currentPage={page}
+          page={page}
           totalPages={totalPages}
           onPageChange={setPage}
         />

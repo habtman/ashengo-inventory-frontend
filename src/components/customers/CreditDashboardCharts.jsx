@@ -147,116 +147,125 @@ export default function CreditDashboardCharts({ customers = [] }) {
         </div>
       </div>
 
-      {/* TOP CREDIT CUSTOMERS */}
-      <div className="rounded-xl bg-white border shadow p-6">
+        {/* TOP CREDIT CUSTOMERS */}
+        <div className="rounded-xl bg-white border shadow p-6">
 
-        <h2 className="text-lg font-semibold mb-1">
-          Top Credit Customers
-        </h2>
+          <h2 className="text-lg font-semibold mb-1">
+            Top Credit Customers
+          </h2>
 
-        <p className="text-sm text-slate-500 mb-4">
-          Top 10 customers ranked by outstanding credit.
-        </p>
+          <p className="text-sm text-slate-500 mb-4">
+            Top 10 customers ranked by outstanding credit.
+          </p>
 
-        <div className="h-[420px]">
+          <div className="h-[420px]">
 
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
-            <BarChart data={topCustomers}>
-
-              <CartesianGrid
-                strokeDasharray="3 3"
-              />
-
-              <XAxis
-                dataKey="name"
-                tickFormatter={(name) =>
-                  name.length > 12
-                    ? name.substring(0, 12) + "..."
-                    : name
-                }
-                angle={-25}
-                textAnchor="end"
-                height={80}
-              />
-
-              <YAxis
-                tickFormatter={(value) =>
-                  `ETB ${(value / 1000).toFixed(0)}k`
-                }
-              />
-
-              <Tooltip
-                formatter={(value) => [
-                  `ETB ${Number(value).toLocaleString(
-                    undefined,
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}`,
-                  "Outstanding",
-                ]}
-              />
-
-              <Legend />
-
-              <Bar
-                dataKey="outstanding"
-                name="Outstanding Credit"
-                radius={[4, 4, 0, 0]}
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
+              <BarChart
+                data={topCustomers}
+                layout="vertical"
+                margin={{
+                  top: 5,
+                  right: 20,
+                  left: 10,
+                  bottom: 5,
+                }}
               >
 
-                {topCustomers.map(
-                  (customer) => {
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                />
 
-                    const utilization =
-                      Number(
-                        customer.utilization_percent
-                      ) || 0;
-
-                    let color =
-                      "#22c55e";
-
-                    if (
-                      utilization >= 80 &&
-                      utilization <= 100
-                    ) {
-                      color = "#eab308";
-                    }
-
-                    if (
-                      utilization > 100
-                    ) {
-                      color = "#ef4444";
-                    }
-
-                    return (
-                      <Cell
-                        key={customer.id}
-                        fill={color}
-                        cursor="pointer"
-                        stroke="#fff"
-                        strokeWidth={1}
-                        onClick={() =>
-                          navigate(
-                            `/customers/${customer.id}`
-                          )
-                        }
-                      />
-                    );
+                <XAxis
+                  type="number"
+                  tickFormatter={(value) =>
+                    `ETB ${(value / 1000).toFixed(0)}k`
                   }
-                )}
+                />
 
-              </Bar>
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={95}
+                  tickFormatter={(name) =>
+                    name.length > 14
+                      ? name.substring(0, 14) + "..."
+                      : name
+                  }
+                />
 
-            </BarChart>
-          </ResponsiveContainer>
+                <Tooltip
+                  formatter={(value) => [
+                    `ETB ${Number(value).toLocaleString(
+                      undefined,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}`,
+                    "Outstanding",
+                  ]}
+                />
 
+                <Legend />
+
+                <Bar
+                  dataKey="outstanding"
+                  name="Outstanding Credit"
+                  radius={[0, 4, 4, 0]}
+                >
+
+                  {topCustomers.map(
+                    (customer) => {
+
+                      const utilization =
+                        Number(
+                          customer.utilization_percent
+                        ) || 0;
+
+                      let color =
+                        "#22c55e";
+
+                      if (
+                        utilization >= 80 &&
+                        utilization <= 100
+                      ) {
+                        color = "#eab308";
+                      }
+
+                      if (
+                        utilization > 100
+                      ) {
+                        color = "#ef4444";
+                      }
+
+                      return (
+                        <Cell
+                          key={customer.id}
+                          fill={color}
+                          cursor="pointer"
+                          stroke="#fff"
+                          strokeWidth={1}
+                          onClick={() =>
+                            navigate(
+                              `/customers/${customer.id}`
+                            )
+                          }
+                        />
+                      );
+                    }
+                  )}
+
+                </Bar>
+
+              </BarChart>
+            </ResponsiveContainer>
+
+          </div>
         </div>
-      </div>
 
     </div>
   );
