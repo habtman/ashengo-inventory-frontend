@@ -497,7 +497,7 @@ export default function InvoicesList() {
         </div>
 
         <div className="max-w-full overflow-x-auto">
-          <table className="w-full min-w-[1050px] border-collapse text-sm">
+          <table className="w-full min-w-[900px] border-collapse text-sm">
             <thead className="bg-slate-50">
               <tr>
                 {sortHeader("Invoice #", "invoice_number")}
