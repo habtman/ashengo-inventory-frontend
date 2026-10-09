@@ -4,6 +4,18 @@ import autoTable from "jspdf-autotable";
 import { formatCurrency } from "./currency";
 
 export function exportInvoicesExcel(invoices) {
+  const headers = [
+    "Invoice",
+    "Customer",
+    "Payment",
+    "Status",
+    "Total",
+    "Paid",
+    "Balance",
+    "DueDate",
+    "Created"
+  ];  
+
   const rows = invoices.map(inv => ({
     Invoice: inv.invoice_number,
     Customer: inv.customer_name,
@@ -19,8 +31,54 @@ export function exportInvoicesExcel(invoices) {
       new Date(inv.created_at).toLocaleDateString(),
   }));
 
-  const worksheet =
-    XLSX.utils.json_to_sheet(rows);
+  const worksheet = XLSX.utils.aoa_to_sheet(
+    [
+      headers,
+      ...rows,
+    ]);    
+
+//set readable column widths
+
+    worksheet["!cols"] = [
+      { wch: 22 }, // Invoice
+      { wch: 28 }, // Customer
+      { wch: 18 }, // Payment
+      { wch: 18 }, // Status
+      { wch: 16 }, // Total
+      { wch: 16 }, // Paid
+      { wch: 16 }, // Balance
+      { wch: 16 }, // DueDate
+      { wch: 16 }, // Created 
+    ]
+
+    const lastRow = rows.length 
+    //Excels's built-in autosilter
+    if (lastRow > 0) {
+      worksheet["!autofilter"] = {
+        ref: `A1:I${lastRow + 1}`,
+      };
+    } 
+
+    //Format amount columns and dates
+for (let r = 1; r <= lastRow; r++) 
+  { for (const c of [4, 5, 6]) 
+    { const address = XLSX.utils.encode_cell({ r, c });
+     if (worksheet[address]) 
+      { worksheet[address].z = "#,##0.00;[Red]-#,##0.00";
+
+       } }
+
+
+  for (const c of [7, 8]) 
+    {
+       const address = XLSX.utils.encode_cell({ r, c }); 
+       const cell = worksheet[address]; 
+       if (cell && cell.v instanceof Date)
+         { cell.z = "dd-mmm-yyyy"; 
+          }
+        }
+      }
+
 
   const workbook =
     XLSX.utils.book_new();
