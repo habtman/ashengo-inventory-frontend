@@ -413,7 +413,7 @@ export default function InvoicesList() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
         <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
           <p className="text-xs font-medium text-slate-500 sm:text-sm">
             Total invoices
