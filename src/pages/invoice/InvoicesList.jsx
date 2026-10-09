@@ -450,6 +450,14 @@ export default function InvoicesList() {
           </p>
         </div>
 
+        {/* Overdue */} 
+      <div className="min-w-0 rounded-xl border border-rose-200 bg-rose-50 p-3 sm:p-4"> 
+        <p className="text-xs font-medium text-rose-700 sm:text-sm"> 
+          Overdue </p> 
+          <p className="mt-1 text-2xl font-bold text-rose-700"> 
+            {invoiceCounts.OVERDUE} 
+          </p> 
+          </div>
       </div>
 
       {/* Status filters */}
