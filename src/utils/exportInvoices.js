@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatCurrency } from "./currency";
 
+
 export function exportInvoicesExcel(invoices) {
   const headers = [
     "Invoice",
@@ -13,75 +14,80 @@ export function exportInvoicesExcel(invoices) {
     "Paid",
     "Balance",
     "DueDate",
-    "Created"
-  ];  
+    "Created",
+  ];
 
-  const rows = invoices.map(inv => ({
-    Invoice: inv.invoice_number,
-    Customer: inv.customer_name,
-    Payment: inv.payment_method,
-    Status: inv.status,
-    Total: inv.total_amount,
-    Paid: inv.amount_paid,
-    Balance: inv.balance_due,
-    DueDate: inv.due_date
-      ? new Date(inv.due_date).toLocaleDateString()
-      : "",
-    Created:
-      new Date(inv.created_at).toLocaleDateString(),
-  }));
+  const rows = invoices.map((inv) => [
+    inv.invoice_number || "",
+    inv.customer_name || "",
+    inv.payment_method || "",
+    inv.status || "",
+    Number(inv.total_amount || 0),
+    Number(inv.amount_paid || 0),
+    Number(inv.balance_due || 0),
+    inv.due_date ? new Date(inv.due_date) : "",
+    inv.created_at ? new Date(inv.created_at) : "",
+  ]);
 
-  const worksheet = XLSX.utils.aoa_to_sheet(
-    [
-      headers,
-      ...rows,
-    ]);    
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    headers,
+    ...rows,
+  ]);
 
-//set readable column widths
+  // Set readable column widths.
+  worksheet["!cols"] = [
+    { wch: 22 },
+    { wch: 28 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 16 },
+  ];
 
-    worksheet["!cols"] = [
-      { wch: 22 }, // Invoice
-      { wch: 28 }, // Customer
-      { wch: 18 }, // Payment
-      { wch: 18 }, // Status
-      { wch: 16 }, // Total
-      { wch: 16 }, // Paid
-      { wch: 16 }, // Balance
-      { wch: 16 }, // DueDate
-      { wch: 16 }, // Created 
-    ]
+  const lastRow = rows.length + 1;
 
-    const lastRow = rows.length 
-    //Excels's built-in autosilter
-    if (lastRow > 0) {
-      worksheet["!autofilter"] = {
-        ref: `A1:I${lastRow + 1}`,
-      };
-    } 
+  // Enable Excel filter dropdowns for all columns.
+  if (rows.length > 0) {
+    worksheet["!autofilter"] = {
+      ref: `A1:I${lastRow}`,
+    };
+  }
 
-    //Format amount columns and dates
-for (let r = 1; r <= lastRow; r++) 
-  { for (const c of [4, 5, 6]) 
-    { const address = XLSX.utils.encode_cell({ r, c });
-     if (worksheet[address]) 
-      { worksheet[address].z = "#,##0.00;[Red]-#,##0.00";
+  // Format Total, Paid, and Balance.
+  for (let r = 1; r < lastRow; r++) {
+    for (const c of [4, 5, 6]) {
+      const address = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[address];
 
-       } }
-
-
-  for (const c of [7, 8]) 
-    {
-       const address = XLSX.utils.encode_cell({ r, c }); 
-       const cell = worksheet[address]; 
-       if (cell && cell.v instanceof Date)
-         { cell.z = "dd-mmm-yyyy"; 
-          }
-        }
+      if (cell && typeof cell.v === "number") {
+        cell.z = "#,##0.00;[Red]-#,##0.00";
       }
+    }
 
+    // Format DueDate and Created as dates.
+    for (const c of [7, 8]) {
+      const address = XLSX.utils.encode_cell({ r, c });
+      const cell = worksheet[address];
 
-  const workbook =
-    XLSX.utils.book_new();
+      if (cell && cell.v instanceof Date) {
+        cell.z = "dd-mmm-yyyy";
+      }
+    }
+  }
+
+  // Freeze the header row.
+  worksheet["!freeze"] = {
+    xSplit: 0,
+    ySplit: 1,
+    topLeftCell: "A2",
+    activePane: "bottomLeft",
+    state: "frozen",
+  };
+
+  const workbook = XLSX.utils.book_new();
 
   XLSX.utils.book_append_sheet(
     workbook,
@@ -89,11 +95,10 @@ for (let r = 1; r <= lastRow; r++)
     "Invoices"
   );
 
-  XLSX.writeFile(
-    workbook,
-    "Invoices.xlsx"
-  );
+  XLSX.writeFile(workbook, "Invoices.xlsx");
 }
+
+
 
 export function exportInvoicesPDF(invoices) {
   const doc = new jsPDF();
