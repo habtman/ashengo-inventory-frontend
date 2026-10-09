@@ -125,9 +125,22 @@ export default function InvoicesList() {
     };
   }, []);
 
+  const isInvoiceOverdue = (invoice) => { 
+    if (!invoice.due_date || Number(invoice.balance_due || 0) <= 0) 
+      {
+         return false;
+         } 
+    // Compare calendar dates to avoid time-of-day issues. 
+      const today = new Date(); today.setHours(0, 0, 0, 0); 
+      const dueDate = new Date(invoice.due_date); dueDate.setHours(0, 0, 0, 0); 
+      return dueDate < today;
+     };
+
   const filteredInvoices =
     statusFilter === "ALL"
       ? invoices
+      : statusFilter === "OVERDUE"
+      ? invoices.filter(isInvoiceOverdue)   
       : invoices.filter(
           (invoice) => invoice.status === statusFilter
         );
@@ -173,6 +186,8 @@ export default function InvoicesList() {
       (i) => i.status === "PARTIALLY_PAID"
     ).length,
     UNPAID: invoices.filter((i) => i.status === "UNPAID").length,
+    OVERDUE: invoices.filter(isInvoiceOverdue).length,  
+
   };
 
   const totalInvoicePages = Math.max(
@@ -265,10 +280,11 @@ export default function InvoicesList() {
     { key: "PAID", label: "Paid" },
     { key: "PARTIALLY_PAID", label: "Partially paid" },
     { key: "UNPAID", label: "Unpaid" },
+    { key: "OVERDUE", label: "Overdue" }, 
   ];
 
   return (
-    <div className="mx-auto flex min-w-0 w-full max-w-[1800px] flex-col gap-4 p-3 sm:p-4 lg:p-5">
+    <div className="flex min-w-0 w-full max-w-none flex-col gap-4 p-3 sm:p-4 lg:p-5">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -433,6 +449,7 @@ export default function InvoicesList() {
             {invoiceCounts.UNPAID}
           </p>
         </div>
+
       </div>
 
       {/* Status filters */}
@@ -513,10 +530,7 @@ export default function InvoicesList() {
                 </tr>
               ) : (
                 paginatedInvoices.map((inv) => {
-                  const overdue =
-                    inv.status !== "PAID" &&
-                    inv.due_date &&
-                    new Date(inv.due_date) < new Date();
+                const overdue = isInvoiceOverdue(inv);
 
                   const statusStyle =
                     inv.status === "PAID"
