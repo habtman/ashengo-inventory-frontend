@@ -1,4 +1,4 @@
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatCurrency } from "./currency";
@@ -34,12 +34,12 @@ export function exportInvoicesExcel(invoices) {
     ...rows,
   ]);
 
-  // Set readable column widths.
+  // Column widths
   worksheet["!cols"] = [
     { wch: 22 },
     { wch: 28 },
     { wch: 18 },
-    { wch: 18 },
+    { wch: 20 },
     { wch: 16 },
     { wch: 16 },
     { wch: 16 },
@@ -49,36 +49,14 @@ export function exportInvoicesExcel(invoices) {
 
   const lastRow = rows.length + 1;
 
-  // Enable Excel filter dropdowns for all columns.
+  // Excel filter dropdowns
   if (rows.length > 0) {
     worksheet["!autofilter"] = {
       ref: `A1:I${lastRow}`,
     };
   }
 
-  // Format Total, Paid, and Balance.
-  for (let r = 1; r < lastRow; r++) {
-    for (const c of [4, 5, 6]) {
-      const address = XLSX.utils.encode_cell({ r, c });
-      const cell = worksheet[address];
-
-      if (cell && typeof cell.v === "number") {
-        cell.z = "#,##0.00;[Red]-#,##0.00";
-      }
-    }
-
-    // Format DueDate and Created as dates.
-    for (const c of [7, 8]) {
-      const address = XLSX.utils.encode_cell({ r, c });
-      const cell = worksheet[address];
-
-      if (cell && cell.v instanceof Date) {
-        cell.z = "dd-mmm-yyyy";
-      }
-    }
-  }
-
-  // Freeze the header row.
+  // Freeze the header row
   worksheet["!freeze"] = {
     xSplit: 0,
     ySplit: 1,
@@ -86,6 +64,99 @@ export function exportInvoicesExcel(invoices) {
     activePane: "bottomLeft",
     state: "frozen",
   };
+
+  // Header styling
+  for (let c = 0; c < headers.length; c++) {
+    const cellAddress = XLSX.utils.encode_cell({
+      r: 0,
+      c,
+    });
+
+    worksheet[cellAddress].s = {
+      font: {
+        bold: true,
+        color: { rgb: "FFFFFF" },
+        sz: 11,
+      },
+      fill: {
+        patternType: "solid",
+        fgColor: { rgb: "1D4ED8" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+        wrapText: true,
+      },
+      border: {
+        top: { style: "thin", color: { rgb: "1E40AF" } },
+        bottom: { style: "thin", color: { rgb: "1E40AF" } },
+        left: { style: "thin", color: { rgb: "D1D5DB" } },
+        right: { style: "thin", color: { rgb: "D1D5DB" } },
+      },
+    };
+  }
+
+  // Header row height
+  worksheet["!rows"] = [{ hpt: 25 }];
+
+  // Body styling and number/date formats
+  for (let r = 1; r < lastRow; r++) {
+    for (let c = 0; c < headers.length; c++) {
+      const address = XLSX.utils.encode_cell({
+        r,
+        c,
+      });
+
+      const cell = worksheet[address];
+      if (!cell) continue;
+
+      cell.s = {
+        font: {
+          name: "Arial",
+          sz: 10,
+          color: { rgb: "1F2937" },
+        },
+        fill: {
+          patternType: "solid",
+          fgColor: {
+            rgb: r % 2 === 0 ? "EFF6FF" : "FFFFFF",
+          },
+        },
+        alignment: {
+          vertical: "center",
+          horizontal: c >= 4 && c <= 6 ? "right" : "left",
+        },
+        border: {
+          bottom: {
+            style: "thin",
+            color: { rgb: "E5E7EB" },
+          },
+        },
+      };
+
+      // Total, Paid, Balance
+      if ([4, 5, 6].includes(c)) {
+        cell.z = "#,##0.00;[Red]-#,##0.00";
+      }
+
+      // DueDate and Created
+      if ([7, 8].includes(c) && cell.v instanceof Date) {
+        cell.z = "dd-mmm-yyyy";
+      }
+
+      // Highlight overdue status
+      if (c === 3 && String(cell.v).toUpperCase() === "OVERDUE") {
+        cell.s.font = {
+          name: "Arial",
+          sz: 10,
+          bold: true,
+          color: { rgb: "DC2626" },
+        };
+      }
+    }
+
+    worksheet["!rows"].push({ hpt: 20 });
+  }
 
   const workbook = XLSX.utils.book_new();
 
