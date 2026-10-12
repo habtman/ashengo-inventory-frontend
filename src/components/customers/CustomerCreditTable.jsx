@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../utils/currency";
 import Pagination from "../../pages/customers/Pagination";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -60,41 +60,191 @@ export default function CustomerCreditTable({
       page * PAGE_SIZE
     );
 
-  const exportExcel = () => {
-    const data =
-      filteredCustomers.map(
-        (customer) => ({
-          Customer: customer.name,
-          Code: customer.customer_code,
-          "Credit Limit":
-            customer.credit_limit,
-          Outstanding:
-            customer.outstanding,
-          "Available Credit":
-            customer.available_credit,
-          "Used %":
-            customer.utilization_percent,
-          Status: customer.status,
-        })
-      );
+const exportExcel = () => {
+  const headers = [
+    "Customer",
+    "Code",
+    "Credit Limit",
+    "Outstanding",
+    "Available Credit",
+    "Used %",
+    "Status",
+  ];
 
-    const worksheet =
-      XLSX.utils.json_to_sheet(data);
+  const data = filteredCustomers.map((customer) => [
+    customer.name || "",
+    customer.customer_code || "",
+    Number(customer.credit_limit || 0),
+    Number(customer.outstanding || 0),
+    Number(customer.available_credit || 0),
+    Number(customer.utilization_percent || 0),
+    customer.status || "",
+  ]);
 
-    const workbook =
-      XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    headers,
+    ...data,
+  ]);
 
-    XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      "Customer Credit"
-    );
+  // Set column widths so names and headings are readable.
+  worksheet["!cols"] = [
+    { wch: 30 },
+    { wch: 18 },
+    { wch: 22 },
+    { wch: 22 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 16 },
+  ];
 
-    XLSX.writeFile(
-      workbook,
-      "customer-credit-dashboard.xlsx"
-    );
+  const lastRow = data.length + 1;
+
+  // Enable sorting and filtering in Excel.
+  if (data.length > 0) {
+    worksheet["!autofilter"] = {
+      ref: `A1:G${lastRow}`,
+    };
+  }
+
+  // Freeze the header row.
+  worksheet["!freeze"] = {
+    xSplit: 0,
+    ySplit: 1,
+    topLeftCell: "A2",
+    activePane: "bottomLeft",
+    state: "frozen",
   };
+
+  // Style header cells.
+  for (let c = 0; c < headers.length; c++) {
+    const address = XLSX.utils.encode_cell({
+      r: 0,
+      c,
+    });
+
+    worksheet[address].s = {
+      font: {
+        name: "Arial",
+        bold: true,
+        color: { rgb: "FFFFFF" },
+        sz: 11,
+      },
+      fill: {
+        patternType: "solid",
+        fgColor: { rgb: "1D4ED8" },
+      },
+      alignment: {
+        horizontal: c >= 2 && c <= 5 ? "right" : "left",
+        vertical: "center",
+        wrapText: true,
+      },
+      border: {
+        bottom: {
+          style: "medium",
+          color: { rgb: "1E40AF" },
+        },
+      },
+    };
+  }
+
+  worksheet["!rows"] = [{ hpt: 28 }];
+
+  // Style data rows and format numbers.
+  for (let r = 1; r < lastRow; r++) {
+    for (let c = 0; c < headers.length; c++) {
+      const address = XLSX.utils.encode_cell({
+        r,
+        c,
+      });
+
+      const cell = worksheet[address];
+      if (!cell) continue;
+
+      cell.s = {
+        font: {
+          name: "Arial",
+          sz: 10,
+          color: { rgb: "1F2937" },
+        },
+        fill: {
+          patternType: "solid",
+          fgColor: {
+            rgb: r % 2 === 0 ? "EFF6FF" : "FFFFFF",
+          },
+        },
+        alignment: {
+          vertical: "center",
+          horizontal: c >= 2 && c <= 5 ? "right" : "left",
+        },
+        border: {
+          bottom: {
+            style: "thin",
+            color: { rgb: "E5E7EB" },
+          },
+        },
+      };
+
+      // Monetary values with thousands separators.
+      if ([2, 3, 4].includes(c)) {
+        cell.z = "#,##0.00;[Red]-#,##0.00";
+      }
+
+      // Utilization as a percentage number, e.g. 62.49%.
+      // The source value is already 62.49, not 0.6249.
+      if (c === 5) {
+        cell.z = '0.00"%"';
+      }
+
+      // Status colors.
+      if (c === 6) {
+        const status = String(cell.v || "").toUpperCase();
+
+        if (status === "ACTIVE") {
+          cell.s.font = {
+            name: "Arial",
+            sz: 10,
+            bold: true,
+            color: { rgb: "15803D" },
+          };
+        } else if (status === "CLEAR") {
+          cell.s.font = {
+            name: "Arial",
+            sz: 10,
+            bold: true,
+            color: { rgb: "64748B" },
+          };
+        } else if (
+          status === "WARNING" ||
+          status === "OVER_LIMIT"
+        ) {
+          cell.s.font = {
+            name: "Arial",
+            sz: 10,
+            bold: true,
+            color: { rgb: "DC2626" },
+          };
+        }
+      }
+    }
+
+    worksheet["!rows"].push({ hpt: 21 });
+  }
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Customer Credit"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    "customer-credit-dashboard.xlsx"
+  );
+};
+
+
 
   const exportPDF = () => {
     const doc = new jsPDF();
