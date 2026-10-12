@@ -61,41 +61,50 @@ export default function CustomerCreditTable({
     );
 
 const exportExcel = () => {
-  const headers = [
-    "Customer",
-    "Code",
-    "Credit Limit",
-    "Outstanding",
-    "Available Credit",
-    "Used %",
-    "Status",
-  ];
 
-  const data = filteredCustomers.map((customer) => [
-    customer.name || "",
-    customer.customer_code || "",
-    Number(customer.credit_limit || 0),
-    Number(customer.outstanding || 0),
-    Number(customer.available_credit || 0),
-    Number(customer.utilization_percent || 0),
-    customer.status || "",
-  ]);
-
-  const worksheet = XLSX.utils.aoa_to_sheet([
-    headers,
-    ...data,
-  ]);
-
-  // Set column widths so names and headings are readable.
-worksheet["!cols"] = [
-  { wch: 34 }, // Customer
-  { wch: 22 }, // Code
-  { wch: 26 }, // Credit Limit
-  { wch: 26 }, // Outstanding
-  { wch: 32 }, // Available Credit
-  { wch: 18 }, // Used %
-  { wch: 22 }, // Status
+const headers = [
+  "Customer Name",
+  "Customer Code",
+  "Credit Limit",
+  "Outstanding",
+  "Available Credit",
+  "Credit Used %",
+  "Credit Status",
 ];
+
+const data = filteredCustomers.map((customer) => [
+  customer.name || "",
+  customer.customer_code || "",
+  Number(customer.credit_limit || 0),
+  Number(customer.outstanding || 0),
+  Number(customer.available_credit || 0),
+  Number(customer.utilization_percent || 0),
+  customer.status || "",
+]);
+
+const worksheet = XLSX.utils.aoa_to_sheet([
+  headers,
+  ...data,
+]);
+
+// Wider columns leave room for both the full headings
+// and Excel's filter dropdown buttons.
+worksheet["!cols"] = [
+  { wch: 30 }, // Customer Name
+  { wch: 22 }, // Customer Code
+  { wch: 24 }, // Credit Limit
+  { wch: 24 }, // Outstanding
+  { wch: 27 }, // Available Credit
+  { wch: 19 }, // Credit Used %
+  { wch: 20 }, // Credit Status
+];
+
+// Make the header row taller.
+worksheet["!rows"] = [
+  { hpt: 32 },
+];
+
+
 
   const lastRow = data.length + 1;
 
