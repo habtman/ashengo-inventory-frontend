@@ -87,15 +87,15 @@ const exportExcel = () => {
   ]);
 
   // Set column widths so names and headings are readable.
-      worksheet["!cols"] = [
-      { wch: 32 }, // Customer
-      { wch: 20 }, // Code
-      { wch: 24 }, // Credit Limit
-      { wch: 24 }, // Outstanding
-      { wch: 28 }, // Available Credit
-      { wch: 16 }, // Used %
-      { wch: 20 }, // Status
-    ];
+worksheet["!cols"] = [
+  { wch: 34 }, // Customer
+  { wch: 22 }, // Code
+  { wch: 26 }, // Credit Limit
+  { wch: 26 }, // Outstanding
+  { wch: 32 }, // Available Credit
+  { wch: 18 }, // Used %
+  { wch: 22 }, // Status
+];
 
   const lastRow = data.length + 1;
 
@@ -173,8 +173,9 @@ const exportExcel = () => {
           },
         },
         alignment: {
+          horizontal: "left",
           vertical: "center",
-          horizontal: c >= 2 && c <= 5 ? "right" : "left",
+          wrapText: true,
         },
         border: {
           bottom: {
