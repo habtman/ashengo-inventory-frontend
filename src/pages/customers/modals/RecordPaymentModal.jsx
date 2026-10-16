@@ -1,5 +1,5 @@
 import { useState } from "react";
-import customerPaymentApi from "../../../api/customerPaymentApi";
+import invoiceApi from "../../../api/invoiceApi";
 import { formatCurrency } from "../../../utils/currency";
 
 export default function RecordPaymentModal({
@@ -28,7 +28,10 @@ export default function RecordPaymentModal({
 
     const paymentAmount = Number(amount);
 
-    if (!Number.isFinite(paymentAmount) || paymentAmount <= 0) {
+    if (
+      !Number.isFinite(paymentAmount) ||
+      paymentAmount <= 0
+    ) {
       setError("Enter a valid payment amount.");
       return;
     }
@@ -49,13 +52,15 @@ export default function RecordPaymentModal({
     try {
       setSaving(true);
 
-      await customerPaymentApi.create({
-          invoiceId: Number(invoiceId),
-          amount: Number(amount),
+      await invoiceApi.recordPayment(
+        Number(invoiceId),
+        {
+          amount: paymentAmount,
           paymentMethod
-      });
+        }
+      );
 
-      onSuccess();
+      await onSuccess();
       onClose();
 
     } catch (err) {
@@ -90,52 +95,31 @@ export default function RecordPaymentModal({
           shadow-xl
         "
       >
-
         <h2 className="mb-4 text-xl font-bold">
           Record Payment
         </h2>
 
-        {/* Error */}
-
         {error && (
           <div
             className="
-              mb-4
-              rounded
-              border
-              border-red-200
-              bg-red-50
-              p-3
-              text-sm
-              text-red-700
+              mb-4 rounded border border-red-200
+              bg-red-50 p-3 text-sm text-red-700
             "
           >
             {error}
           </div>
         )}
 
-        {/* Invoice */}
-
         <label className="mb-1 block text-sm font-medium">
           Invoice
         </label>
 
         <select
-          className="
-            mb-4
-            w-full
-            rounded
-            border
-            p-2
-          "
+          className="mb-4 w-full rounded border p-2"
           value={invoiceId}
-          onChange={(e) =>
-            setInvoiceId(e.target.value)
-          }
+          onChange={(e) => setInvoiceId(e.target.value)}
         >
-          <option value="">
-            Select Invoice
-          </option>
+          <option value="">Select Invoice</option>
 
           {invoices
             .filter(
@@ -156,16 +140,10 @@ export default function RecordPaymentModal({
             ))}
         </select>
 
-        {/* Selected invoice balance */}
-
         {selectedInvoice && (
           <div
             className="
-              mb-4
-              rounded
-              bg-gray-50
-              p-3
-              text-sm
+              mb-4 rounded bg-gray-50 p-3 text-sm
             "
           >
             <div className="flex justify-between">
@@ -185,16 +163,12 @@ export default function RecordPaymentModal({
 
               <span className="font-semibold text-red-600">
                 {formatCurrency(
-                  Number(
-                    selectedInvoice.balance_due || 0
-                  )
+                  Number(selectedInvoice.balance_due || 0)
                 )}
               </span>
             </div>
           </div>
         )}
-
-        {/* Amount */}
 
         <label className="mb-1 block text-sm font-medium">
           Payment Amount
@@ -205,67 +179,33 @@ export default function RecordPaymentModal({
           min="0.01"
           step="0.01"
           placeholder="Amount"
-          className="
-            mb-4
-            w-full
-            rounded
-            border
-            p-2
-          "
+          className="mb-4 w-full rounded border p-2"
           value={amount}
-          onChange={(e) =>
-            setAmount(e.target.value)
-          }
+          onChange={(e) => setAmount(e.target.value)}
         />
-
-        {/* Payment method */}
 
         <label className="mb-1 block text-sm font-medium">
           Payment Method
         </label>
 
         <select
-          className="
-            mb-5
-            w-full
-            rounded
-            border
-            p-2
-          "
+          className="mb-5 w-full rounded border p-2"
           value={paymentMethod}
-          onChange={(e) =>
-            setPaymentMethod(e.target.value)
-          }
+          onChange={(e) => setPaymentMethod(e.target.value)}
         >
-          <option value="CASH">
-            CASH
-          </option>
-
-          <option value="BANK">
-            BANK
-          </option>
-
-          <option value="TRANSFER">
-            TRANSFER
-          </option>
+          <option value="CASH">CASH</option>
+          <option value="BANK">BANK</option>
+          <option value="TRANSFER">TRANSFER</option>
         </select>
 
-        {/* Actions */}
-
         <div className="flex justify-end gap-2">
-
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
             className="
-              rounded
-              bg-gray-500
-              px-4
-              py-2
-              text-white
-              hover:bg-gray-600
-              disabled:opacity-50
+              rounded bg-gray-500 px-4 py-2 text-white
+              hover:bg-gray-600 disabled:opacity-50
             "
           >
             Cancel
@@ -276,22 +216,16 @@ export default function RecordPaymentModal({
             onClick={handleSubmit}
             disabled={saving}
             className="
-              rounded
-              bg-green-600
-              px-4
-              py-2
-              font-medium
-              text-white
-              hover:bg-green-700
+              rounded bg-green-600 px-4 py-2 font-medium
+              text-white hover:bg-green-700
               disabled:opacity-50
             "
           >
             {saving ? "Saving..." : "Save"}
           </button>
-
         </div>
-
       </div>
     </div>
   );
 }
+
