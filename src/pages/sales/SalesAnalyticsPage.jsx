@@ -23,6 +23,17 @@ function StatCard({ title, value, description }) {
   );
 }
 
+
+const getLocalDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+
 export default function SalesAnalyticsPage() {
   const [profits, setProfits] = useState(null);
   const [topProducts, setTopProducts] = useState([]);
@@ -30,6 +41,7 @@ export default function SalesAnalyticsPage() {
   const [revenueTrend, setRevenueTrend] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedDate, setSelectedDate] = useState(getLocalDate);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
@@ -40,7 +52,7 @@ export default function SalesAnalyticsPage() {
         await Promise.all([
           salesAnalyticsApi.getProfits(),
           salesAnalyticsApi.getTopProducts(),
-          salesAnalyticsApi.getDailyRevenue(),
+          salesAnalyticsApi.getDailyRevenue(selectedDate),  
           salesAnalyticsApi.getRevenueTrend(),
         ]);
 
@@ -56,7 +68,7 @@ export default function SalesAnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedDate]);   
 
   useEffect(() => {
     fetchAnalytics();
@@ -77,24 +89,47 @@ export default function SalesAnalyticsPage() {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+ 
+        <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900">
             Sales Analytics
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
             Invoice-based sales performance and estimated profitability.
-          </p>
+            </p>
         </div>
 
-        <button
-          type="button"
-          onClick={fetchAnalytics}
-          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          Refresh
-        </button>
-      </div>
+        <div className="flex flex-wrap items-end gap-3">
+            <div>
+            <label
+                htmlFor="analytics-date"
+                className="mb-1 block text-sm font-medium text-slate-600"
+            >
+                Daily revenue date
+            </label>
+
+            <input
+                id="analytics-date"
+                type="date"
+                value={selectedDate}
+                max={getLocalDate()}
+                onChange={(event) => setSelectedDate(event.target.value)}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+            />
+            </div>
+
+            <button
+            type="button"
+            onClick={fetchAnalytics}
+            disabled={loading}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
+            {loading ? "Loading..." : "Refresh"}
+            </button>
+        </div>
+        </div>
+
 
       {error && (
         <div
@@ -114,7 +149,7 @@ export default function SalesAnalyticsPage() {
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Today's Invoiced Revenue"
+          title="Invoiced Revenue for Selected Date"
           value={formatMoney(dailyRevenue?.total_revenue)}
           description={`${Number(dailyRevenue?.total_sales) || 0} invoices`}
         />
