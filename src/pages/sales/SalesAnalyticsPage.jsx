@@ -1,7 +1,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { salesAnalyticsApi } from "../../api/salesAnalyticsApi";
-import RevenueChart from "../../components/RevenueChart";
+import RevenueChart from "../../components/sales/RevenueChart";
 
 const formatMoney = (value) =>
   new Intl.NumberFormat("en-US", {
