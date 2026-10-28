@@ -40,6 +40,7 @@ import AgingReport from "./pages/customers/reports/AgingReport";
 import CustomerCreditDashboard from "./pages/customers/CustomerCreditDashboard";   
 import ForgotPassword from "./pages/auth/ForgotPassword";  
 import ResetPassword from "./pages/auth/ResetPassword"; 
+import SalesAnalyticsPage from "./pages/sales/SalesAnalyticsPage";
 
 
 
@@ -93,6 +94,7 @@ export default function App() {
           <Route path="/customers/aging" element={<AgingReport />} />
           <Route path="/customers/credit-dashboard" element={<CustomerCreditDashboard />} />  
           <Route path="/inventory/:id" element={<InventoryDetails />} />
+          <Route path="/sales-analytics" element={<SalesAnalyticsPage />} />  
  
 
 

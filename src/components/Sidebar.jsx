@@ -33,6 +33,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
   const canViewSalesOrders = hasPermission("sales_orders.view");
   const canViewCustomers = hasPermission("customers.view");
   const canViewInvoices = hasPermission("invoices.view");
+  const canViewSalesAnalytics = hasPermission("reports.sales");
 
 
   const canViewSuppliers = hasPermission("suppliers.view");
@@ -359,6 +360,16 @@ if (pathname.startsWith("/admin")) {
             onClick={handleNavClick}  
           >
             Invoices
+          </NavLink>
+        )}
+
+        {canViewSalesAnalytics && (
+          <NavLink
+            to="/sales-analytics"
+            className={linkClass}
+            onClick={handleNavClick}
+          >
+            Sales Analytics
           </NavLink>
         )}
 
