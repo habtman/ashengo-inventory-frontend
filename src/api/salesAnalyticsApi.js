@@ -45,4 +45,18 @@ export const salesAnalyticsApi = {
     const params = new URLSearchParams(filters);
     return apiFetch(`/api/v1/sales/summary?${params}`);
   },
+
+
+    getPaymentsCollected: (date) => {
+    const params = new URLSearchParams();
+    if (date) params.set("date", date);
+
+    const query = params.toString();
+
+    return apiFetch(
+        `/api/v1/sales-analytics/payments/daily${query ? `?${query}` : ""}`
+    );
+    },
+
+
 };
