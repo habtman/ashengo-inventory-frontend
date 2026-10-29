@@ -42,24 +42,27 @@ export default function SalesAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedDate, setSelectedDate] = useState(getLocalDate);
+  const [paymentsCollected, setPaymentsCollected] = useState(null);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const [profitData, productsData, dailyData, trendData] =
+      const [profitData, productsData, dailyData, trendData, paymentsData] =
         await Promise.all([
           salesAnalyticsApi.getProfits(),
           salesAnalyticsApi.getTopProducts(),
           salesAnalyticsApi.getDailyRevenue(selectedDate),  
           salesAnalyticsApi.getRevenueTrend(),
+          salesAnalyticsApi.getPaymentsCollected(selectedDate),
         ]);
 
       setProfits(profitData);
       setTopProducts(Array.isArray(productsData) ? productsData : []);
       setDailyRevenue(dailyData);
       setRevenueTrend(Array.isArray(trendData) ? trendData : []);
+      setPaymentsCollected(paymentsData);
     } catch (err) {
       console.error("Failed to load sales analytics:", err);
       setError(
@@ -153,6 +156,14 @@ export default function SalesAnalyticsPage() {
           value={formatMoney(dailyRevenue?.total_revenue)}
           description={`${Number(dailyRevenue?.total_sales) || 0} invoices`}
         />
+
+
+        <StatCard
+        title="Payments Collected"
+        value={formatMoney(paymentsCollected?.total_collected)}
+        description={`${Number(paymentsCollected?.total_payments) || 0} payments received on selected date`}
+        />
+
 
         <StatCard
           title="7-Day Revenue"
