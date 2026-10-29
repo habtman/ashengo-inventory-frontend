@@ -43,19 +43,21 @@ export default function SalesAnalyticsPage() {
   const [error, setError] = useState("");
   const [selectedDate, setSelectedDate] = useState(getLocalDate);
   const [paymentsCollected, setPaymentsCollected] = useState(null);
+  const [receivables, setReceivables] = useState(null);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const [profitData, productsData, dailyData, trendData, paymentsData] =
+      const [profitData, productsData, dailyData, trendData, paymentsData, receivablesData] =
         await Promise.all([
           salesAnalyticsApi.getProfits(),
           salesAnalyticsApi.getTopProducts(),
           salesAnalyticsApi.getDailyRevenue(selectedDate),  
           salesAnalyticsApi.getRevenueTrend(),
           salesAnalyticsApi.getPaymentsCollected(selectedDate),
+          salesAnalyticsApi.getOutstandingReceivables(),
         ]);
 
       setProfits(profitData);
@@ -63,6 +65,7 @@ export default function SalesAnalyticsPage() {
       setDailyRevenue(dailyData);
       setRevenueTrend(Array.isArray(trendData) ? trendData : []);
       setPaymentsCollected(paymentsData);
+      setReceivables(receivablesData);  
     } catch (err) {
       console.error("Failed to load sales analytics:", err);
       setError(
@@ -163,6 +166,20 @@ export default function SalesAnalyticsPage() {
         value={formatMoney(paymentsCollected?.total_collected)}
         description={`${Number(paymentsCollected?.total_payments) || 0} payments received on selected date`}
         />
+
+
+        <StatCard
+        title="Outstanding Receivables"
+        value={formatMoney(receivables?.outstanding_amount)}
+        description={`${Number(receivables?.outstanding_invoices) || 0} invoices with balances due`}
+        />
+
+        <StatCard
+        title="Overdue Receivables"
+        value={formatMoney(receivables?.overdue_amount)}
+        description={`${Number(receivables?.overdue_invoices) || 0} overdue invoices`}
+        />
+
 
 
         <StatCard

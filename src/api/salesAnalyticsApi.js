@@ -59,4 +59,9 @@ export const salesAnalyticsApi = {
     },
 
 
+getOutstandingReceivables: () =>
+  apiFetch("/api/v1/sales-analytics/receivables/outstanding"),
+
+
+
 };
