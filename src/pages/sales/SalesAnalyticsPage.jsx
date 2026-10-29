@@ -4,11 +4,6 @@ import { salesAnalyticsApi } from "../../api/salesAnalyticsApi";
 import { formatCurrency } from "../../utils/currency";
 import RevenueChart from "../../components/sales/RevenueChart";
 
-const formatMoney = (value) =>
-  new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value) || 0);
 
 function StatCard({ title, value, description }) {
   return (
@@ -157,7 +152,7 @@ export default function SalesAnalyticsPage() {
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Invoiced Revenue for Selected Date"
-          value={formatMoney(dailyRevenue?.total_revenue)}
+          value={formatCurrency(dailyRevenue?.total_revenue)}
           description={`${Number(dailyRevenue?.total_sales) || 0} invoices`}
         />
 
@@ -184,19 +179,19 @@ export default function SalesAnalyticsPage() {
 
         <StatCard
           title="7-Day Revenue"
-          value={formatMoney(revenue)}
+          value={formatCurrency(revenue)}
           description="Revenue from confirmed sales orders"
         />
 
         <StatCard
           title="Estimated Cost"
-          value={formatMoney(cost)}
+          value={formatCurrency(cost)}
           description="Based on current inventory costs"
         />
 
         <StatCard
           title="Estimated Profit"
-          value={formatMoney(profit)}
+          value={formatCurrency(profit)}
           description={`Profit margin: ${margin.toFixed(1)}%`}
         />
       </section>
@@ -264,7 +259,7 @@ export default function SalesAnalyticsPage() {
                       {Number(product.total_sold) || 0}
                     </td>
                     <td className="px-3 py-3 text-right tabular-nums">
-                      {formatMoney(product.total_revenue)}
+                      {formatCurrency(product.total_revenue)}
                     </td>
                   </tr>
                 ))}

@@ -53,7 +53,12 @@ export default function RevenueChart({ data }) {
           }}
         />
 
-        <YAxis tickFormatter={formatCurrency} />
+        <YAxis
+          width={105}
+          tickFormatter={(value) => formatCurrency(value)}
+          tick={{ fontSize: 11 }}
+          tickMargin={8}
+        />
 
         <Tooltip
           labelFormatter={(value) => String(value).slice(0, 10)}
