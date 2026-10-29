@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { salesAnalyticsApi } from "../../api/salesAnalyticsApi";
 import { formatCurrency } from "../../utils/currency";
 import RevenueChart from "../../components/sales/RevenueChart";
+import PaymentsCollectionChart from "../../components/sales/PaymentsCollectionChart";
+import RevenuePaymentsComparisonChart from "../../components/sales/RevenuePaymentsComparisonChart";
 
 
 function StatCard({ title, value, description }) {
@@ -220,12 +222,6 @@ const sevenDayCollectionRate =
           value={formatCurrency(profit)}
           description={`Profit margin: ${margin.toFixed(1)}%`}
         />
-
-
-
-
-
-    
       </section>
 
       {Number(profits?.item_lines_missing_cost) > 0 && (
@@ -248,6 +244,29 @@ const sevenDayCollectionRate =
             No invoiced sales found for this period.
           </p>
         )}
+      </section>
+
+      <section className="analytics-section">
+        <h2>Payments Collection Trend</h2>
+
+        <p>
+          Daily payments received over the last seven days.
+        </p>
+
+        <PaymentsCollectionChart data={paymentsTrend} />
+      </section>
+
+      <section className="analytics-section">
+        <h2>Revenue vs Payments Comparison</h2>
+
+        <p>
+          Compare invoiced sales with actual payments received over the last seven days.
+        </p>
+
+        <RevenuePaymentsComparisonChart
+          revenueData={revenueTrend}
+          paymentsData={paymentsTrend}
+        />
       </section>
 
 
