@@ -63,5 +63,10 @@ getOutstandingReceivables: () =>
   apiFetch("/api/v1/sales-analytics/receivables/outstanding"),
 
 
+getPaymentsTrend: () =>
+  apiFetch("/api/v1/sales-analytics/payments/trend"),
+
+
+
 
 };

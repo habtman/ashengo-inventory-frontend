@@ -40,13 +40,15 @@ export default function SalesAnalyticsPage() {
   const [selectedDate, setSelectedDate] = useState(getLocalDate);
   const [paymentsCollected, setPaymentsCollected] = useState(null);
   const [receivables, setReceivables] = useState(null);
+  const [paymentsTrend, setPaymentsTrend] = useState([]);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const [profitData, productsData, dailyData, trendData, paymentsData, receivablesData] =
+      const [profitData, productsData, dailyData, 
+        trendData, paymentsData, receivablesData, paymentsTrendData] =
         await Promise.all([
           salesAnalyticsApi.getProfits(),
           salesAnalyticsApi.getTopProducts(),
@@ -54,6 +56,7 @@ export default function SalesAnalyticsPage() {
           salesAnalyticsApi.getRevenueTrend(),
           salesAnalyticsApi.getPaymentsCollected(selectedDate),
           salesAnalyticsApi.getOutstandingReceivables(),
+          salesAnalyticsApi.getPaymentsTrend(),
         ]);
 
       setProfits(profitData);
@@ -61,7 +64,9 @@ export default function SalesAnalyticsPage() {
       setDailyRevenue(dailyData);
       setRevenueTrend(Array.isArray(trendData) ? trendData : []);
       setPaymentsCollected(paymentsData);
-      setReceivables(receivablesData);  
+      setReceivables(receivablesData);
+      setPaymentsTrend(
+        Array.isArray(paymentsTrendData) ? paymentsTrendData : []); 
     } catch (err) {
       console.error("Failed to load sales analytics:", err);
       setError(
@@ -80,6 +85,27 @@ export default function SalesAnalyticsPage() {
   const cost = Number(profits?.cost) || 0;
   const profit = Number(profits?.profit) || 0;
   const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+  const selectedDayRevenue =
+  Number(dailyRevenue?.total_revenue) || 0;
+
+const selectedDayCollected =
+  Number(paymentsCollected?.total_collected) || 0;
+
+const selectedDayCollectionRate =
+  selectedDayRevenue > 0
+    ? (selectedDayCollected / selectedDayRevenue) * 100
+    : null;
+
+const sevenDayCollected = paymentsTrend.reduce(
+  (sum, day) => sum + (Number(day.total_collected) || 0),
+  0
+);
+
+const sevenDayCollectionRate =
+  Number(profits?.revenue) > 0
+    ? (sevenDayCollected / Number(profits.revenue)) * 100
+    : null;
 
   if (loading) {
     return (
@@ -194,6 +220,12 @@ export default function SalesAnalyticsPage() {
           value={formatCurrency(profit)}
           description={`Profit margin: ${margin.toFixed(1)}%`}
         />
+
+
+
+
+
+    
       </section>
 
       {Number(profits?.item_lines_missing_cost) > 0 && (
@@ -217,6 +249,8 @@ export default function SalesAnalyticsPage() {
           </p>
         )}
       </section>
+
+
 
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-slate-900">
@@ -268,6 +302,50 @@ export default function SalesAnalyticsPage() {
           </div>
         )}
       </section>
+
+        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <h2 className="mb-4 text-lg font-semibold text-slate-800">
+    Collection Performance
+  </h2>
+
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="rounded-lg bg-slate-50 p-4">
+      <p className="text-sm text-slate-500">
+        Selected-Day Collection Rate
+      </p>
+      <p className="mt-2 text-2xl font-semibold text-slate-900">
+        {selectedDayCollectionRate === null
+          ? "N/A"
+          : `${selectedDayCollectionRate.toFixed(1)}%`}
+      </p>
+      <p className="mt-2 text-sm text-slate-500">
+        {formatCurrency(selectedDayCollected)} collected from{" "}
+        {formatCurrency(selectedDayRevenue)} invoiced
+      </p>
+    </div>
+
+    <div className="rounded-lg bg-slate-50 p-4">
+      <p className="text-sm text-slate-500">
+        Seven-Day Collection Rate
+      </p>
+      <p className="mt-2 text-2xl font-semibold text-slate-900">
+        {sevenDayCollectionRate === null
+          ? "N/A"
+          : `${sevenDayCollectionRate.toFixed(1)}%`}
+      </p>
+      <p className="mt-2 text-sm text-slate-500">
+        {formatCurrency(sevenDayCollected)} collected over the last seven days
+      </p>
+    </div>
+  </div>
+
+  <p className="mt-4 text-xs text-slate-500">
+    These rates compare cash received with invoiced revenue for the
+    same period. Payments may relate to invoices issued on earlier dates,
+    so the rates are comparison indicators, not invoice settlement rates.
+  </p>
+</div>
+
     </div>
   );
 }
