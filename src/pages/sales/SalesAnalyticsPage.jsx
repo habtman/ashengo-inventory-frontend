@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { salesAnalyticsApi } from "../../api/salesAnalyticsApi";
+import { formatCurrency } from "../../utils/currency";
 import RevenueChart from "../../components/sales/RevenueChart";
 
 const formatMoney = (value) =>
@@ -161,24 +162,23 @@ export default function SalesAnalyticsPage() {
         />
 
 
-        <StatCard
-        title="Payments Collected"
-        value={formatMoney(paymentsCollected?.total_collected)}
-        description={`${Number(paymentsCollected?.total_payments) || 0} payments received on selected date`}
-        />
-
-
-        <StatCard
+      <StatCard
         title="Outstanding Receivables"
-        value={formatMoney(receivables?.outstanding_amount)}
+        value={formatCurrency(receivables?.outstanding_amount)}
         description={`${Number(receivables?.outstanding_invoices) || 0} invoices with balances due`}
-        />
+      />
 
-        <StatCard
+      <StatCard
         title="Overdue Receivables"
-        value={formatMoney(receivables?.overdue_amount)}
+        value={formatCurrency(receivables?.overdue_amount)}
         description={`${Number(receivables?.overdue_invoices) || 0} overdue invoices`}
-        />
+      />
+
+      <StatCard
+        title="Payments Collected"
+        value={formatCurrency(paymentsCollected?.total_collected)}
+        description={`${Number(paymentsCollected?.total_payments) || 0} payments received on selected date`}
+      />
 
 
 

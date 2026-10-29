@@ -9,10 +9,8 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const formatMoney = (value) =>
-  new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-  }).format(Number(value) || 0);
+import { formatCurrency } from "../../utils/currency";
+
 
 export default function RevenueChart({ data }) {
   if (!data || data.length === 0) {
@@ -55,12 +53,12 @@ export default function RevenueChart({ data }) {
           }}
         />
 
-        <YAxis tickFormatter={formatMoney} />
+        <YAxis tickFormatter={formatCurrency} />
 
         <Tooltip
           labelFormatter={(value) => String(value).slice(0, 10)}
           formatter={(value) => [
-            formatMoney(value),
+            formatCurrency(value),
             "Revenue",
           ]}
         />
