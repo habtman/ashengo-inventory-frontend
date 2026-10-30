@@ -5,7 +5,9 @@ import { formatCurrency } from "../../utils/currency";
 import RevenueChart from "../../components/sales/RevenueChart";
 import PaymentsCollectionChart from "../../components/sales/PaymentsCollectionChart";
 import RevenuePaymentsComparisonChart from "../../components/sales/RevenuePaymentsComparisonChart";
-
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx-js-style";
 
 function StatCard({ title, value, description }) {
   return (
@@ -144,6 +146,317 @@ const sevenDayCollectionRate =
   Number(profits?.revenue) > 0
     ? (sevenDayCollected / Number(profits.revenue)) * 100
     : null;
+
+
+  const getReportLabel = () => {
+    if (reportPeriod === "year") {
+      return `Year ${reportYear}`;
+    }
+
+    return new Date(reportYear, reportMonth - 1, 1)
+      .toLocaleString("en-GB", {
+        month: "long",
+        year: "numeric",
+      });
+  };
+
+  const getPeriodTotals = () => {
+    const summary = periodAnalytics?.summary || {};
+    const trend = periodAnalytics?.trend || [];
+
+    const revenue = Number(summary.revenue) || 0;
+    const cost = Number(summary.cost) || 0;
+    const profit = Number(summary.profit) || 0;
+    const collected = trend.reduce(
+      (sum, item) => sum + (Number(item.total_collected) || 0),
+      0
+    );
+
+    return {
+      revenue,
+      cost,
+      profit,
+      collected,
+      margin: revenue > 0 ? (profit / revenue) * 100 : 0,
+      invoiceCount: Number(summary.invoice_count) || 0,
+      missingCostLines:
+        Number(summary.item_lines_missing_cost) || 0,
+    };
+  };
+
+  const exportPeriodPDF = () => {
+    if (!periodAnalytics || periodLoading) return;
+
+    const totals = getPeriodTotals();
+    const doc = new jsPDF();
+    const reportLabel = getReportLabel();
+
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("ASHENGO INVENTORY", 14, 18);
+
+    doc.setFontSize(14);
+    doc.text("Sales Analytics Report", 14, 28);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Reporting period: ${reportLabel}`, 14, 37);
+    doc.text(
+      `Date range: ${periodAnalytics.start_date} to ${
+        periodAnalytics.end_date
+      } (end date exclusive)`,
+      14,
+      43
+    );
+    doc.text("Currency: ETB", 14, 49);
+
+    autoTable(doc, {
+      startY: 57,
+      head: [["Financial Summary", "Amount"]],
+      body: [
+        ["Invoiced Revenue", formatCurrency(totals.revenue)],
+        ["Payments Collected", formatCurrency(totals.collected)],
+        ["Estimated Cost", formatCurrency(totals.cost)],
+        ["Estimated Profit", formatCurrency(totals.profit)],
+        ["Profit Margin", `${totals.margin.toFixed(1)}%`],
+        ["Invoice Count", String(totals.invoiceCount)],
+      ],
+      theme: "grid",
+      headStyles: {
+        fillColor: [30, 64, 175],
+      },
+    });
+
+    if (totals.missingCostLines > 0) {
+      const warningY = doc.lastAutoTable.finalY + 8;
+      doc.setFontSize(9);
+      doc.setTextColor(180, 83, 9);
+      doc.text(
+        `Warning: ${totals.missingCostLines} invoice line(s) have no recorded product cost. Profit estimates may be incomplete.`,
+        14,
+        warningY,
+        { maxWidth: 180 }
+      );
+    }
+
+    const trendRows = (periodAnalytics.trend || []).map((item) => {
+      const date = String(item.date).slice(0, 10);
+
+      const label =
+        reportPeriod === "year"
+          ? new Date(`${date}T12:00:00`).toLocaleDateString(
+              "en-GB",
+              { month: "long" }
+            )
+          : date;
+
+      return [
+        label,
+        formatCurrency(item.total_revenue),
+        formatCurrency(item.total_collected),
+        Number(item.total_payments) || 0,
+      ];
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 12,
+      head: [[
+        reportPeriod === "year" ? "Month" : "Date",
+        "Invoiced Revenue",
+        "Payments Collected",
+        "Payment Count",
+      ]],
+      body: trendRows,
+      theme: "grid",
+      headStyles: {
+        fillColor: [30, 64, 175],
+      },
+    });
+
+    const productRows = (periodAnalytics.top_products || []).map(
+      (product) => [
+        product.name || "Unknown product",
+        product.sku || "—",
+        Number(product.total_sold) || 0,
+        formatCurrency(product.total_revenue),
+      ]
+    );
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 12,
+      head: [[
+        "Product",
+        "SKU",
+        "Units Sold",
+        "Invoiced Revenue",
+      ]],
+      body: productRows.length
+        ? productRows
+        : [["No product sales", "—", 0, formatCurrency(0)]],
+      theme: "grid",
+      headStyles: {
+        fillColor: [30, 64, 175],
+      },
+    });
+
+    const pageCount = doc.internal.getNumberOfPages();
+
+    for (let page = 1; page <= pageCount; page++) {
+      doc.setPage(page);
+      doc.setFontSize(8);
+      doc.setTextColor(120);
+      doc.text(
+        `Ashengo Inventory | ${reportLabel} | Page ${page} of ${pageCount}`,
+        14,
+        doc.internal.pageSize.height - 8
+      );
+    }
+
+    doc.save(
+      `Ashengo-Sales-Report-${reportPeriod}-${reportYear}${
+        reportPeriod === "month"
+          ? `-${String(reportMonth).padStart(2, "0")}`
+          : ""
+      }.pdf`
+    );
+  };
+
+  const exportPeriodExcel = () => {
+    if (!periodAnalytics || periodLoading) return;
+
+    const totals = getPeriodTotals();
+    const reportLabel = getReportLabel();
+
+    const summaryRows = [
+      ["ASHENGO INVENTORY"],
+      ["Sales Analytics Report"],
+      ["Reporting Period", reportLabel],
+      ["Start Date", periodAnalytics.start_date],
+      ["End Date (Exclusive)", periodAnalytics.end_date],
+      ["Currency", "ETB"],
+      [],
+      ["Financial Summary", "Amount (ETB)"],
+      ["Invoiced Revenue", totals.revenue],
+      ["Payments Collected", totals.collected],
+      ["Estimated Cost", totals.cost],
+      ["Estimated Profit", totals.profit],
+      ["Profit Margin (%)", Number(totals.margin.toFixed(2))],
+      ["Invoice Count", totals.invoiceCount],
+      ["Invoice Lines Missing Cost", totals.missingCostLines],
+    ];
+
+    const trendRows = [
+      [
+        reportPeriod === "year" ? "Month" : "Date",
+        "Invoiced Revenue (ETB)",
+        "Payments Collected (ETB)",
+        "Payment Count",
+      ],
+      ...(periodAnalytics.trend || []).map((item) => {
+        const date = String(item.date).slice(0, 10);
+
+        const label =
+          reportPeriod === "year"
+            ? new Date(`${date}T12:00:00`).toLocaleDateString(
+                "en-GB",
+                { month: "long" }
+              )
+            : date;
+
+        return [
+          label,
+          Number(item.total_revenue) || 0,
+          Number(item.total_collected) || 0,
+          Number(item.total_payments) || 0,
+        ];
+      }),
+    ];
+
+    const productRows = [
+      ["Product", "SKU", "Units Sold", "Invoiced Revenue (ETB)"],
+      ...(periodAnalytics.top_products || []).map((product) => [
+        product.name || "Unknown product",
+        product.sku || "—",
+        Number(product.total_sold) || 0,
+        Number(product.total_revenue) || 0,
+      ]),
+    ];
+
+    const workbook = XLSX.utils.book_new();
+
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
+    const trendSheet = XLSX.utils.aoa_to_sheet(trendRows);
+    const productsSheet = XLSX.utils.aoa_to_sheet(productRows);
+
+    summarySheet["!cols"] = [
+      { wch: 32 },
+      { wch: 24 },
+    ];
+
+    trendSheet["!cols"] = [
+      { wch: 18 },
+      { wch: 24 },
+      { wch: 26 },
+      { wch: 18 },
+    ];
+
+    productsSheet["!cols"] = [
+      { wch: 32 },
+      { wch: 18 },
+      { wch: 16 },
+      { wch: 26 },
+    ];
+
+    const styleHeader = (sheet, rowNumber, columnCount) => {
+      for (let col = 0; col < columnCount; col++) {
+        const address = XLSX.utils.encode_cell({
+          r: rowNumber,
+          c: col,
+        });
+
+        if (sheet[address]) {
+          sheet[address].s = {
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "1E40AF" } },
+            alignment: { vertical: "center" },
+          };
+        }
+      }
+    };
+
+    styleHeader(summarySheet, 0, 2);
+    styleHeader(summarySheet, 7, 2);
+    styleHeader(trendSheet, 0, 4);
+    styleHeader(productsSheet, 0, 4);
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      summarySheet,
+      "Summary"
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      trendSheet,
+      reportPeriod === "year" ? "Monthly Trend" : "Daily Trend"
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      productsSheet,
+      "Top Products"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      `Ashengo-Sales-Report-${reportPeriod}-${reportYear}${
+        reportPeriod === "month"
+          ? `-${String(reportMonth).padStart(2, "0")}`
+          : ""
+      }.xlsx`
+    );
+  };
+
 
   if (loading) {
     return (
@@ -552,14 +865,20 @@ const sevenDayCollectionRate =
           <h3 className="mb-4 font-semibold text-slate-900">
             Invoiced Revenue Trend
           </h3>
-          <RevenueChart data={periodAnalytics.trend || []} />
+          <RevenueChart
+            data={periodAnalytics.trend}
+            period={reportPeriod}
+          />
         </div>
 
         <div className="rounded-xl border border-slate-200 p-4">
           <h3 className="mb-4 font-semibold text-slate-900">
             Payments Collection Trend
           </h3>
-          <PaymentsCollectionChart data={periodAnalytics.trend || []} />
+          <PaymentsCollectionChart
+            data={periodAnalytics.trend}
+            period={reportPeriod}
+          />
         </div>
 
         <div className="rounded-xl border border-slate-200 p-4">
@@ -567,8 +886,9 @@ const sevenDayCollectionRate =
             Revenue vs Payments Comparison
           </h3>
           <RevenuePaymentsComparisonChart
-            revenueData={periodAnalytics.trend || []}
-            paymentsData={periodAnalytics.trend || []}
+            revenueData={periodAnalytics.trend}
+            paymentsData={periodAnalytics.trend}
+            period={reportPeriod}
           />
         </div>
       </div>
@@ -619,6 +939,28 @@ const sevenDayCollectionRate =
     </>
   ) : null}
 </section>
+
+
+
+<div className="flex flex-wrap gap-2">
+  <button
+    type="button"
+    onClick={exportPeriodPDF}
+    disabled={!periodAnalytics || periodLoading}
+    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Export PDF
+  </button>
+
+  <button
+    type="button"
+    onClick={exportPeriodExcel}
+    disabled={!periodAnalytics || periodLoading}
+    className="rounded-lg bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Export Excel
+  </button>
+</div>
 
 
     </div>
