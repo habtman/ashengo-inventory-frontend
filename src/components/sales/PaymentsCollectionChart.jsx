@@ -11,7 +11,10 @@ import {
 
 import { formatCurrency } from "../../utils/currency";
 
-export default function PaymentsCollectionChart({ data = [] }) {
+export default function PaymentsCollectionChart({
+  data = [],
+  period = "month",
+}) {
   const chartData = data.map((item) => ({
     ...item,
     chartCollected: Number(item.total_collected) || 0,
@@ -22,18 +25,26 @@ export default function PaymentsCollectionChart({ data = [] }) {
   }
 
   const formatDateLabel = (value) => {
-  const date = String(value).slice(0, 10);
-  const [year, month, day] = date.split("-");
+    if (!value) return "";
 
-  const monthName = new Date(
-    Number(year),
-    Number(month) - 1,
-    Number(day)
-  ).toLocaleString("en-GB", { month: "short" });
+    const dateString = String(value).slice(0, 10);
+    const date = new Date(`${dateString}T12:00:00`);
 
-  return `${monthName} ${Number(day)}`;
-};
+    if (Number.isNaN(date.getTime())) {
+      return String(value);
+    }
 
+    if (period === "year") {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+      });
+    }
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   return (
     <div style={{ width: "100%", height: 300 }}>
@@ -44,11 +55,11 @@ export default function PaymentsCollectionChart({ data = [] }) {
         >
           <CartesianGrid strokeDasharray="3 3" />
 
-        <XAxis
-        dataKey="date"
-        tick={{ fontSize: 11 }}
-        tickFormatter={formatDateLabel}
-        />
+          <XAxis
+            dataKey="date"
+            tick={{ fontSize: 11 }}
+            tickFormatter={formatDateLabel}
+          />
 
           <YAxis
             width={105}
@@ -62,7 +73,11 @@ export default function PaymentsCollectionChart({ data = [] }) {
               formatCurrency(value),
               "Payments Collected",
             ]}
-            labelFormatter={(label) => `Date: ${label}`}
+            labelFormatter={(label) =>
+              period === "year"
+                ? formatDateLabel(label)
+                : `Date: ${String(label).slice(0, 10)}`
+            }
           />
 
           <Line

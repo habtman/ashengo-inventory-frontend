@@ -11,8 +11,7 @@ import {
 
 import { formatCurrency } from "../../utils/currency";
 
-
-export default function RevenueChart({ data }) {
+export default function RevenueChart({ data, period = "month" }) {
   if (!data || data.length === 0) {
     return (
       <div className="flex h-[300px] items-center justify-center text-slate-400">
@@ -29,6 +28,28 @@ export default function RevenueChart({ data }) {
     ),
   }));
 
+  const formatDateLabel = (value) => {
+    if (!value) return "";
+
+    const dateString = String(value).slice(0, 10);
+    const date = new Date(`${dateString}T12:00:00`);
+
+    if (Number.isNaN(date.getTime())) {
+      return String(value);
+    }
+
+    if (period === "year") {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+      });
+    }
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart
@@ -39,18 +60,7 @@ export default function RevenueChart({ data }) {
 
         <XAxis
           dataKey="date"
-          tickFormatter={(value) => {
-            if (!value) return "";
-            const date = new Date(
-              `${String(value).slice(0, 10)}T12:00:00`
-            );
-            return Number.isNaN(date.getTime())
-              ? String(value)
-              : date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
-          }}
+          tickFormatter={formatDateLabel}
         />
 
         <YAxis
@@ -61,7 +71,12 @@ export default function RevenueChart({ data }) {
         />
 
         <Tooltip
-          labelFormatter={(value) => String(value).slice(0, 10)}
+          labelFormatter={(value) => {
+            if (period === "year") {
+              return formatDateLabel(value);
+            }
+            return String(value).slice(0, 10);
+          }}
           formatter={(value) => [
             formatCurrency(value),
             "Revenue",

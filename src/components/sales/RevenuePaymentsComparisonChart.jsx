@@ -15,6 +15,7 @@ import { formatCurrency } from "../../utils/currency";
 export default function RevenuePaymentsComparisonChart({
   revenueData = [],
   paymentsData = [],
+  period = "month",
 }) {
   // Index payment data by date for reliable matching.
   const paymentsByDate = Object.fromEntries(
@@ -35,19 +36,26 @@ export default function RevenuePaymentsComparisonChart({
   });
 
   const formatDateLabel = (value) => {
-  const date = String(value).slice(0, 10);
-  const [year, month, day] = date.split("-");
+    if (!value) return "";
 
-  const monthName = new Date(
-    Number(year),
-    Number(month) - 1,
-    Number(day)
-  ).toLocaleString("en-GB", { month: "short" });
+    const dateString = String(value).slice(0, 10);
+    const date = new Date(`${dateString}T12:00:00`);
 
-  return `${monthName} ${Number(day)}`;
-};
+    if (Number.isNaN(date.getTime())) {
+      return String(value);
+    }
 
-  
+    if (period === "year") {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+      });
+    }
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   if (!chartData.length) {
     return <p>No comparison data available.</p>;
@@ -65,7 +73,7 @@ export default function RevenuePaymentsComparisonChart({
           <XAxis
             dataKey="date"
             tick={{ fontSize: 11 }}
-            tickFormatter={formatDateLabel} 
+            tickFormatter={formatDateLabel}
           />
 
           <YAxis
@@ -80,7 +88,11 @@ export default function RevenuePaymentsComparisonChart({
               formatCurrency(value),
               name,
             ]}
-            labelFormatter={(label) => `Date: ${label}`}
+            labelFormatter={(label) =>
+              period === "year"
+                ? formatDateLabel(label)
+                : `Date: ${String(label).slice(0, 10)}`
+            }
           />
 
           <Legend />
