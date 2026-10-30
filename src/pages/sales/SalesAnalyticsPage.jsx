@@ -46,6 +46,7 @@ export default function SalesAnalyticsPage() {
   const [receivables, setReceivables] = useState(null);
   const [paymentsTrend, setPaymentsTrend] = useState([]);
 
+
   const now = new Date();
 
   const [reportPeriod, setReportPeriod] = useState("month");
@@ -55,6 +56,8 @@ export default function SalesAnalyticsPage() {
   const [periodAnalytics, setPeriodAnalytics] = useState(null);
   const [periodLoading, setPeriodLoading] = useState(false);
   const [periodError, setPeriodError] = useState("");
+
+  const [previousPeriodAnalytics, setPreviousPeriodAnalytics] = useState(null);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
@@ -91,27 +94,52 @@ export default function SalesAnalyticsPage() {
     }
   }, [selectedDate]);   
 
-  const fetchPeriodAnalytics = useCallback(async () => {
+
+const fetchPeriodAnalytics = useCallback(async () => {
   setPeriodLoading(true);
   setPeriodError("");
 
   try {
-    const data = await salesAnalyticsApi.getPeriodAnalytics(
-      reportPeriod,
-      reportYear,
-      reportPeriod === "month" ? reportMonth : null
-    );
+    let previousYear = reportYear;
+    let previousMonth = null;
 
-    setPeriodAnalytics(data);
+    if (reportPeriod === "month") {
+      if (reportMonth === 1) {
+        previousYear = reportYear - 1;
+        previousMonth = 12;
+      } else {
+        previousMonth = reportMonth - 1;
+      }
+    } else {
+      previousYear = reportYear - 1;
+    }
+
+    const [currentData, previousData] = await Promise.all([
+      salesAnalyticsApi.getPeriodAnalytics(
+        reportPeriod,
+        reportYear,
+        reportPeriod === "month" ? reportMonth : null
+      ),
+
+      salesAnalyticsApi.getPeriodAnalytics(
+        reportPeriod,
+        previousYear,
+        reportPeriod === "month" ? previousMonth : null
+      ),
+    ]);
+
+    setPeriodAnalytics(currentData);
+    setPreviousPeriodAnalytics(previousData);
   } catch (err) {
-    console.error("Failed to load period analytics:", err);
+    console.error("Failed to load period comparison:", err);
     setPeriodError(
-      err?.message || "Unable to load the selected reporting period."
+      err?.message || "Unable to load the selected reporting periods."
     );
   } finally {
     setPeriodLoading(false);
   }
 }, [reportPeriod, reportYear, reportMonth]);
+
 
 useEffect(() => {
   fetchPeriodAnalytics();
@@ -159,6 +187,20 @@ const sevenDayCollectionRate =
         year: "numeric",
       });
   };
+
+
+const getPreviousReportLabel = () => {
+  if (reportPeriod === "year") {
+    return `Year ${reportYear - 1}`;
+  }
+
+  return new Date(reportYear, reportMonth - 2, 1)
+    .toLocaleString("en-GB", {
+      month: "long",
+      year: "numeric",
+    });
+};
+
 
   const getPeriodTotals = () => {
     const summary = periodAnalytics?.summary || {};
@@ -456,6 +498,78 @@ const sevenDayCollectionRate =
       }.xlsx`
     );
   };
+
+
+
+const getComparisonValues = (report) => {
+  const summary = report?.summary || {};
+  const trend = report?.trend || [];
+
+  return {
+    revenue: Number(summary.revenue) || 0,
+    collected: trend.reduce(
+      (sum, item) => sum + (Number(item.total_collected) || 0),
+      0
+    ),
+    cost: Number(summary.cost) || 0,
+    profit: Number(summary.profit) || 0,
+    invoices: Number(summary.invoice_count) || 0,
+  };
+};
+
+const getComparisonChange = (current, previous) => {
+  const difference = current - previous;
+
+  let percentage;
+
+  if (previous === 0) {
+    percentage = current === 0 ? 0 : null;
+  } else {
+    percentage = (difference / Math.abs(previous)) * 100;
+  }
+
+  return {
+    difference,
+    percentage,
+  };
+};
+
+const currentComparison = getComparisonValues(periodAnalytics);
+const previousComparison = getComparisonValues(previousPeriodAnalytics);
+
+const comparisonRows = [
+  {
+    label: "Invoiced Revenue",
+    current: currentComparison.revenue,
+    previous: previousComparison.revenue,
+    currency: true,
+  },
+  {
+    label: "Payments Collected",
+    current: currentComparison.collected,
+    previous: previousComparison.collected,
+    currency: true,
+  },
+  {
+    label: "Estimated Cost",
+    current: currentComparison.cost,
+    previous: previousComparison.cost,
+    currency: true,
+  },
+  {
+    label: "Estimated Profit",
+    current: currentComparison.profit,
+    previous: previousComparison.profit,
+    currency: true,
+  },
+  {
+    label: "Invoice Count",
+    current: currentComparison.invoices,
+    previous: previousComparison.invoices,
+    currency: false,
+  },
+];
+
 
 
   if (loading) {
@@ -851,6 +965,89 @@ const sevenDayCollectionRate =
           description="Payments received during this period"
         />
       </div>
+
+
+<div className="rounded-xl border border-slate-200 bg-white p-5">
+  <div className="mb-5">
+    <h3 className="text-lg font-semibold text-slate-900">
+      Period-over-Period Comparison
+    </h3>
+    <p className="mt-1 text-sm text-slate-500">
+      Compare {getReportLabel()} with {getPreviousReportLabel()}.
+    </p>
+  </div>
+
+  {previousPeriodAnalytics && (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[650px] text-left text-sm">
+        <thead>
+          <tr className="border-b border-slate-200 text-slate-500">
+            <th className="px-3 py-3 font-medium">Metric</th>
+            <th className="px-3 py-3 text-right font-medium">
+              Current Period
+            </th>
+            <th className="px-3 py-3 text-right font-medium">
+              Previous Period
+            </th>
+            <th className="px-3 py-3 text-right font-medium">
+              Difference
+            </th>
+            <th className="px-3 py-3 text-right font-medium">
+              Change
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {comparisonRows.map((row) => {
+            const change = getComparisonChange(
+              row.current,
+              row.previous
+            );
+
+            const formatValue = (value) =>
+              row.currency
+                ? formatCurrency(value)
+                : value.toLocaleString("en-GB");
+
+            return (
+              <tr
+                key={row.label}
+                className="border-b border-slate-100 last:border-0"
+              >
+                <td className="px-3 py-3 font-medium text-slate-800">
+                  {row.label}
+                </td>
+
+                <td className="px-3 py-3 text-right tabular-nums">
+                  {formatValue(row.current)}
+                </td>
+
+                <td className="px-3 py-3 text-right tabular-nums">
+                  {formatValue(row.previous)}
+                </td>
+
+                <td className="px-3 py-3 text-right tabular-nums">
+                  {change.difference > 0 ? "+" : ""}
+                  {formatValue(change.difference)}
+                </td>
+
+                <td className="px-3 py-3 text-right tabular-nums">
+                  {change.percentage === null
+                    ? "New"
+                    : `${change.percentage > 0 ? "+" : ""}${change.percentage.toFixed(1)}%`}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+
+
+
 
       {Number(periodAnalytics.summary?.item_lines_missing_cost) > 0 && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
