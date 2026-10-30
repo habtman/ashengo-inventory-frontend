@@ -66,7 +66,20 @@ getOutstandingReceivables: () =>
 getPaymentsTrend: () =>
   apiFetch("/api/v1/sales-analytics/payments/trend"),
 
+getPeriodAnalytics: (period, year, month = null) => {
+  const params = new URLSearchParams({
+    period,
+    year: String(year),
+  });
 
+  if (period === "month" && month !== null) {
+    params.set("month", String(month));
+  }
+
+  return apiFetch(
+    `/api/v1/sales-analytics/sales/period?${params.toString()}`
+  );
+},
 
 
 };

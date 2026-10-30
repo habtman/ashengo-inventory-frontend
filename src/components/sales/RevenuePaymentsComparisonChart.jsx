@@ -34,6 +34,21 @@ export default function RevenuePaymentsComparisonChart({
     };
   });
 
+  const formatDateLabel = (value) => {
+  const date = String(value).slice(0, 10);
+  const [year, month, day] = date.split("-");
+
+  const monthName = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day)
+  ).toLocaleString("en-GB", { month: "short" });
+
+  return `${monthName} ${Number(day)}`;
+};
+
+  
+
   if (!chartData.length) {
     return <p>No comparison data available.</p>;
   }
@@ -50,6 +65,7 @@ export default function RevenuePaymentsComparisonChart({
           <XAxis
             dataKey="date"
             tick={{ fontSize: 11 }}
+            tickFormatter={formatDateLabel} 
           />
 
           <YAxis

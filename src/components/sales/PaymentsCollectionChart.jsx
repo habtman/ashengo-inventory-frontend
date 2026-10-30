@@ -21,6 +21,20 @@ export default function PaymentsCollectionChart({ data = [] }) {
     return <p>No payment collection data available.</p>;
   }
 
+  const formatDateLabel = (value) => {
+  const date = String(value).slice(0, 10);
+  const [year, month, day] = date.split("-");
+
+  const monthName = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day)
+  ).toLocaleString("en-GB", { month: "short" });
+
+  return `${monthName} ${Number(day)}`;
+};
+
+
   return (
     <div style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer>
@@ -30,10 +44,11 @@ export default function PaymentsCollectionChart({ data = [] }) {
         >
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis
-            dataKey="date"
-            tick={{ fontSize: 11 }}
-          />
+        <XAxis
+        dataKey="date"
+        tick={{ fontSize: 11 }}
+        tickFormatter={formatDateLabel}
+        />
 
           <YAxis
             width={105}
