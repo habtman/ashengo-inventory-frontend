@@ -269,6 +269,50 @@ const getPreviousReportLabel = () => {
       },
     });
 
+
+    // Period-over-period comparison
+    const comparisonPdfRows = comparisonRows.map((row) => {
+      const change = getComparisonChange(
+        row.current,
+        row.previous
+      );
+
+      const formatValue = (value) =>
+        row.currency
+          ? formatCurrency(value)
+          : value.toLocaleString("en-GB");
+
+      return [
+        row.label,
+        formatValue(row.current),
+        formatValue(row.previous),
+        `${change.difference > 0 ? "+" : ""}${formatValue(change.difference)}`,
+        change.percentage === null
+          ? "New"
+          : `${change.percentage > 0 ? "+" : ""}${change.percentage.toFixed(1)}%`,
+      ];
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 12,
+      head: [[
+        "Metric",
+        getReportLabel(),
+        getPreviousReportLabel(),
+        "Difference",
+        "Change",
+      ]],
+      body: comparisonPdfRows,
+      theme: "grid",
+      headStyles: {
+        fillColor: [30, 64, 175],
+      },
+      styles: {
+        fontSize: 8,
+      },
+    });
+
+
     if (totals.missingCostLines > 0) {
       const warningY = doc.lastAutoTable.finalY + 8;
       doc.setFontSize(9);
@@ -424,11 +468,42 @@ const getPreviousReportLabel = () => {
       ]),
     ];
 
+
+    const comparisonExcelRows = [
+      [
+        "Metric",
+        getReportLabel(),
+        getPreviousReportLabel(),
+        "Difference",
+        "Change (%)",
+      ],
+      ...comparisonRows.map((row) => {
+        const change = getComparisonChange(
+          row.current,
+          row.previous
+        );
+
+        return [
+          row.label,
+          row.current,
+          row.previous,
+          change.difference,
+          change.percentage === null
+            ? "New"
+            : Number(change.percentage.toFixed(2)),
+        ];
+      }),
+    ];
+
+
     const workbook = XLSX.utils.book_new();
 
     const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
     const trendSheet = XLSX.utils.aoa_to_sheet(trendRows);
     const productsSheet = XLSX.utils.aoa_to_sheet(productRows);
+    const comparisonSheet = XLSX.utils.aoa_to_sheet(
+  comparisonExcelRows
+);
 
     summarySheet["!cols"] = [
       { wch: 32 },
@@ -447,6 +522,14 @@ const getPreviousReportLabel = () => {
       { wch: 18 },
       { wch: 16 },
       { wch: 26 },
+    ];
+
+    comparisonSheet["!cols"] = [
+      { wch: 26 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 18 },
     ];
 
     const styleHeader = (sheet, rowNumber, columnCount) => {
@@ -468,8 +551,9 @@ const getPreviousReportLabel = () => {
 
     styleHeader(summarySheet, 0, 2);
     styleHeader(summarySheet, 7, 2);
-    styleHeader(trendSheet, 0, 4);
+    styleHeader(trendSheet, 0, 4); 
     styleHeader(productsSheet, 0, 4);
+    styleHeader(comparisonSheet, 0, 5);
 
     XLSX.utils.book_append_sheet(
       workbook,
@@ -487,6 +571,12 @@ const getPreviousReportLabel = () => {
       workbook,
       productsSheet,
       "Top Products"
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      comparisonSheet,
+      "Period Comparison"
     );
 
     XLSX.writeFile(
