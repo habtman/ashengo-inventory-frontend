@@ -44,6 +44,16 @@ export default function SalesAnalyticsPage() {
   const [receivables, setReceivables] = useState(null);
   const [paymentsTrend, setPaymentsTrend] = useState([]);
 
+  const now = new Date();
+
+  const [reportPeriod, setReportPeriod] = useState("month");
+  const [reportYear, setReportYear] = useState(now.getFullYear());
+  const [reportMonth, setReportMonth] = useState(now.getMonth() + 1);
+
+  const [periodAnalytics, setPeriodAnalytics] = useState(null);
+  const [periodLoading, setPeriodLoading] = useState(false);
+  const [periodError, setPeriodError] = useState("");
+
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -78,6 +88,32 @@ export default function SalesAnalyticsPage() {
       setLoading(false);
     }
   }, [selectedDate]);   
+
+  const fetchPeriodAnalytics = useCallback(async () => {
+  setPeriodLoading(true);
+  setPeriodError("");
+
+  try {
+    const data = await salesAnalyticsApi.getPeriodAnalytics(
+      reportPeriod,
+      reportYear,
+      reportPeriod === "month" ? reportMonth : null
+    );
+
+    setPeriodAnalytics(data);
+  } catch (err) {
+    console.error("Failed to load period analytics:", err);
+    setPeriodError(
+      err?.message || "Unable to load the selected reporting period."
+    );
+  } finally {
+    setPeriodLoading(false);
+  }
+}, [reportPeriod, reportYear, reportMonth]);
+
+useEffect(() => {
+  fetchPeriodAnalytics();
+}, [fetchPeriodAnalytics]);
 
   useEffect(() => {
     fetchAnalytics();
@@ -364,6 +400,226 @@ const sevenDayCollectionRate =
     so the rates are comparison indicators, not invoice settlement rates.
   </p>
 </div>
+
+
+<section className="space-y-5 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div className="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 className="text-xl font-bold text-slate-900">
+        Monthly / Yearly Sales Report
+      </h2>
+      <p className="mt-1 text-sm text-slate-500">
+        Analyze invoiced revenue, estimated profitability and payments collected.
+      </p>
+    </div>
+
+    <div className="flex flex-wrap items-end gap-3">
+      <div>
+        <label className="mb-1 block text-sm font-medium text-slate-600">
+          Reporting period
+        </label>
+        <select
+          value={reportPeriod}
+          onChange={(e) => setReportPeriod(e.target.value)}
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+        >
+          <option value="month">Monthly</option>
+          <option value="year">Yearly</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-slate-600">
+          Year
+        </label>
+        <select
+          value={reportYear}
+          onChange={(e) => setReportYear(Number(e.target.value))}
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+        >
+          {Array.from(
+            { length: new Date().getFullYear() - 2020 + 1 },
+            (_, index) => new Date().getFullYear() - index
+          ).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {reportPeriod === "month" && (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-600">
+            Month
+          </label>
+          <select
+            value={reportMonth}
+            onChange={(e) => setReportMonth(Number(e.target.value))}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          >
+            {[
+              "January", "February", "March", "April",
+              "May", "June", "July", "August",
+              "September", "October", "November", "December",
+            ].map((name, index) => (
+              <option key={index + 1} value={index + 1}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+    </div>
+  </div>
+
+  {periodError && (
+    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      {periodError}
+      <button
+        type="button"
+        onClick={fetchPeriodAnalytics}
+        className="ml-3 font-semibold underline"
+      >
+        Try again
+      </button>
+    </div>
+  )}
+
+  {periodLoading ? (
+    <p className="py-8 text-center text-slate-500">
+      Loading reporting period...
+    </p>
+  ) : periodAnalytics ? (
+    <>
+      <p className="text-sm font-medium text-slate-600">
+        Report: {reportPeriod === "month"
+          ? new Date(reportYear, reportMonth - 1).toLocaleString("en-GB", {
+              month: "long",
+              year: "numeric",
+            })
+          : reportYear}
+      </p>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          title="Invoiced Revenue"
+          value={formatCurrency(periodAnalytics.summary?.revenue)}
+          description={`${Number(periodAnalytics.summary?.invoice_count) || 0} invoices`}
+        />
+
+        <StatCard
+          title="Estimated Cost"
+          value={formatCurrency(periodAnalytics.summary?.cost)}
+          description="Based on current inventory costs"
+        />
+
+        <StatCard
+          title="Estimated Profit"
+          value={formatCurrency(periodAnalytics.summary?.profit)}
+          description={`Profit margin: ${
+            Number(periodAnalytics.summary?.revenue) > 0
+              ? (
+                  Number(periodAnalytics.summary.profit) /
+                  Number(periodAnalytics.summary.revenue) * 100
+                ).toFixed(1)
+              : "0.0"
+          }%`}
+        />
+
+        <StatCard
+          title="Payments Collected"
+          value={formatCurrency(
+            periodAnalytics.trend?.reduce(
+              (sum, item) => sum + (Number(item.total_collected) || 0),
+              0
+            )
+          )}
+          description="Payments received during this period"
+        />
+      </div>
+
+      {Number(periodAnalytics.summary?.item_lines_missing_cost) > 0 && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          Profit estimates exclude{" "}
+          {periodAnalytics.summary.item_lines_missing_cost} invoice line(s)
+          with no recorded product cost.
+        </div>
+      )}
+
+      <div className="space-y-5">
+        <div className="rounded-xl border border-slate-200 p-4">
+          <h3 className="mb-4 font-semibold text-slate-900">
+            Invoiced Revenue Trend
+          </h3>
+          <RevenueChart data={periodAnalytics.trend || []} />
+        </div>
+
+        <div className="rounded-xl border border-slate-200 p-4">
+          <h3 className="mb-4 font-semibold text-slate-900">
+            Payments Collection Trend
+          </h3>
+          <PaymentsCollectionChart data={periodAnalytics.trend || []} />
+        </div>
+
+        <div className="rounded-xl border border-slate-200 p-4">
+          <h3 className="mb-4 font-semibold text-slate-900">
+            Revenue vs Payments Comparison
+          </h3>
+          <RevenuePaymentsComparisonChart
+            revenueData={periodAnalytics.trend || []}
+            paymentsData={periodAnalytics.trend || []}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 p-5">
+        <h3 className="mb-4 font-semibold text-slate-900">
+          Top-Selling Products
+        </h3>
+
+        {periodAnalytics.top_products?.length ? (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[550px] text-left text-sm">
+              <thead>
+                <tr className="border-b text-slate-500">
+                  <th className="px-3 py-3">Product</th>
+                  <th className="px-3 py-3">SKU</th>
+                  <th className="px-3 py-3 text-right">Units Sold</th>
+                  <th className="px-3 py-3 text-right">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {periodAnalytics.top_products.map((product, index) => (
+                  <tr
+                    key={`${product.inventory_id ?? product.sku}-${index}`}
+                    className="border-b border-slate-100 last:border-0"
+                  >
+                    <td className="px-3 py-3 font-medium">
+                      {product.name}
+                    </td>
+                    <td className="px-3 py-3">{product.sku || "—"}</td>
+                    <td className="px-3 py-3 text-right">
+                      {Number(product.total_sold) || 0}
+                    </td>
+                    <td className="px-3 py-3 text-right">
+                      {formatCurrency(product.total_revenue)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="py-5 text-center text-sm text-slate-500">
+            No product sales found for this period.
+          </p>
+        )}
+      </div>
+    </>
+  ) : null}
+</section>
+
 
     </div>
   );
