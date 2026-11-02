@@ -597,6 +597,7 @@ const getComparisonValues = (report) => {
 
   return {
     revenue: Number(summary.revenue) || 0,
+    unitsSold: Number(summary.total_units_sold) || 0,
     collected: trend.reduce(
       (sum, item) => sum + (Number(item.total_collected) || 0),
       0
@@ -604,7 +605,7 @@ const getComparisonValues = (report) => {
     cost: Number(summary.cost) || 0,
     profit: Number(summary.profit) || 0,
     invoices: Number(summary.invoice_count) || 0,
-    unitsSold: Number(summary.total_units_sold) || 0,
+    
   };
 };
 
