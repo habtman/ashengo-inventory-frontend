@@ -604,6 +604,7 @@ const getComparisonValues = (report) => {
     cost: Number(summary.cost) || 0,
     profit: Number(summary.profit) || 0,
     invoices: Number(summary.invoice_count) || 0,
+    unitsSold: Number(summary.total_units_sold) || 0,
   };
 };
 
@@ -658,6 +659,12 @@ const comparisonRows = [
     previous: previousComparison.invoices,
     currency: false,
   },
+  {
+    label: "Units Sold",
+    current: currentComparison.unitsSold,
+    previous: previousComparison.unitsSold,
+    currency: false,
+  } 
 ];
 
 
