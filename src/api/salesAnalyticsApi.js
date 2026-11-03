@@ -81,5 +81,27 @@ getPeriodAnalytics: (period, year, month = null) => {
   );
 },
 
+  // Monthly sales targets
+  getMonthlyTarget: (year, month) => {
+    const params = new URLSearchParams({
+      year: String(year),
+      month: String(month),
+    });
+
+    return apiFetch(
+      `/api/v1/sales-analytics/targets/monthly?${params.toString()}`
+    );
+  },
+
+  saveMonthlyTarget: (year, month, targetAmount) =>
+    apiFetch("/api/v1/sales-analytics/targets/monthly", {
+      method: "PUT",
+      body: JSON.stringify({
+        year,
+        month,
+        target_amount: targetAmount,
+      }),
+    }),
+
 
 };
