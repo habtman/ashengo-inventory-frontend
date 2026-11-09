@@ -59,6 +59,8 @@ export default function SalesAnalyticsPage() {
 
   const [previousPeriodAnalytics, setPreviousPeriodAnalytics] = useState(null);
 
+  
+
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError("");
